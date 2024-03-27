@@ -13,20 +13,40 @@ Screen::~Screen() {
 void Screen::init() {
 }
 
-void Screen::run() {
+void Screen::onResize() {
 }
 
-void Screen::on_resize() {
+void Screen::onClosing() {
 }
 
-void Screen::on_closing() {
+void Screen::handleGuiEvent(sf::Event& sfEvent) {
+	for (GuiElement* guiElement : m_guiElements) {
+		guiElement->handleEvent(sfEvent);
+	}
 }
 
-void Screen::handle_events(sf::Event& sf_event) {
+void Screen::updateGui(float dt) {
+	for (GuiElement* guiElement : m_guiElements) {
+		guiElement->update(dt);
+	}
+}
+
+void Screen::renderGui(sf::RenderTarget& window) {
+	for (GuiElement* guiElement : m_guiElements) {
+		guiElement->render(window);
+	}
+}
+
+void Screen::handleEvent(sf::Event& sfEvent) {
+	handleGuiEvent(sfEvent);
 }
 
 void Screen::update(float dt) {
+	updateGui(dt);
 }
 
+
 void Screen::render(sf::RenderTarget& window) {
+	window.clear();
+	renderGui(window);
 }

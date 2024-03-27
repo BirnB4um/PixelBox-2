@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include "Screen.h"
 #include "../Tools/IO_DATA.h"
 
@@ -12,15 +13,13 @@ public:
 
 	void init() override;
 
-	void run() override;
-
 	//called when the window is resized
-	void on_resize() override;
+	void onResize() override;
 
 	//called when the window is about to close
-	void on_closing() override;
+	void onClosing() override;
 
-	void handle_events(sf::Event& sf_event) override;
+	void handleEvent(sf::Event& sfEvent) override;
 
 	//update given deltatime dt in seconds
 	void update(float dt) override;

@@ -2,51 +2,46 @@
 #include "../Application.h"
 
 HomeScreen::HomeScreen() {
-
 }
 
 HomeScreen::~HomeScreen() {
-
 }
 
 void HomeScreen::init() {
 
+	m_button.setFont(app->getResourceManager().getPixelFont());
+	m_button.setText("Test");
+	m_button.setBounds(100, 100, 200, 120);
+	m_button.setFunction([this]() {
+		std::cout << "Button pressed" << std::endl;
+		});
+	m_guiElements.push_back(&m_button);
 }
 
-void HomeScreen::run() {
-
+void HomeScreen::onResize() {
 }
 
-void HomeScreen::on_resize() {
-
+void HomeScreen::onClosing() {
 }
 
-void HomeScreen::on_closing() {
+void HomeScreen::handleEvent(sf::Event& sfEvent) {
+	handleGuiEvent(sfEvent);
 
-}
-
-void HomeScreen::handle_events(sf::Event& sf_event) {
-	switch (sf_event.type) {
-
+	switch (sfEvent.type) {
 	case sf::Event::MouseButtonPressed:
-		app->open_screen(app->SETTINGS);
+		//app->openScreen(ScreenID::SETTINGS);
 		break;
 
 	default:
 		break;
-
 	}
 }
 
 void HomeScreen::update(float dt) {
-	ImGui::Begin("Hallo");
-	ImGui::Text("halloooooooooo");
-	ImGui::ColorButton("Color", ImVec4(0.4f, 0.7f, 0.8f, 0.5f));
-	ImVec4 color = ImVec4(0.4f, 0.7f, 0.8f, 0.5f);
-	ImGui::ColorPicker3("MEINE FARBEEE", (float*)&color);
-	ImGui::End();
+	updateGui(dt);
 }
 
 void HomeScreen::render(sf::RenderTarget& window) {
-	window.clear(sf::Color::Green);
+	window.clear();
+	renderGui(window);
 }

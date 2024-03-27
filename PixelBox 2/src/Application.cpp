@@ -1,25 +1,45 @@
 #include "Application.h"
 
+Application* Application::currentInstance = nullptr;
+
 
 Application::Application() {
+	currentInstance = this;
+
+	// load resources
+	if (!loadResources()) {
+		throw std::runtime_error("Error loading resources");
+	}
+
 	Screen::app = this;
+	m_homescreen.init();
+	m_settingsscreen.init();
+	openScreen(ScreenID::HOME);
 
-	homescreen.init();
-	settingsscreen.init();
-	screens.push_back(&homescreen);
-	current_screen = &homescreen;
+	createWindow(800, 600, false, 60, "PixelBox 2");
 
-	create_window(800, 600, false, 60, "CircuitGrid");
-
-	ImGui::SFML::Init(window);
-
+	ImGui::SFML::Init(m_window);
 }
 
 Application::~Application() {
+	ImGui::SFML::Shutdown();
 }
 
+ResourceManager& Application::getResourceManager() {
+	return m_resourceManager;
+}
 
-void Application::create_window(unsigned int width, unsigned int height, bool fullscreen, int fps, std::string title, bool vsync)
+bool Application::loadResources() {
+	if (!m_resourceManager.loadResources()) {
+		return false;
+	}
+
+	GuiElement::setTexture(m_resourceManager.getGuiTexture());
+
+	return true;
+}
+
+void Application::createWindow(unsigned int width, unsigned int height, bool fullscreen, int fps, std::string title, bool vsync)
 {
 	sf::ContextSettings settings;
 	settings.depthBits = 24;
@@ -28,72 +48,76 @@ void Application::create_window(unsigned int width, unsigned int height, bool fu
 	settings.majorVersion = 3;
 	settings.minorVersion = 0;
 
-	window_width = width;
-	window_height = height;
-	this->fps = fps;
-	this->fullscreen = fullscreen;
+	m_windowWidth = width;
+	m_windowHeight = height;
+	m_fps = fps;
+	m_fullscreen = fullscreen;
+	m_title = title;
 
 	if (fullscreen) {
-		window.create(sf::VideoMode::getFullscreenModes()[0], title, sf::Style::Fullscreen, settings);
+		m_window.create(sf::VideoMode::getFullscreenModes()[0], title, sf::Style::Fullscreen, settings);
 	}
 	else {
-		windowed_width = width;
-		windowed_height = height;
-		window.create(sf::VideoMode(width, height), title, sf::Style::Close | sf::Style::Resize, settings);
+		m_windowedWidth = width;
+		m_windowedHeight = height;
+		m_window.create(sf::VideoMode(width, height), title, sf::Style::Close | sf::Style::Resize, settings);
 	}
-	window.setFramerateLimit(fps);
-	window.setVerticalSyncEnabled(vsync);
+	m_window.setFramerateLimit(fps);
+	m_window.setVerticalSyncEnabled(vsync);
 
-	on_resize();
+	onResize();
 }
 
-void Application::close_current_screen() {
-	if (screens.size() > 1)
-		screens.pop_back();
+void Application::closeCurrentScreen() {
+	if (m_screens.size() > 1)
+		m_screens.pop_back();
+
+	m_currentScreen = m_screens.back();
 }
 
-void Application::open_screen(SCREEN_ID id) {
+void Application::openScreen(ScreenID id) {
 	switch (id)
 	{
-	case HOME:
-		screens.push_back(&homescreen);
+	case ScreenID::HOME:
+		m_screens.push_back(&m_homescreen);
 		break;
-	case SETTINGS:
-		screens.push_back(&settingsscreen);
+	case ScreenID::SETTINGS:
+		m_screens.push_back(&m_settingsscreen);
 		break;
 	default:
 		break;
 	}
+
+	m_currentScreen = m_screens.back();
 }
 
-void Application::on_closing() {
-	homescreen.on_closing();
-	settingsscreen.on_closing();
+void Application::onClosing() {
+	m_homescreen.onClosing();
+	m_settingsscreen.onClosing();
 
-	window.close();
+	m_window.close();
 }
 
-void Application::on_resize() {
-	window_width = window.getSize().x;
-	window_height = window.getSize().y;
-	if (!fullscreen) {
-		windowed_width = window_width;
-		windowed_height = window_height;
+void Application::onResize() {
+	m_windowWidth = m_window.getSize().x;
+	m_windowHeight = m_window.getSize().y;
+	if (!m_fullscreen) {
+		m_windowedWidth = m_windowWidth;
+		m_windowedHeight = m_windowHeight;
 	}
+	normalView.setSize(m_windowWidth, m_windowHeight);
+	normalView.setCenter(m_windowWidth / 2, m_windowHeight / 2);
 
-	homescreen.on_resize();
-	settingsscreen.on_resize();
+	m_homescreen.onResize();
+	m_settingsscreen.onResize();
 }
 
-void Application::handle_events() {
-	while (window.pollEvent(sf_event)) {
-		
-		ImGui::SFML::ProcessEvent(window, sf_event);
+void Application::handleEvents() {
+	while (m_window.pollEvent(m_sfEvent)) {
+		ImGui::SFML::ProcessEvent(m_window, m_sfEvent);
 
-
-		switch (sf_event.type)
+		switch (m_sfEvent.type)
 		{
-
 		case sf::Event::GainedFocus:
 			break;
 
@@ -101,19 +125,19 @@ void Application::handle_events() {
 			break;
 
 		case sf::Event::Closed:
-			on_closing();
+			onClosing();
 			break;
 
 		case sf::Event::Resized:
-			on_resize();
+			onResize();
 			break;
 
 		case sf::Event::KeyPressed:
 
 			// toggle fullscreen
-			if (sf_event.key.code == sf::Keyboard::F10) {
-				fullscreen = !fullscreen;
-				create_window(windowed_width, windowed_height, fullscreen, fps, "CircuitGrid");
+			if (m_sfEvent.key.code == sf::Keyboard::F10) {
+				m_fullscreen = !m_fullscreen;
+				createWindow(m_windowedWidth, m_windowedHeight, m_fullscreen, m_fps, m_title);
 			}
 
 			break;
@@ -126,48 +150,36 @@ void Application::handle_events() {
 		if (ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard)
 			continue;
 
-		current_screen->handle_events(sf_event);
-
+		m_currentScreen->handleEvent(m_sfEvent);
 	}
 }
 
 void Application::update() {
+	ImGui::SFML::Update(m_window, m_deltaTime);
 
-	ImGui::SFML::Update(window, deltaTime);
-
-	current_screen->update(deltaTime.asSeconds());
-
+	m_currentScreen->update(m_deltaTime.asSeconds());
 }
 
 void Application::draw() {
-	window.clear();
+	m_window.clear();
+	m_window.setView(normalView);
 
-	current_screen->render(window);
+	m_currentScreen->render(m_window);
 
-	sf::Sprite sprite;
+	ImGui::SFML::Render(m_window);
 
-	ImGui::SFML::Render(window);
-
-	window.display();
+	m_window.display();
 }
 
 void Application::run() {
-
-	while (window.isOpen())
+	while (m_window.isOpen())
 	{
-		deltaTime = deltaClock.restart();
+		m_deltaTime = m_deltaClock.restart();
 
-		if (screens.size() == 0)
-			screens.push_back(&homescreen);
-
-		current_screen = screens.back();
-
-		handle_events();
+		handleEvents();
 
 		update();
 
 		draw();
 	}
-
-	ImGui::SFML::Shutdown();
 }

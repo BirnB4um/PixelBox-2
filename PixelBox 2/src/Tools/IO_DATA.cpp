@@ -26,7 +26,7 @@
 //	return saveFileDialog.lpstrFile;
 //}
 
-std::string IO_DATA::choose_open_file(int nr_file_name) {//returns path to file
+std::string IO_DATA::chooseOpenFile(int nrFileName) {//returns path to file
 	OPENFILENAMEA openFileDialog;
 	char szSaveFileName[MAX_PATH] = "";
 	ZeroMemory(&openFileDialog, sizeof(openFileDialog));
@@ -35,15 +35,15 @@ std::string IO_DATA::choose_open_file(int nr_file_name) {//returns path to file
 
 	openFileDialog.lpstrFilter = "All Files (*.*)\0*.*\0";
 	openFileDialog.lpstrDefExt = "All";
-	if (nr_file_name == 1) {
+	if (nrFileName == 1) {
 		openFileDialog.lpstrFilter = "Board (*.board)\0*board\0All Files (*.*)\0*.*\0";
 		openFileDialog.lpstrDefExt = "board";
 	}
-	else if (nr_file_name == 2) {
+	else if (nrFileName == 2) {
 		openFileDialog.lpstrFilter = "Structure (*.struct)\0*struct\0All Files (*.*)\0*.*\0";
 		openFileDialog.lpstrDefExt = "struct";
 	}
-	else if (nr_file_name == 3) {
+	else if (nrFileName == 3) {
 		openFileDialog.lpstrFilter = "Josef ist dumm! (*.josefistdumm)\0*josefistdumm\0All Files (*.*)\0*.*\0";
 		openFileDialog.lpstrDefExt = "josefistdumm";
 	}
@@ -57,7 +57,7 @@ std::string IO_DATA::choose_open_file(int nr_file_name) {//returns path to file
 }
 
 
-std::string IO_DATA::choose_save_file(int nr_file_name) {
+std::string IO_DATA::chooseSaveFile(int nrFileName) {
 	OPENFILENAMEA saveFileDialog;
 	char szSaveFileName[MAX_PATH] = "";
 	ZeroMemory(&saveFileDialog, sizeof(saveFileDialog));
@@ -66,15 +66,15 @@ std::string IO_DATA::choose_save_file(int nr_file_name) {
 
 	saveFileDialog.lpstrFilter = "All Files (*.*)\0*.*\0";
 	saveFileDialog.lpstrDefExt = "All";
-	if (nr_file_name == 1) {
+	if (nrFileName == 1) {
 		saveFileDialog.lpstrFilter = "Board (*.board)\0*board\0All Files (*.*)\0*.*\0";
 		saveFileDialog.lpstrDefExt = "board";
 	}
-	else if (nr_file_name == 2) {
+	else if (nrFileName == 2) {
 		saveFileDialog.lpstrFilter = "Structure (*.struct)\0*struct\0All Files (*.*)\0*.*\0";
 		saveFileDialog.lpstrDefExt = "struct";
 	}
-	else if (nr_file_name == 3) {
+	else if (nrFileName == 3) {
 		saveFileDialog.lpstrFilter = "Josef ist dumm! (*.josefistdumm)\0*josefistdumm\0All Files (*.*)\0*.*\0";
 		saveFileDialog.lpstrDefExt = "josefistdumm";
 	}
@@ -88,22 +88,22 @@ std::string IO_DATA::choose_save_file(int nr_file_name) {
 }
 
 
-bool IO_DATA::save_to_file(std::string file_name, const char *output_data, const size_t data_size, bool append_data) {
-	if (file_name == "")
+bool IO_DATA::saveToFile(std::string fileName, const char *outputData, const size_t dataSize, bool appendData) {
+	if (fileName == "")
 		return false;
 
-	auto myfile = std::fstream(file_name, std::ios::out | std::ios::binary | (append_data ? std::ios_base::app : 0));
-	myfile.write((char*)output_data, data_size);
+	auto myfile = std::fstream(fileName, std::ios::out | std::ios::binary | (appendData ? std::ios_base::app : 0));
+	myfile.write((char*)outputData, dataSize);
 	myfile.close();
 	return true;
 
 }
 
-bool IO_DATA::read_from_file(std::string file_name, std::vector<char>& input_data) {
-	if (file_name == "")
+bool IO_DATA::readFromFile(std::string fileName, std::vector<char>& inputData) {
+	if (fileName == "")
 		return false;
-	std::ifstream input(file_name, std::ios::binary);
-	input_data = std::vector<char>((std::istreambuf_iterator<char>(input)), (std::istreambuf_iterator<char>()));
+	std::ifstream input(fileName, std::ios::binary);
+	inputData = std::vector<char>((std::istreambuf_iterator<char>(input)), (std::istreambuf_iterator<char>()));
 	input.close();
 	return true;
 }

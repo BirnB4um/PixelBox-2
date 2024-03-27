@@ -74,12 +74,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SFML_STATIC;CONSOLE_APP;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)sfml\include;$(ProjectDir)imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)sfml\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;openal32.lib;freetype.lib;winmm.lib;gdi32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;ws2_32.lib;sfml-main.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;sfml-audio-s-d.lib;sfml-network-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -91,12 +91,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SFML_STATIC;CONSOLE_APP;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)sfml\include;$(ProjectDir)imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -133,6 +133,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\GUI\Panel.h" />
+    <ClInclude Include="src\ResourceManager.h" />
+    <ClInclude Include="src\GUI\NinePatch.h" />
+    <ClInclude Include="src\GUI\Button.h" />
+    <ClInclude Include="src\GUI\GuiElement.h" />
     <ClInclude Include="src\Screens\SettingsScreen.h" />
     <ClInclude Include="src\Screens\HomeScreen.h" />
     <ClInclude Include="src\Application.h" />
@@ -151,6 +156,11 @@
     <ClInclude Include="src\Tools\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\GUI\Panel.cpp" />
+    <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\GUI\NinePatch.cpp" />
+    <ClCompile Include="src\GUI\Button.cpp" />
+    <ClCompile Include="src\GUI\GuiElement.cpp" />
     <ClCompile Include="src\Screens\SettingsScreen.cpp" />
     <ClCompile Include="src\Screens\HomeScreen.cpp" />
     <ClCompile Include="src\Application.cpp" />
@@ -163,6 +173,14 @@
     <ClCompile Include="src\Screens\Screen.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Tools\IO_DATA.cpp" />
+    <ClCompile Include="src\Tools\Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\textures\gui_texture.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="res\fonts\arial.ttf" />
+    <Font Include="res\fonts\pixelfont.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

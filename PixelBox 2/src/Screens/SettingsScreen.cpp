@@ -2,49 +2,39 @@
 #include "../Application.h"
 
 SettingsScreen::SettingsScreen() {
-
 }
 
 SettingsScreen::~SettingsScreen() {
-
 }
 
 void SettingsScreen::init() {
-
 }
 
-void SettingsScreen::run() {
-
+void SettingsScreen::onResize() {
 }
 
-void SettingsScreen::on_resize() {
-
+void SettingsScreen::onClosing() {
 }
 
-void SettingsScreen::on_closing() {
+void SettingsScreen::handleEvent(sf::Event& sfEvent) {
+	handleGuiEvent(sfEvent);
 
-}
-
-void SettingsScreen::handle_events(sf::Event& sf_event) {
-	switch (sf_event.type) {
-
+	switch (sfEvent.type) {
 	case sf::Event::MouseButtonPressed:
-		IO_DATA::choose_open_file();
-		app->close_current_screen();
+		std::cout << IO_DATA::chooseOpenFile() << std::endl;
+		app->closeCurrentScreen(); 
 		break;
 
 	default:
 		break;
-
 	}
 }
 
 void SettingsScreen::update(float dt) {
-
+	updateGui(dt);
 }
 
 void SettingsScreen::render(sf::RenderTarget& window) {
 	window.clear(sf::Color::Red);
-
-
+	renderGui(window);
 }

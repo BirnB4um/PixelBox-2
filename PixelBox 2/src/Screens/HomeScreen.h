@@ -1,9 +1,9 @@
 #pragma once
 #include "Screen.h"
+#include "../GUI/Button.h"
 
 class HomeScreen : public Screen
 {
-
 public:
 
 	HomeScreen();
@@ -11,24 +11,22 @@ public:
 
 	void init() override;
 
-	void run() override;
-
 	//called when the window is resized
-	void on_resize() override;
+	void onResize() override;
 
 	//called when the window is about to close
-	void on_closing() override;
+	void onClosing() override;
 
-	void handle_events(sf::Event& sf_event) override;
+	void handleEvent(sf::Event& sfEvent) override;
 
 	//update given deltatime dt in seconds
 	void update(float dt) override;
 
 	void render(sf::RenderTarget& window) override;
 
-
 private:
+
+	Button m_button;
 
 
 };
-

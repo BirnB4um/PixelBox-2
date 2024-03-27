@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "../GUI/GuiElement.h"
 
 class Application;
 
@@ -14,15 +15,13 @@ public:
 
 	virtual void init();
 
-	virtual void run();
-
 	//called when the window is resized
-	virtual void on_resize();
+	virtual void onResize();
 
 	//called when the window is about to close
-	virtual void on_closing();
+	virtual void onClosing();
 
-	virtual void handle_events(sf::Event& sf_event);
+	virtual void handleEvent(sf::Event& sfEvent);
 
 	//update given deltatime dt in seconds
 	virtual void update(float dt);
@@ -30,7 +29,15 @@ public:
 	virtual void render(sf::RenderTarget& window);
 
 
-private:
+	void handleGuiEvent(sf::Event& sfEvent);
+	void updateGui(float dt);
+	void renderGui(sf::RenderTarget& window);
+
+
+
+protected:
+	std::vector<GuiElement*> m_guiElements;
+
 
 
 };

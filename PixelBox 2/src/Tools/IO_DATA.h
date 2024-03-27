@@ -6,9 +6,9 @@
 class IO_DATA
 {
 public:
-	static std::string choose_open_file(int nr_file_name = 0);
-	static std::string choose_save_file(int nr_file_name = 0);
-	static bool save_to_file(std::string file_name, const char *output_data, const size_t data_size, bool append_data);
-	static bool read_from_file(std::string file_name, std::vector<char>& input_data);
+	static std::string chooseOpenFile(int nrFileName = 0);
+	static std::string chooseSaveFile(int nrFileName = 0);
+	static bool saveToFile(std::string fileName, const char *outputData, const size_t dataSize, bool appendData);
+	static bool readFromFile(std::string fileName, std::vector<char>& inputData);
 };
 

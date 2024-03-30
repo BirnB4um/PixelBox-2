@@ -21,6 +21,7 @@ class Application
 public:
 
 	static Application* currentInstance;
+	static sf::Vector2i mousePos;
 
 	Application();
 	~Application();

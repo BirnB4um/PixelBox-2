@@ -37,6 +37,12 @@ void Screen::renderGui(sf::RenderTarget& window) {
 	}
 }
 
+void Screen::reloadGuiResources() {
+	for (GuiElement* guiElement : m_guiElements) {
+		guiElement->reloadResources();
+	}
+}
+
 void Screen::handleEvent(sf::Event& sfEvent) {
 	handleGuiEvent(sfEvent);
 }

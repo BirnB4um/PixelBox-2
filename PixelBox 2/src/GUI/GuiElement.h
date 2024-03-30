@@ -13,6 +13,7 @@ public:
 	virtual void handleEvent(sf::Event& sfEvent);
 	virtual void update(float dt);
 	virtual void render(sf::RenderTarget& window);
+	virtual void reloadResources();
 
 	static void setGuiScale(float scale);
 	static void setTexture(sf::Texture* texture);

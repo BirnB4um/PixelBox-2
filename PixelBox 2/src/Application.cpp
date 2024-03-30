@@ -1,7 +1,7 @@
 #include "Application.h"
 
 Application* Application::currentInstance = nullptr;
-
+sf::Vector2i Application::mousePos = sf::Vector2i(0, 0);
 
 Application::Application() {
 	currentInstance = this;
@@ -140,6 +140,10 @@ void Application::handleEvents() {
 				createWindow(m_windowedWidth, m_windowedHeight, m_fullscreen, m_fps, m_title);
 			}
 
+			break;
+
+		case sf::Event::MouseMoved:
+			mousePos = sf::Mouse::getPosition(m_window);
 			break;
 
 		default:

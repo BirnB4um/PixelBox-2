@@ -32,6 +32,7 @@ public:
 	void handleGuiEvent(sf::Event& sfEvent);
 	void updateGui(float dt);
 	void renderGui(sf::RenderTarget& window);
+	void reloadGuiResources();
 
 
 

@@ -8,7 +8,6 @@ HomeScreen::~HomeScreen() {
 }
 
 void HomeScreen::init() {
-
 	m_button.setFont(app->getResourceManager().getPixelFont());
 	m_button.setText("Test");
 	m_button.setBounds(100, 100, 200, 120);
@@ -16,6 +15,8 @@ void HomeScreen::init() {
 		std::cout << "Button pressed" << std::endl;
 		});
 	m_guiElements.push_back(&m_button);
+
+	reloadGuiResources();
 }
 
 void HomeScreen::onResize() {

@@ -26,3 +26,6 @@ void GuiElement::update(float dt) {
 
 void GuiElement::render(sf::RenderTarget& window) {
 }
+
+void GuiElement::reloadResources() {
+}

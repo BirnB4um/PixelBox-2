@@ -6,14 +6,11 @@ NinePatch::NinePatch() {
 
 	m_verticesArray = new sf::Vertex[54];
 
-	m_posX = 0;
-	m_posY = 0;
-	m_width = 50;
-	m_height = 50;
-	m_borderWidth = 1;
+	m_bounds = sf::FloatRect(0.0f, 0.0f, 10.0f, 10.0f);
+	m_borderWidth = 1.0f;
 
 	updateVerticesPositions();
-	setPatches(0, 0, 3, 3, 1);
+	setPatches(sf::IntRect(0, 0, 3, 3), 1.0f);
 }
 
 NinePatch::~NinePatch() {
@@ -28,48 +25,62 @@ void NinePatch::render(sf::RenderTarget& window) {
 	window.draw(m_vertexBuffer, m_renderState);
 }
 
-void NinePatch::setPosX(float x) {
-	m_posX = x;
-	updateVerticesPositions();
-}
-void NinePatch::setPosY(float y) {
-	m_posY = y;
+void NinePatch::setPosition(float x, float y) {
+	m_bounds.left = x;
+	m_bounds.top = y;
 	updateVerticesPositions();
 }
 
-void NinePatch::setWidth(float width) {
-	m_width = width;
-	updateVerticesPositions();
-}
-
-void NinePatch::setHeight(float height) {
-	m_height = height;
+void NinePatch::setPosition(sf::Vector2f position) {
+	m_bounds.left = position.x;
+	m_bounds.top = position.y;
 	updateVerticesPositions();
 }
 
 void NinePatch::setSize(float width, float height) {
-	m_width = width;
-	m_height = height;
+	m_bounds.width = width;
+	m_bounds.height = height;
 	updateVerticesPositions();
 }
 
-void NinePatch::setPosition(float x, float y) {
-	m_posX = x;
-	m_posY = y;
+void NinePatch::setSize(sf::Vector2f size) {
+	m_bounds.width = size.x;
+	m_bounds.height = size.y;
+	updateVerticesPositions();
+}
+
+void NinePatch::setBounds(sf::FloatRect bounds) {
+	m_bounds = bounds;
 	updateVerticesPositions();
 }
 
 void NinePatch::setBounds(float x, float y, float width, float height) {
-	m_posX = x;
-	m_posY = y;
-	m_width = width;
-	m_height = height;
+	m_bounds.left = x;
+	m_bounds.top = y;
+	m_bounds.width = width;
+	m_bounds.height = height;
 	updateVerticesPositions();
 }
 
 void NinePatch::setBorderWidth(float width) {
 	m_borderWidth = width;
 	updateVerticesPositions();
+}
+
+sf::Vector2f NinePatch::getSize() {
+	return sf::Vector2f(m_bounds.width, m_bounds.height);
+}
+
+sf::Vector2f NinePatch::getPosition() {
+	return sf::Vector2f(m_bounds.left, m_bounds.top);
+}
+
+sf::FloatRect NinePatch::getBounds() {
+	return m_bounds;
+}
+
+float NinePatch::getBorderWidth() {
+	return m_borderWidth;
 }
 
 void NinePatch::setPatch(PatchIndex patchIndex, sf::IntRect area) {
@@ -85,11 +96,11 @@ void NinePatch::setPatch(PatchIndex patchIndex, sf::IntRect area) {
 	m_vertexBuffer.update(m_verticesArray);
 }
 
-void NinePatch::setPatches(int left, int top, int width, int height, int borderWidth) {
-	float x = left;
-	float y = top;
-	float w = width;
-	float h = height;
+void NinePatch::setPatches(sf::IntRect area, float borderWidth) {
+	float x = area.left;
+	float y = area.top;
+	float w = area.width;
+	float h = area.height;
 	float bw = borderWidth;
 
 	// points for corners
@@ -120,10 +131,10 @@ void NinePatch::setPatches(int left, int top, int width, int height, int borderW
 }
 
 void NinePatch::updateVerticesPositions() {
-	float x = m_posX;
-	float y = m_posY;
-	float w = m_width;
-	float h = m_height;
+	float x = m_bounds.left;
+	float y = m_bounds.top;
+	float w = m_bounds.width;
+	float h = m_bounds.height;
 	float bw = m_borderWidth;
 
 	// points for corners

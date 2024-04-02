@@ -6,14 +6,21 @@ sf::Vector2i Application::mousePos = sf::Vector2i(0, 0);
 Application::Application() {
 	currentInstance = this;
 
+	m_shouldClose = false;
+
 	// load resources
 	if (!loadResources()) {
 		throw std::runtime_error("Error loading resources");
 	}
 
+	m_allScreens.push_back(&m_homescreen);
+	m_allScreens.push_back(&m_worldselectionscreen);
+	m_allScreens.push_back(&m_settingsscreen);
+
 	Screen::app = this;
 	m_homescreen.init();
 	m_settingsscreen.init();
+	m_worldselectionscreen.init();
 	openScreen(ScreenID::HOME);
 
 	createWindow(800, 600, false, 60, "PixelBox 2");
@@ -69,31 +76,21 @@ void Application::createWindow(unsigned int width, unsigned int height, bool ful
 }
 
 void Application::closeCurrentScreen() {
-	if (m_screens.size() > 1)
-		m_screens.pop_back();
+	if (m_openScreens.size() > 1)
+		m_openScreens.pop_back();
 
-	m_currentScreen = m_screens.back();
+	m_currentScreen = m_openScreens.back();
 }
 
 void Application::openScreen(ScreenID id) {
-	switch (id)
-	{
-	case ScreenID::HOME:
-		m_screens.push_back(&m_homescreen);
-		break;
-	case ScreenID::SETTINGS:
-		m_screens.push_back(&m_settingsscreen);
-		break;
-	default:
-		break;
-	}
-
-	m_currentScreen = m_screens.back();
+	m_openScreens.push_back(m_allScreens[static_cast<int>(id)]);
+	m_currentScreen = m_openScreens.back();
 }
 
 void Application::onClosing() {
-	m_homescreen.onClosing();
-	m_settingsscreen.onClosing();
+	for (Screen* screen : m_allScreens) {
+		screen->onClosing();
+	}
 
 	m_window.close();
 }
@@ -108,8 +105,17 @@ void Application::onResize() {
 	normalView.setSize(m_windowWidth, m_windowHeight);
 	normalView.setCenter(m_windowWidth / 2, m_windowHeight / 2);
 
-	m_homescreen.onResize();
-	m_settingsscreen.onResize();
+	for (Screen* screen : m_allScreens) {
+		screen->onResize();
+	}
+}
+
+sf::Vector2i Application::getWindowSize() {
+	return sf::Vector2i(m_windowWidth, m_windowHeight);
+}
+
+void Application::close() {
+	m_shouldClose = true;
 }
 
 void Application::handleEvents() {
@@ -161,6 +167,14 @@ void Application::handleEvents() {
 void Application::update() {
 	ImGui::SFML::Update(m_window, m_deltaTime);
 
+	ImGui::Begin("gui");
+	float scale = GuiElement::getGuiScale();
+	if (ImGui::SliderFloat("gui scale", &scale, 0.1f, 2.0f)) {
+		GuiElement::setGuiScale(scale);
+		onResize();
+	}
+	ImGui::End();
+
 	m_currentScreen->update(m_deltaTime.asSeconds());
 }
 
@@ -185,5 +199,8 @@ void Application::run() {
 		update();
 
 		draw();
+
+		if (m_shouldClose)
+			onClosing();
 	}
 }

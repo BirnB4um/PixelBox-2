@@ -17,6 +17,7 @@ public:
 
 	static void setGuiScale(float scale);
 	static void setTexture(sf::Texture* texture);
+	static float getGuiScale();
 
 protected:
 	static float m_guiScale;

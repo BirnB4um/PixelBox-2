@@ -5,8 +5,6 @@
 #include "GuiElement.h"
 #include "NinePatch.h"
 #include "../Tools/Utils.h"
-#include <imgui.h>
-#include <imgui-SFML.h>
 
 class Application;
 
@@ -22,37 +20,31 @@ public:
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;
 
-	void setPosX(int x);
-	void setPosY(int y);
-	void setPosition(int x, int y);
-	void setWidth(int width);
-	void setHeight(int height);
-	void setSize(int width, int height);
-	void setBounds(int x, int y, int width, int height);
-	void setBorderWidth(int width);
-
-	int getPosX();
-	int getPosY();
-	sf::Vector2i getPosition();
-	int getWidth();
-	int getHeight();
-	sf::Vector2i getSize();
-	int getBorderWidth();
-
-	void setText(std::string text);
-
 	void setFunction(std::function<void()> func);
 
-	void setFont(sf::Font& font);
 
-private:
+	void setPosition(float x, float y);
+	void setPosition(sf::Vector2f position);
+	void setSize(float width, float height);
+	void setSize(sf::Vector2f size);
+	void setBounds(float x, float y, float width, float height);
+	void setBounds(sf::FloatRect bounds);
+	void setBorderWidth(float width);
+
+	sf::Vector2f getPosition();
+	sf::Vector2f getSize();
+	sf::FloatRect getBounds();
+	float getBorderWidth();
+
+
+protected:
 	NinePatch m_ninePatch;
-	sf::Text m_text;
 	bool m_hovered;
 	bool m_pressed;
-	int m_posX, m_posY, m_width, m_height, m_borderWidth;
+	float m_borderWidth;
+	sf::FloatRect m_bounds;
 	std::function<void()> m_function;
 
-	void updateSize();
+	virtual void updateSize();
 	void updateInteraction();
 };

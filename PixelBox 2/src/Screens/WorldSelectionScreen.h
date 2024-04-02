@@ -1,14 +1,13 @@
 #pragma once
 #include "Screen.h"
-#include "../GUI/TextButton.h"
-#include "../GUI/SpriteButton.h"
+#include "../GUI/Button.h"
 
-class HomeScreen : public Screen
+class WorldSelectionScreen : public Screen
 {
 public:
 
-	HomeScreen();
-	~HomeScreen();
+	WorldSelectionScreen();
+	~WorldSelectionScreen();
 
 	void init() override;
 
@@ -27,10 +26,7 @@ public:
 
 private:
 
-	TextButton m_worldSelectionButton;
-	TextButton m_settingsButton;
-	SpriteButton m_testButton;
-
+	Button m_button;
 
 
 };

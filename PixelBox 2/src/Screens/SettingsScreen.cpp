@@ -21,7 +21,7 @@ void SettingsScreen::handleEvent(sf::Event& sfEvent) {
 
 	switch (sfEvent.type) {
 	case sf::Event::MouseButtonPressed:
-		std::cout << IO_DATA::chooseOpenFile() << std::endl;
+		//std::cout << IO_DATA::chooseOpenFile() << std::endl;
 		app->closeCurrentScreen(); 
 		break;
 

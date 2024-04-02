@@ -8,11 +8,12 @@
 #include "Screens/Screen.h"
 #include "Screens/HomeScreen.h"
 #include "Screens/SettingsScreen.h"
+#include "Screens/WorldSelectionScreen.h"
 #include "ResourceManager.h"
 #include "GUI/GuiElement.h"
 
 enum class ScreenID {
-	HOME, SETTINGS
+	HOME, WORLDSELECTION, SETTINGS
 };
 
 class Application
@@ -29,6 +30,8 @@ public:
 	void closeCurrentScreen();
 	void openScreen(ScreenID id);
 	ResourceManager& getResourceManager();
+	void close();
+	sf::Vector2i getWindowSize();
 
 
 private:
@@ -48,12 +51,15 @@ private:
 	int m_windowedHeight;
 	int m_fps;
 	bool m_fullscreen;
+	bool m_shouldClose;
 
 	//screens
-	std::vector<Screen*> m_screens;
+	std::vector<Screen*> m_openScreens;
+	std::vector<Screen*> m_allScreens;
 	Screen* m_currentScreen;
 	HomeScreen m_homescreen;
 	SettingsScreen m_settingsscreen;
+	WorldSelectionScreen m_worldselectionscreen;
 
 	void createWindow(unsigned int width, unsigned int height, bool fullscreen, int fps, std::string title, bool vsync = false);
 	void onResize();

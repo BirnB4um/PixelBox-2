@@ -11,6 +11,9 @@ void GuiElement::setGuiScale(float scale) {
 	m_guiScale = scale;
 }
 
+float GuiElement::getGuiScale() {
+	return m_guiScale;
+}
 
 GuiElement::GuiElement() {
 }

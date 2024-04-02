@@ -1,22 +1,16 @@
 #include "Button.h"
-
 #include "../Application.h"
 
 Button::Button() {
-	m_text.setString("Button");
-	m_text.setCharacterSize(24);
-	m_text.setFillColor(sf::Color(255, 255, 255, 255));
 
-	m_ninePatch.setTexture(m_texture);
-	m_ninePatch.setPatches(0, 0, 5, 5, 2);
-	m_ninePatch.setPosition(100, 100);
-	m_ninePatch.setSize(100, 60);
-	m_ninePatch.setBorderWidth(2);
+	m_ninePatch.setPatches(sf::IntRect(0, 0, 5, 5), 2);
+	setBounds(0, 0, 20, 10);
+	setBorderWidth(4);
 
 	m_hovered = false;
 	m_pressed = false;
 
-	setBounds(0, 0, 100, 60);
+	setBounds(sf::FloatRect(0, 0, 100, 60));
 }
 
 Button::~Button() {
@@ -31,14 +25,14 @@ void Button::handleEvent(sf::Event& sfEvent) {
 
 	case sf::Event::MouseButtonPressed:
 		if (m_hovered) {
-			m_ninePatch.setPatches(10, 0, 5, 5, 2);
+			m_ninePatch.setPatches(sf::IntRect(10, 0, 5, 5), 2);
 			m_pressed = true;
 		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
 		if (m_hovered && m_pressed) {
-			m_ninePatch.setPatches(5, 0, 5, 5, 2);
+			m_ninePatch.setPatches(sf::IntRect(5, 0, 5, 5), 2);
 			m_function();
 		}
 		m_pressed = false;
@@ -50,18 +44,18 @@ void Button::handleEvent(sf::Event& sfEvent) {
 }
 
 void Button::updateInteraction() {
-	if (Utils::rectContainsPoint(Application::mousePos.x, Application::mousePos.y, m_posX, m_posY, m_width, m_height)) {
+	if (m_bounds.contains(static_cast<sf::Vector2f>(Application::mousePos))) {
 		if (m_pressed) {
-			m_ninePatch.setPatches(10, 0, 5, 5, 2);
+			m_ninePatch.setPatches(sf::IntRect(10, 0, 5, 5), 2);
 		}
 		else if (!m_hovered) {
-			m_ninePatch.setPatches(5, 0, 5, 5, 2);
+			m_ninePatch.setPatches(sf::IntRect(5, 0, 5, 5), 2);
 		}
 		m_hovered = true;
 	}
 	else {
 		if (m_hovered) {
-			m_ninePatch.setPatches(0, 0, 5, 5, 2);
+			m_ninePatch.setPatches(sf::IntRect(0, 0, 5, 5), 2);
 		}
 		m_hovered = false;
 	}
@@ -72,7 +66,6 @@ void Button::update(float dt) {
 
 void Button::render(sf::RenderTarget& window) {
 	m_ninePatch.render(window);
-	window.draw(m_text);
 }
 
 void Button::reloadResources() {
@@ -83,89 +76,68 @@ void Button::setFunction(std::function<void()> func) {
 	m_function = func;
 }
 
-void Button::setFont(sf::Font& font) {
-	m_text.setFont(font);
-}
-
-void Button::setPosX(int x) {
-	m_posX = x;
+void Button::setPosition(float x, float y) {
+	m_bounds.left = x;
+	m_bounds.top = y;
 	updateSize();
 }
 
-void Button::setPosY(int y) {
-	m_posY = y;
+void Button::setPosition(sf::Vector2f position) {
+	m_bounds.left = position.x;
+	m_bounds.top = position.y;
 	updateSize();
 }
 
-void Button::setPosition(int x, int y) {
-	m_posX = x;
-	m_posY = y;
+void Button::setSize(float width, float height) {
+	m_bounds.width = width;
+	m_bounds.height = height;
 	updateSize();
 }
 
-void Button::setWidth(int width) {
-	m_width = width;
+void Button::setSize(sf::Vector2f size) {
+	m_bounds.width = size.x;
+	m_bounds.height = size.y;
 	updateSize();
 }
 
-void Button::setHeight(int height) {
-	m_height = height;
+void Button::setBounds(float x, float y, float width, float height) {
+	m_bounds.left = x;
+	m_bounds.top = y;
+	m_bounds.width = width;
+	m_bounds.height = height;
 	updateSize();
 }
 
-void Button::setSize(int width, int height) {
-	m_width = width;
-	m_height = height;
+void Button::setBounds(sf::FloatRect bounds) {
+	m_bounds = bounds;
 	updateSize();
 }
 
-void Button::setBounds(int x, int y, int width, int height) {
-	m_posX = x;
-	m_posY = y;
-	m_width = width;
-	m_height = height;
-	updateSize();
-}
-
-void Button::setBorderWidth(int width) {
+void Button::setBorderWidth(float width) {
 	m_borderWidth = width;
 	m_ninePatch.setBorderWidth(width);
 }
 
-void Button::setText(std::string text) {
-	m_text.setString(text);
+sf::Vector2f Button::getPosition() {
+	return sf::Vector2f(m_bounds.left, m_bounds.top);
 }
 
-int Button::getPosX() {
-	return m_posX;
+sf::Vector2f Button::getSize() {
+	return sf::Vector2f(m_bounds.width, m_bounds.height);
 }
 
-int Button::getPosY() {
-	return m_posY;
+sf::FloatRect Button::getBounds() {
+	return m_bounds;
 }
 
-sf::Vector2i Button::getPosition() {
-	return sf::Vector2i(m_posX, m_posY);
-}
-
-int Button::getWidth() {
-	return m_width;
-}
-
-int Button::getHeight() {
-	return m_height;
-}
-
-sf::Vector2i Button::getSize() {
-	return sf::Vector2i(m_width, m_height);
-}
-
-int Button::getBorderWidth() {
+float Button::getBorderWidth() {
 	return m_borderWidth;
 }
 
 void Button::updateSize() {
-	m_ninePatch.setBounds(m_posX, m_posY, m_width, m_height);
-	m_text.setPosition(m_posX + m_width / 2 - m_text.getLocalBounds().width / 2, m_posY + m_height / 2 - m_text.getLocalBounds().height / 2);
+	m_bounds.width = std::max(m_bounds.width, 2.0f * m_borderWidth);
+	m_bounds.height = std::max(m_bounds.height, 2.0f * m_borderWidth);
+
+	m_ninePatch.setBounds(m_bounds);
 	updateInteraction();
 }

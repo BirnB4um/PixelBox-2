@@ -2,7 +2,6 @@
 
 #include <SFML/Graphics.hpp>
 
-
 class GuiElement
 {
 public:

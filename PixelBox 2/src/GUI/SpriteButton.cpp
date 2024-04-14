@@ -1,9 +1,8 @@
 #include "SpriteButton.h"
 #include "../Application.h"
 
-SpriteButton::SpriteButton() {
+SpriteButton::SpriteButton(): Button() {
 	m_sprite.setPosition(0.0f, 0.0f);
-	Button::Button();
 }
 
 SpriteButton::~SpriteButton() {

@@ -3,14 +3,15 @@
 
 Button::Button() {
 
-	m_ninePatch.setPatches(sf::IntRect(0, 0, 5, 5), 2);
-	setBounds(0, 0, 20, 10);
+	m_ninePatch.setPatches(PatchAtlas::roundedIdle);
+	setBounds(sf::FloatRect(0, 0, 100, 60));
 	setBorderWidth(4);
 
 	m_hovered = false;
 	m_pressed = false;
 
-	setBounds(sf::FloatRect(0, 0, 100, 60));
+	m_function = []() {};
+
 }
 
 Button::~Button() {
@@ -25,14 +26,14 @@ void Button::handleEvent(sf::Event& sfEvent) {
 
 	case sf::Event::MouseButtonPressed:
 		if (m_hovered) {
-			m_ninePatch.setPatches(sf::IntRect(10, 0, 5, 5), 2);
+			m_ninePatch.setPatches(PatchAtlas::roundedPressed);
 			m_pressed = true;
 		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
 		if (m_hovered && m_pressed) {
-			m_ninePatch.setPatches(sf::IntRect(5, 0, 5, 5), 2);
+			m_ninePatch.setPatches(PatchAtlas::roundedHover);
 			m_function();
 		}
 		m_pressed = false;
@@ -46,16 +47,16 @@ void Button::handleEvent(sf::Event& sfEvent) {
 void Button::updateInteraction() {
 	if (m_bounds.contains(static_cast<sf::Vector2f>(Application::mousePos))) {
 		if (m_pressed) {
-			m_ninePatch.setPatches(sf::IntRect(10, 0, 5, 5), 2);
+			m_ninePatch.setPatches(PatchAtlas::roundedPressed);
 		}
 		else if (!m_hovered) {
-			m_ninePatch.setPatches(sf::IntRect(5, 0, 5, 5), 2);
+			m_ninePatch.setPatches(PatchAtlas::roundedHover);
 		}
 		m_hovered = true;
 	}
 	else {
 		if (m_hovered) {
-			m_ninePatch.setPatches(sf::IntRect(0, 0, 5, 5), 2);
+			m_ninePatch.setPatches(PatchAtlas::roundedIdle);
 		}
 		m_hovered = false;
 	}
@@ -116,6 +117,7 @@ void Button::setBounds(sf::FloatRect bounds) {
 void Button::setBorderWidth(float width) {
 	m_borderWidth = width;
 	m_ninePatch.setBorderWidth(width);
+	updateSize();
 }
 
 sf::Vector2f Button::getPosition() {

@@ -130,6 +130,10 @@ void NinePatch::setPatches(sf::IntRect area, float borderWidth) {
 	m_vertexBuffer.update(m_verticesArray);
 }
 
+void NinePatch::setPatches(PatchAtlas& atlas) {
+	setPatches(atlas.area, atlas.borderWidth);
+}
+
 void NinePatch::updateVerticesPositions() {
 	float x = m_bounds.left;
 	float y = m_bounds.top;

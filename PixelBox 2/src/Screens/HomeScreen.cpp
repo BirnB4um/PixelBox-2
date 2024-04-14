@@ -8,6 +8,8 @@ HomeScreen::~HomeScreen() {
 }
 
 void HomeScreen::init() {
+
+	// init GUI
 	m_worldSelectionButton.setFont(app->getResourceManager().getPixelFont());
 	m_worldSelectionButton.setText("Worlds");
 	m_worldSelectionButton.setFunction([this]() {
@@ -25,9 +27,22 @@ void HomeScreen::init() {
 	m_testButton.setBounds(100, 100, 200,150);
 	m_testButton.setTexturePatch(sf::IntRect(0, 0, 20, 10));
 	m_testButton.setFunction([this]() {
-		app->openScreen(ScreenID::SETTINGS);
 		});
 	m_guiElements.push_back(&m_testButton);
+
+	m_slider.setPosition(100, 300);
+	m_slider.setFunction([this]() {
+		std::cout << "Slider Value: " << m_slider.getValue() << std::endl;
+		});
+	m_slider.setRange(0, 100);
+	m_guiElements.push_back(&m_slider);
+
+	m_slider2.setPosition(50, 350);
+	m_slider2.setFunction([this]() {
+		std::cout << "Slider Value: " << m_slider2.getValue() << std::endl;
+		});
+	m_slider2.setRange(1, -1);
+	m_guiElements.push_back(&m_slider2);
 
 	reloadGuiResources();
 }
@@ -77,6 +92,7 @@ void HomeScreen::update(float dt) {
 	if (ImGui::SliderFloat2("W/H", value, -50, 300)) {
 		m_testButton.setSize(value[0], value[1]);
 	}
+	ImGui::Button("TexturePatch", ImVec2(100, 50));
 	ImGui::End();
 }
 

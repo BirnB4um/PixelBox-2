@@ -133,7 +133,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\GUI\PatchAtlas.h" />
+    <ClInclude Include="src\GUI\HorizontalSlider.h" />
+    <ClInclude Include="src\GUI\Slider.h" />
     <ClInclude Include="src\GUI\Panel.h" />
+    <ClInclude Include="src\GUI\SpriteButton.h" />
+    <ClInclude Include="src\GUI\TextButton.h" />
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\GUI\NinePatch.h" />
     <ClInclude Include="src\GUI\Button.h" />
@@ -151,12 +156,19 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="src\Screens\Screen.h" />
+    <ClInclude Include="src\Screens\WorldSelectionScreen.h" />
     <ClInclude Include="src\Tools\IO_DATA.h" />
     <ClInclude Include="src\Tools\Timer.h" />
     <ClInclude Include="src\Tools\Utils.h" />
+    <ClInclude Include="src\GUI\VerticalSlider.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\GUI\PatchAtlas.cpp" />
+    <ClCompile Include="src\GUI\HorizontalSlider.cpp" />
+    <ClCompile Include="src\GUI\Slider.cpp" />
     <ClCompile Include="src\GUI\Panel.cpp" />
+    <ClCompile Include="src\GUI\SpriteButton.cpp" />
+    <ClCompile Include="src\GUI\TextButton.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\GUI\NinePatch.cpp" />
     <ClCompile Include="src\GUI\Button.cpp" />
@@ -172,8 +184,10 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Screens\Screen.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Screens\WorldSelectionScreen.cpp" />
     <ClCompile Include="src\Tools\IO_DATA.cpp" />
     <ClCompile Include="src\Tools\Utils.cpp" />
+    <ClCompile Include="src\GUI\VerticalSlider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\gui_texture.png" />

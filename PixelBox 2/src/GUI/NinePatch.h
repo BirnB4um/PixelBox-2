@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "PatchAtlas.h"
 
 class NinePatch
 {
@@ -39,6 +40,7 @@ public:
 
 	void setPatch(PatchIndex index, sf::IntRect area);
 	void setPatches(sf::IntRect area, float borderWidth);
+	void setPatches(PatchAtlas& atlas);
 
 private:
 	sf::FloatRect m_bounds;

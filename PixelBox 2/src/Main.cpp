@@ -19,7 +19,6 @@ int main(int argc, char** argv) {
 	// process command line arguments
 	// ...
 
-
 	Application app;
 	app.run();
 

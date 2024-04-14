@@ -2,6 +2,8 @@
 #include "Screen.h"
 #include "../GUI/TextButton.h"
 #include "../GUI/SpriteButton.h"
+#include "../GUI/HorizontalSlider.h"
+#include "../GUI/VerticalSlider.h"
 
 class HomeScreen : public Screen
 {
@@ -30,6 +32,9 @@ private:
 	TextButton m_worldSelectionButton;
 	TextButton m_settingsButton;
 	SpriteButton m_testButton;
+	HorizontalSlider m_slider;
+	VerticalSlider m_slider2;
+
 
 
 

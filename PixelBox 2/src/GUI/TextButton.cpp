@@ -1,12 +1,10 @@
 #include "TextButton.h"
 #include "../Application.h"
 
-TextButton::TextButton() {
+TextButton::TextButton(): Button() {
 	m_text.setString("Button");
 	m_text.setCharacterSize(24);
 	m_text.setFillColor(sf::Color(255, 255, 255, 255));
-
-	Button::Button();
 }
 
 TextButton::~TextButton() {

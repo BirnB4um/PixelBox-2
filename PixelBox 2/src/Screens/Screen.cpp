@@ -1,7 +1,6 @@
 #include "Screen.h"
 #include "../Application.h"
 
-Application* Screen::app;
 
 
 Screen::Screen() {
@@ -11,12 +10,16 @@ Screen::~Screen() {
 }
 
 void Screen::init() {
+
 }
 
 void Screen::onResize() {
 }
 
 void Screen::onClosing() {
+}
+
+void Screen::onSwitch() {
 }
 
 void Screen::handleGuiEvent(sf::Event& sfEvent) {
@@ -55,4 +58,8 @@ void Screen::update(float dt) {
 void Screen::render(sf::RenderTarget& window) {
 	window.clear();
 	renderGui(window);
+}
+
+void Screen::addGuiElement(GuiElement* element) {
+	m_guiElements.push_back(element);
 }

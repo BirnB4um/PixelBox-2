@@ -10,7 +10,7 @@ public:
 
 protected:
 
-	void updateSize() override;
+	void updateBounds() override;
 	void updateNobPosition() override;
 	void updateValue() override;
 };

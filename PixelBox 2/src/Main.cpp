@@ -16,12 +16,11 @@
 
 int main(int argc, char** argv) {
 
-	// process command line arguments
-	// ...
+	// TODO: process command line arguments
 
-	Application app;
+	Application& app = Application::instance();
+	app.init();
 	app.run();
-
 
 	return 0;
 }

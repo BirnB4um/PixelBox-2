@@ -1,15 +1,14 @@
 #pragma once
-#include <iostream>
-#include "Screen.h"
-#include "../Tools/IO_DATA.h"
+#include "../Screen.h"
+#include "../../GUI/Panel.h"
+#include "../../GUI/ScrollPanel.h"
 
-class SettingsScreen : public Screen
+class WorldSelectionScreen : public Screen
 {
-
 public:
 
-	SettingsScreen();
-	~SettingsScreen();
+	WorldSelectionScreen();
+	~WorldSelectionScreen();
 
 	void init() override;
 
@@ -19,6 +18,8 @@ public:
 	//called when the window is about to close
 	void onClosing() override;
 
+	void onSwitch() override;
+
 	void handleEvent(sf::Event& sfEvent) override;
 
 	//update given deltatime dt in seconds
@@ -26,9 +27,15 @@ public:
 
 	void render(sf::RenderTarget& window) override;
 
-
 private:
+
+	sf::Text m_title;
+
+	ScrollPanel m_worldMenu;
+
+	TextButton m_createNewWorldButton;
+
+	TextButton button1, button2;
 
 
 };
-

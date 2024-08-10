@@ -8,8 +8,8 @@ SpriteButton::SpriteButton(): Button() {
 SpriteButton::~SpriteButton() {
 }
 
-void SpriteButton::handleEvent(sf::Event& sfEvent) {
-	Button::handleEvent(sfEvent);
+bool SpriteButton::handleEvent(sf::Event& sfEvent) {
+	return Button::handleEvent(sfEvent);
 }
 
 void SpriteButton::update(float dt) {
@@ -23,16 +23,16 @@ void SpriteButton::render(sf::RenderTarget& window) {
 
 void SpriteButton::reloadResources() {
 	Button::reloadResources();
-	m_sprite.setTexture(*m_texture, false);
+	m_sprite.setTexture(*ResourceManager::getGuiTexture(), false);
 }
 
 void SpriteButton::setTexturePatch(sf::IntRect area) {
 	m_sprite.setTextureRect(area);
-	updateSize();
+	updateBounds();
 }
 
-void SpriteButton::updateSize() {
-	Button::updateSize();
+void SpriteButton::updateBounds() {
+	Button::updateBounds();
 
 	sf::IntRect spriteSize = m_sprite.getTextureRect();
 	float spriteRatio = static_cast<float>(spriteSize.width) / static_cast<float>(spriteSize.height);

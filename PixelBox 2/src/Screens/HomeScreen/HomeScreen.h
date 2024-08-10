@@ -1,9 +1,7 @@
 #pragma once
-#include "Screen.h"
-#include "../GUI/TextButton.h"
-#include "../GUI/SpriteButton.h"
-#include "../GUI/HorizontalSlider.h"
-#include "../GUI/VerticalSlider.h"
+#include "../Screen.h"
+#include "../../GUI/TextButton.h"
+#include "../../GUI/TextInput.h"
 
 class HomeScreen : public Screen
 {
@@ -20,6 +18,8 @@ public:
 	//called when the window is about to close
 	void onClosing() override;
 
+	void onSwitch() override;
+
 	void handleEvent(sf::Event& sfEvent) override;
 
 	//update given deltatime dt in seconds
@@ -28,14 +28,10 @@ public:
 	void render(sf::RenderTarget& window) override;
 
 private:
+	sf::RectangleShape m_logo;
 
-	TextButton m_worldSelectionButton;
+	TextButton m_worldsButton;
 	TextButton m_settingsButton;
-	SpriteButton m_testButton;
-	HorizontalSlider m_slider;
-	VerticalSlider m_slider2;
-
-
-
+	TextButton m_exitButton;
 
 };

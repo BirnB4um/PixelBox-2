@@ -8,15 +8,11 @@ VerticalSlider::VerticalSlider() : Slider() {
 VerticalSlider::~VerticalSlider() {
 }
 
-void VerticalSlider::updateSize() {
-	m_bounds.width = std::max(m_bounds.width, 2.0f * m_borderWidth);
-	m_bounds.height = std::max(m_bounds.height, 2.0f * m_borderWidth);
+void VerticalSlider::updateBounds() {
+	Slider::updateBounds();
 
 	m_nob.setSize(sf::Vector2f(m_bounds.width - 2.0f * m_borderWidth, m_nobSize));
 	updateNobPosition();
-
-	m_ninePatch.setBounds(m_bounds);
-	updateInteraction();
 }
 
 void VerticalSlider::updateNobPosition() {
@@ -28,7 +24,7 @@ void VerticalSlider::updateValue() {
 	if (!m_pressed)
 		return;
 
-	float newValue = (static_cast<float>(Application::mousePos.y) - m_bounds.top - m_borderWidth - m_nobSize / 2.0f) / (m_bounds.height - 2.0f * m_borderWidth - m_nobSize);
+	float newValue = (getMousePos().y - m_mouseGrabOffset.y - m_bounds.top - m_borderWidth) / (m_bounds.height - 2.0f * m_borderWidth - m_nobSize);
 	newValue = std::max(0.0f, std::min(1.0f, newValue));
 
 	if (newValue != m_value) {

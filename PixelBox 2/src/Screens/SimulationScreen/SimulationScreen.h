@@ -1,13 +1,13 @@
 #pragma once
-#include "Screen.h"
-#include "../GUI/Button.h"
 
-class WorldSelectionScreen : public Screen
+#include "../Screen.h"
+#include "../../World/World.h"
+
+class SimulationScreen : public Screen
 {
 public:
-
-	WorldSelectionScreen();
-	~WorldSelectionScreen();
+	SimulationScreen();
+	~SimulationScreen();
 
 	void init() override;
 
@@ -17,6 +17,8 @@ public:
 	//called when the window is about to close
 	void onClosing() override;
 
+	void onSwitch() override;
+
 	void handleEvent(sf::Event& sfEvent) override;
 
 	//update given deltatime dt in seconds
@@ -24,9 +26,13 @@ public:
 
 	void render(sf::RenderTarget& window) override;
 
+	//ownership gets transfered
+	void setWorld(World* world);
+
 private:
 
-	Button m_button;
+	World* m_world;
 
 
 };
+

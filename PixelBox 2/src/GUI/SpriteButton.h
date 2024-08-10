@@ -6,6 +6,7 @@
 #include "Button.h"
 #include "NinePatch.h"
 #include "../Tools/Utils.h"
+#include "../ResourceManager.h"
 
 class Application;
 
@@ -16,7 +17,7 @@ public:
 	SpriteButton();
 	~SpriteButton();
 
-	void handleEvent(sf::Event& sfEvent) override;
+	bool handleEvent(sf::Event& sfEvent) override;
 	void update(float dt) override;
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;
@@ -28,5 +29,5 @@ public:
 protected:
 	sf::Sprite m_sprite;
 
-	void updateSize() override;
+	void updateBounds() override;
 };

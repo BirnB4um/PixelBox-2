@@ -1,30 +1,29 @@
 #include "Slider.h"
 #include "../Application.h"
 
-Slider::Slider() {
-
+Slider::Slider(): InteractableGui() {
 	m_nob.setFillColor(sf::Color(60, 120, 200));
 	m_nob.setOutlineThickness(0);
 
 	m_minValue = 0.0f;
 	m_maxValue = 1.0f;
 	m_nobSize = 20.0f;
+	m_mouseGrabOffset = sf::Vector2f(0.0f, 0.0f);
 
 	m_ninePatch.setPatches(PatchAtlas::angularIdle);
 	setBounds(sf::FloatRect(0, 0, 80, 40));
-	setBorderWidth(2);
+	setBorderWidth(1);
 
 	m_hovered = false;
 	m_pressed = false;
 
 	m_function = []() {};
-
 }
 
 Slider::~Slider() {
 }
 
-void Slider::handleEvent(sf::Event& sfEvent) {
+bool Slider::handleEvent(sf::Event& sfEvent) {
 	switch (sfEvent.type)
 	{
 	case sf::Event::MouseMoved:
@@ -34,8 +33,11 @@ void Slider::handleEvent(sf::Event& sfEvent) {
 
 	case sf::Event::MouseButtonPressed:
 		if (m_hovered) {
-			m_pressed = true;
-			updateValue();
+			if (m_nob.getGlobalBounds().contains(getMousePos())) {
+				m_pressed = true;
+				m_mouseGrabOffset = getMousePos() - m_nob.getPosition();
+				updateValue();
+			}
 		}
 		break;
 
@@ -47,10 +49,13 @@ void Slider::handleEvent(sf::Event& sfEvent) {
 	default:
 		break;
 	}
+
+	return false;
 }
 
 void Slider::updateInteraction() {
-	if (m_bounds.contains(static_cast<sf::Vector2f>(Application::mousePos))) {
+	sf::Vector2f mouse = getMousePos();
+	if (m_bounds.contains(mouse) && ((m_parentGui == nullptr) ? true : m_parentGui->getInteractableArea().contains(mouse))) {
 		if (!m_hovered) {
 			m_ninePatch.setPatches(PatchAtlas::angularHover);
 		}
@@ -65,6 +70,7 @@ void Slider::updateInteraction() {
 }
 
 void Slider::update(float dt) {
+
 }
 
 void Slider::render(sf::RenderTarget& window) {
@@ -73,76 +79,18 @@ void Slider::render(sf::RenderTarget& window) {
 }
 
 void Slider::reloadResources() {
-	m_ninePatch.setTexture(m_texture);
+	m_ninePatch.reloadResources();
 }
 
 void Slider::setFunction(std::function<void()> func) {
 	m_function = func;
 }
 
-void Slider::setPosition(float x, float y) {
-	m_bounds.left = x;
-	m_bounds.top = y;
-	updateSize();
-}
-
-void Slider::setPosition(sf::Vector2f position) {
-	m_bounds.left = position.x;
-	m_bounds.top = position.y;
-	updateSize();
-}
-
-void Slider::setSize(float width, float height) {
-	m_bounds.width = width;
-	m_bounds.height = height;
-	updateSize();
-}
-
-void Slider::setSize(sf::Vector2f size) {
-	m_bounds.width = size.x;
-	m_bounds.height = size.y;
-	updateSize();
-}
-
-void Slider::setBounds(float x, float y, float width, float height) {
-	m_bounds.left = x;
-	m_bounds.top = y;
-	m_bounds.width = width;
-	m_bounds.height = height;
-	updateSize();
-}
-
-void Slider::setBounds(sf::FloatRect bounds) {
-	m_bounds = bounds;
-	updateSize();
-}
-
-void Slider::setBorderWidth(float width) {
-	m_borderWidth = width;
-	m_ninePatch.setBorderWidth(width);
-	updateSize();
-}
-
-sf::Vector2f Slider::getPosition() {
-	return sf::Vector2f(m_bounds.left, m_bounds.top);
-}
-
-sf::Vector2f Slider::getSize() {
-	return sf::Vector2f(m_bounds.width, m_bounds.height);
-}
-
-sf::FloatRect Slider::getBounds() {
-	return m_bounds;
-}
-
-float Slider::getBorderWidth() {
-	return m_borderWidth;
-}
-
-void Slider::updateSize() {
+void Slider::updateBounds() {
 	m_bounds.width = std::max(m_bounds.width, 2.0f * m_borderWidth);
 	m_bounds.height = std::max(m_bounds.height, 2.0f * m_borderWidth);
 
+	m_ninePatch.setBorderWidth(m_borderWidth);
 	m_ninePatch.setBounds(m_bounds);
 	updateInteraction();
 }
@@ -152,14 +100,22 @@ float Slider::getValue() {
 }
 
 void Slider::setValue(float value) {
-	m_value = value;
-	m_value = std::max(m_value, m_minValue);
-	m_value = std::min(m_value, m_maxValue);
+	value = value;
+	value = std::max(value, m_minValue);
+	value = std::min(value, m_maxValue);
+	m_value = (value - m_minValue) / (m_maxValue - m_minValue);
+
+	updateNobPosition();
+	m_function();
 }
 
 void Slider::setRange(float min, float max) {
+	if (min == max)
+		max += 0.0001f;
+	
 	m_minValue = min;
 	m_maxValue = max;
+
 }
 
 void Slider::updateNobPosition() {
@@ -167,9 +123,8 @@ void Slider::updateNobPosition() {
 
 void Slider::setNobSize(float size) {
 	m_nobSize = size;
-	updateSize();
+	updateBounds();
 }
 
 void Slider::updateValue() {
-
 }

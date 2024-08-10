@@ -1,49 +1,44 @@
 #include "Application.h"
+#include "ResourceManager.h"
 
-Application* Application::currentInstance = nullptr;
 sf::Vector2i Application::mousePos = sf::Vector2i(0, 0);
 
-Application::Application() {
-	currentInstance = this;
+Application& Application::instance() {
+	static Application app;
+	return app;
+}
 
+Application::Application() {
+
+}
+
+void Application::init() {
 	m_shouldClose = false;
 
 	// load resources
-	if (!loadResources()) {
+	if (!ResourceManager::loadResources()) {
 		throw std::runtime_error("Error loading resources");
 	}
 
-	m_allScreens.push_back(&m_homescreen);
-	m_allScreens.push_back(&m_worldselectionscreen);
-	m_allScreens.push_back(&m_settingsscreen);
+	createWindow(1200, 800, false, 60, "PixelBox 2");
 
-	Screen::app = this;
-	m_homescreen.init();
-	m_settingsscreen.init();
-	m_worldselectionscreen.init();
+	m_allScreens.push_back(&homeScreen);
+	m_allScreens.push_back(&settingsScreen);
+	m_allScreens.push_back(&worldSelectionScreen);
+	m_allScreens.push_back(&worldCreationScreen);
+	m_allScreens.push_back(&simulationScreen);
+
+	for (Screen* screen : m_allScreens)
+		screen->init();
 	openScreen(ScreenID::HOME);
 
-	createWindow(800, 600, false, 60, "PixelBox 2");
 
 	ImGui::SFML::Init(m_window);
 }
 
+
 Application::~Application() {
 	ImGui::SFML::Shutdown();
-}
-
-ResourceManager& Application::getResourceManager() {
-	return m_resourceManager;
-}
-
-bool Application::loadResources() {
-	if (!m_resourceManager.loadResources()) {
-		return false;
-	}
-
-	GuiElement::setTexture(m_resourceManager.getGuiTexture());
-
-	return true;
 }
 
 void Application::createWindow(unsigned int width, unsigned int height, bool fullscreen, int fps, std::string title, bool vsync)
@@ -79,12 +74,14 @@ void Application::closeCurrentScreen() {
 	if (m_openScreens.size() > 1)
 		m_openScreens.pop_back();
 
-	m_currentScreen = m_openScreens.back();
+	currentScreen = m_openScreens.back();
+	currentScreen->onSwitch();
 }
 
 void Application::openScreen(ScreenID id) {
 	m_openScreens.push_back(m_allScreens[static_cast<int>(id)]);
-	m_currentScreen = m_openScreens.back();
+	currentScreen = m_openScreens.back();
+	currentScreen->onSwitch();
 }
 
 void Application::onClosing() {
@@ -103,7 +100,7 @@ void Application::onResize() {
 		m_windowedHeight = m_windowHeight;
 	}
 	normalView.setSize(m_windowWidth, m_windowHeight);
-	normalView.setCenter(m_windowWidth / 2, m_windowHeight / 2);
+	normalView.setCenter(m_windowWidth / 2.0f, m_windowHeight / 2.0f);
 
 	for (Screen* screen : m_allScreens) {
 		screen->onResize();
@@ -125,9 +122,11 @@ void Application::handleEvents() {
 		switch (m_sfEvent.type)
 		{
 		case sf::Event::GainedFocus:
+			m_window.setFramerateLimit(m_fps);
 			break;
 
 		case sf::Event::LostFocus:
+			m_window.setFramerateLimit(20);
 			break;
 
 		case sf::Event::Closed:
@@ -160,29 +159,29 @@ void Application::handleEvents() {
 		if (ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard)
 			continue;
 
-		m_currentScreen->handleEvent(m_sfEvent);
+		currentScreen->handleEvent(m_sfEvent);
 	}
 }
 
 void Application::update() {
 	ImGui::SFML::Update(m_window, m_deltaTime);
 
-	ImGui::Begin("gui");
-	float scale = GuiElement::getGuiScale();
-	if (ImGui::SliderFloat("gui scale", &scale, 0.1f, 2.0f)) {
-		GuiElement::setGuiScale(scale);
-		onResize();
-	}
-	ImGui::End();
+	//ImGui::Begin("gui");
+	//float scale = GuiElement::getGuiScale();
+	//if (ImGui::SliderFloat("gui scale", &scale, 0.1f, 2.0f)) {
+	//	GuiElement::setGuiScale(scale);
+	//	onResize();
+	//}
+	//ImGui::End();
 
-	m_currentScreen->update(m_deltaTime.asSeconds());
+	currentScreen->update(m_deltaTime.asSeconds());
 }
 
 void Application::draw() {
 	m_window.clear();
 	m_window.setView(normalView);
 
-	m_currentScreen->render(m_window);
+	currentScreen->render(m_window);
 
 	ImGui::SFML::Render(m_window);
 

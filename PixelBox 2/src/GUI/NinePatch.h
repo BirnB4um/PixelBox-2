@@ -1,9 +1,11 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "GuiElement.h"
 #include "PatchAtlas.h"
+#include "../ResourceManager.h"
 
-class NinePatch
+class NinePatch : public GuiElement
 {
 public:
 	const enum PatchIndex
@@ -22,32 +24,18 @@ public:
 	NinePatch();
 	~NinePatch();
 
-	void render(sf::RenderTarget& window);
+	void render(sf::RenderTarget& window) override;
+	void reloadResources() override;
 	void setTexture(sf::Texture* texture);
-
-	void setPosition(float x, float y);
-	void setPosition(sf::Vector2f position);
-	void setSize(float width, float height);
-	void setSize(sf::Vector2f size);
-	void setBounds(sf::FloatRect bounds);
-	void setBounds(float x, float y, float width, float height);
-	void setBorderWidth(float width);
-
-	sf::Vector2f getPosition();
-	sf::Vector2f getSize();
-	sf::FloatRect getBounds();
-	float getBorderWidth();
 
 	void setPatch(PatchIndex index, sf::IntRect area);
 	void setPatches(sf::IntRect area, float borderWidth);
 	void setPatches(PatchAtlas& atlas);
 
 private:
-	sf::FloatRect m_bounds;
-	float m_borderWidth;
 	sf::Vertex* m_verticesArray;
 	sf::VertexBuffer m_vertexBuffer;
 	sf::RenderStates m_renderState;
 
-	void updateVerticesPositions();
+	void updateBounds() override;
 };

@@ -6,14 +6,17 @@
 #include <imgui-SFML.h>
 
 #include "Screens/Screen.h"
-#include "Screens/HomeScreen.h"
-#include "Screens/SettingsScreen.h"
-#include "Screens/WorldSelectionScreen.h"
+#include "Screens/HomeScreen/HomeScreen.h"
+#include "Screens/SettingsScreen/SettingsScreen.h"
+#include "Screens/WorldSelectionScreen/WorldSelectionScreen.h"
+#include "Screens/WorldCreationScreen/WorldCreationScreen.h"
+#include "Screens/SimulationScreen/SimulationScreen.h"
 #include "ResourceManager.h"
 #include "GUI/GuiElement.h"
 
+
 enum class ScreenID {
-	HOME, WORLDSELECTION, SETTINGS
+	HOME, SETTINGS, WORLDSELECTION, WORLDCREATION, SIMULATION
 };
 
 class Application
@@ -21,20 +24,30 @@ class Application
 
 public:
 
-	static Application* currentInstance;
-	static sf::Vector2i mousePos;
+	static Application& instance();
 
-	Application();
+	Application(const Application&) = delete;
+	void operator=(const Application&) = delete;
+
 	~Application();
+	void init();
 	void run();
 	void closeCurrentScreen();
 	void openScreen(ScreenID id);
-	ResourceManager& getResourceManager();
 	void close();
 	sf::Vector2i getWindowSize();
 
+	static sf::Vector2i mousePos;
+
+	Screen* currentScreen;
+	HomeScreen homeScreen;
+	SettingsScreen settingsScreen;
+	WorldSelectionScreen worldSelectionScreen;
+	WorldCreationScreen worldCreationScreen;
+	SimulationScreen simulationScreen;
 
 private:
+	Application();
 
 	//application data
 	sf::RenderWindow m_window;
@@ -42,7 +55,6 @@ private:
 	sf::Clock m_deltaClock;
 	sf::Time m_deltaTime;
 	sf::View normalView;
-	ResourceManager m_resourceManager;
 
 	std::string m_title;
 	int m_windowWidth;
@@ -56,10 +68,6 @@ private:
 	//screens
 	std::vector<Screen*> m_openScreens;
 	std::vector<Screen*> m_allScreens;
-	Screen* m_currentScreen;
-	HomeScreen m_homescreen;
-	SettingsScreen m_settingsscreen;
-	WorldSelectionScreen m_worldselectionscreen;
 
 	void createWindow(unsigned int width, unsigned int height, bool fullscreen, int fps, std::string title, bool vsync = false);
 	void onResize();
@@ -67,6 +75,5 @@ private:
 	void handleEvents();
 	void update();
 	void draw();
-	bool loadResources();
 
 };

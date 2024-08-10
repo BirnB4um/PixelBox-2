@@ -2,13 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include "../GUI/GuiElement.h"
 
-class Application;
-
 class Screen
 {
-
 public:
-	static Application* app;
 
 	Screen();
 	~Screen();
@@ -21,12 +17,16 @@ public:
 	//called when the window is about to close
 	virtual void onClosing();
 
+	//called when switching to this screen
+	virtual void onSwitch();
+
 	virtual void handleEvent(sf::Event& sfEvent);
 
 	//update given deltatime dt in seconds
 	virtual void update(float dt);
 
 	virtual void render(sf::RenderTarget& window);
+
 
 
 	void handleGuiEvent(sf::Event& sfEvent);
@@ -38,6 +38,8 @@ public:
 
 protected:
 	std::vector<GuiElement*> m_guiElements;
+
+	void addGuiElement(GuiElement* element);
 
 
 

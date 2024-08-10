@@ -1,6 +1,6 @@
 #include "NinePatch.h"
 
-NinePatch::NinePatch() {
+NinePatch::NinePatch() : GuiElement() {
 	m_vertexBuffer = sf::VertexBuffer(sf::PrimitiveType::Triangles, sf::VertexBuffer::Usage::Static);
 	m_vertexBuffer.create(54); // 6 * 9 vertices
 
@@ -9,7 +9,7 @@ NinePatch::NinePatch() {
 	m_bounds = sf::FloatRect(0.0f, 0.0f, 10.0f, 10.0f);
 	m_borderWidth = 1.0f;
 
-	updateVerticesPositions();
+	updateBounds();
 	setPatches(sf::IntRect(0, 0, 3, 3), 1.0f);
 }
 
@@ -23,64 +23,6 @@ void NinePatch::setTexture(sf::Texture* texture) {
 
 void NinePatch::render(sf::RenderTarget& window) {
 	window.draw(m_vertexBuffer, m_renderState);
-}
-
-void NinePatch::setPosition(float x, float y) {
-	m_bounds.left = x;
-	m_bounds.top = y;
-	updateVerticesPositions();
-}
-
-void NinePatch::setPosition(sf::Vector2f position) {
-	m_bounds.left = position.x;
-	m_bounds.top = position.y;
-	updateVerticesPositions();
-}
-
-void NinePatch::setSize(float width, float height) {
-	m_bounds.width = width;
-	m_bounds.height = height;
-	updateVerticesPositions();
-}
-
-void NinePatch::setSize(sf::Vector2f size) {
-	m_bounds.width = size.x;
-	m_bounds.height = size.y;
-	updateVerticesPositions();
-}
-
-void NinePatch::setBounds(sf::FloatRect bounds) {
-	m_bounds = bounds;
-	updateVerticesPositions();
-}
-
-void NinePatch::setBounds(float x, float y, float width, float height) {
-	m_bounds.left = x;
-	m_bounds.top = y;
-	m_bounds.width = width;
-	m_bounds.height = height;
-	updateVerticesPositions();
-}
-
-void NinePatch::setBorderWidth(float width) {
-	m_borderWidth = width;
-	updateVerticesPositions();
-}
-
-sf::Vector2f NinePatch::getSize() {
-	return sf::Vector2f(m_bounds.width, m_bounds.height);
-}
-
-sf::Vector2f NinePatch::getPosition() {
-	return sf::Vector2f(m_bounds.left, m_bounds.top);
-}
-
-sf::FloatRect NinePatch::getBounds() {
-	return m_bounds;
-}
-
-float NinePatch::getBorderWidth() {
-	return m_borderWidth;
 }
 
 void NinePatch::setPatch(PatchIndex patchIndex, sf::IntRect area) {
@@ -134,7 +76,7 @@ void NinePatch::setPatches(PatchAtlas& atlas) {
 	setPatches(atlas.area, atlas.borderWidth);
 }
 
-void NinePatch::updateVerticesPositions() {
+void NinePatch::updateBounds() {
 	float x = m_bounds.left;
 	float y = m_bounds.top;
 	float w = m_bounds.width;
@@ -166,4 +108,8 @@ void NinePatch::updateVerticesPositions() {
 	}
 
 	m_vertexBuffer.update(m_verticesArray);
+}
+
+void NinePatch::reloadResources() {
+	setTexture(ResourceManager::getGuiTexture());
 }

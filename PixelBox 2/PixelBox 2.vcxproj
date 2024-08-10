@@ -133,18 +133,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Screens\SimulationScreen\SimulationScreen.h" />
+    <ClInclude Include="src\Ruleset\Ruleset.h" />
+    <ClInclude Include="src\GUI\SpriteRect.h" />
+    <ClInclude Include="src\GUI\Panel.h" />
+    <ClInclude Include="src\GUI\GuiContainer.h" />
+    <ClInclude Include="src\GUI\InteractableGui.h" />
+    <ClInclude Include="src\GUI\ScrollPanel.h" />
     <ClInclude Include="src\GUI\PatchAtlas.h" />
     <ClInclude Include="src\GUI\HorizontalSlider.h" />
     <ClInclude Include="src\GUI\Slider.h" />
-    <ClInclude Include="src\GUI\Panel.h" />
     <ClInclude Include="src\GUI\SpriteButton.h" />
     <ClInclude Include="src\GUI\TextButton.h" />
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\GUI\NinePatch.h" />
     <ClInclude Include="src\GUI\Button.h" />
     <ClInclude Include="src\GUI\GuiElement.h" />
-    <ClInclude Include="src\Screens\SettingsScreen.h" />
-    <ClInclude Include="src\Screens\HomeScreen.h" />
+    <ClInclude Include="src\Screens\SettingsScreen\SettingsScreen.h" />
+    <ClInclude Include="src\Screens\HomeScreen\HomeScreen.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="imgui\imconfig-SFML.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -156,25 +162,36 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="src\Screens\Screen.h" />
-    <ClInclude Include="src\Screens\WorldSelectionScreen.h" />
+    <ClInclude Include="src\Screens\WorldSelectionScreen\WorldSelectionScreen.h" />
     <ClInclude Include="src\Tools\IO_DATA.h" />
     <ClInclude Include="src\Tools\Timer.h" />
     <ClInclude Include="src\Tools\Utils.h" />
     <ClInclude Include="src\GUI\VerticalSlider.h" />
+    <ClInclude Include="src\Screens\WorldSelectionScreen\WorldsPanel.h" />
+    <ClInclude Include="src\World\World.h" />
+    <ClInclude Include="src\World\WorldMetaData.h" />
+    <ClInclude Include="src\Screens\WorldCreationScreen\WorldCreationScreen.h" />
+    <ClInclude Include="src\GUI\TextInput.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Screens\SimulationScreen\SimulationScreen.cpp" />
+    <ClCompile Include="src\Ruleset\Ruleset.cpp" />
+    <ClCompile Include="src\GUI\SpriteRect.cpp" />
+    <ClCompile Include="src\GUI\Panel.cpp" />
+    <ClCompile Include="src\GUI\GuiContainer.cpp" />
+    <ClCompile Include="src\GUI\InteractableGui.cpp" />
+    <ClCompile Include="src\GUI\ScrollPanel.cpp" />
     <ClCompile Include="src\GUI\PatchAtlas.cpp" />
     <ClCompile Include="src\GUI\HorizontalSlider.cpp" />
     <ClCompile Include="src\GUI\Slider.cpp" />
-    <ClCompile Include="src\GUI\Panel.cpp" />
     <ClCompile Include="src\GUI\SpriteButton.cpp" />
     <ClCompile Include="src\GUI\TextButton.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\GUI\NinePatch.cpp" />
     <ClCompile Include="src\GUI\Button.cpp" />
     <ClCompile Include="src\GUI\GuiElement.cpp" />
-    <ClCompile Include="src\Screens\SettingsScreen.cpp" />
-    <ClCompile Include="src\Screens\HomeScreen.cpp" />
+    <ClCompile Include="src\Screens\SettingsScreen\SettingsScreen.cpp" />
+    <ClCompile Include="src\Screens\HomeScreen\HomeScreen.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="imgui\imgui-SFML.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -184,10 +201,15 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Screens\Screen.cpp" />
     <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\Screens\WorldSelectionScreen.cpp" />
+    <ClCompile Include="src\Screens\WorldSelectionScreen\WorldSelectionScreen.cpp" />
     <ClCompile Include="src\Tools\IO_DATA.cpp" />
     <ClCompile Include="src\Tools\Utils.cpp" />
     <ClCompile Include="src\GUI\VerticalSlider.cpp" />
+    <ClCompile Include="src\Screens\WorldSelectionScreen\WorldsPanel.cpp" />
+    <ClCompile Include="src\World\World.cpp" />
+    <ClCompile Include="src\World\WorldMetaData.cpp" />
+    <ClCompile Include="src\Screens\WorldCreationScreen\WorldCreationScreen.cpp" />
+    <ClCompile Include="src\GUI\TextInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\gui_texture.png" />
@@ -195,6 +217,9 @@
   <ItemGroup>
     <Font Include="res\fonts\arial.ttf" />
     <Font Include="res\fonts\pixelfont.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Todo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

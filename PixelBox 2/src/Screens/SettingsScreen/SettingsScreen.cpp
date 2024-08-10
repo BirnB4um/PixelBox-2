@@ -1,5 +1,5 @@
 #include "SettingsScreen.h"
-#include "../Application.h"
+#include "../../Application.h"
 
 SettingsScreen::SettingsScreen() {
 }
@@ -16,13 +16,17 @@ void SettingsScreen::onResize() {
 void SettingsScreen::onClosing() {
 }
 
+void SettingsScreen::onSwitch() {
+
+}
+
 void SettingsScreen::handleEvent(sf::Event& sfEvent) {
 	handleGuiEvent(sfEvent);
 
 	switch (sfEvent.type) {
 	case sf::Event::MouseButtonPressed:
 		//std::cout << IO_DATA::chooseOpenFile() << std::endl;
-		app->closeCurrentScreen(); 
+		Application::instance().closeCurrentScreen();
 		break;
 
 	default:

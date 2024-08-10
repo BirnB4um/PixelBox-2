@@ -2,10 +2,10 @@
 
 #include <functional>
 #include <SFML/Graphics.hpp>
-#include "GuiElement.h"
 #include "Button.h"
 #include "NinePatch.h"
 #include "../Tools/Utils.h"
+#include "../ResourceManager.h"
 
 class Application;
 
@@ -16,9 +16,10 @@ public:
 	TextButton();
 	~TextButton();
 
-	void handleEvent(sf::Event& sfEvent) override;
+	bool handleEvent(sf::Event& sfEvent) override;
 	void update(float dt) override;
 	void render(sf::RenderTarget& window) override;
+	void reloadResources() override;
 
 	void setText(std::string text);
 	void setFont(sf::Font& font);
@@ -29,7 +30,7 @@ public:
 protected:
 	sf::Text m_text;
 
-	void updateSize() override;
+	void updateBounds() override;
 
 
 

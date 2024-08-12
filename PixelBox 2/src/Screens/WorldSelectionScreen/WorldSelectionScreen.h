@@ -35,7 +35,9 @@ private:
 
 	TextButton m_createNewWorldButton;
 
+	ScrollPanel panel2;
 	TextButton button1, button2;
+	TextButton button3, button4;
 
 
 };

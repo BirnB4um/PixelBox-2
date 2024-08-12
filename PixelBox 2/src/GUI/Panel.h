@@ -16,17 +16,19 @@ public:
 
 
 protected:
-	//TODO: change from rendering to a seperate texture to clipping by manipulating the view + viewport
 
 	NinePatch m_ninePatch;
-	sf::RenderTexture m_renderTexture;
-	sf::Sprite m_renderSprite;
-	sf::View m_textureView;
-	sf::FloatRect m_textureViewRect;
+	sf::View m_panelView;
+	sf::FloatRect m_panelViewRect;
 
 	void updateBounds() override;
-	inline void updateViewFromRect(sf::FloatRect& rect);
 	void updateMouseOffset() override;
+
+	//update the view based on the view of the parent
+	void updateView(sf::View& previousView);
+
+	//update everything that is dependent on the viewRect
+	virtual void updateViewRect();
 	
 
 };

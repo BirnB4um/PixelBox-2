@@ -5,6 +5,7 @@ Slider::Slider(): InteractableGui() {
 	m_nob.setFillColor(sf::Color(60, 120, 200));
 	m_nob.setOutlineThickness(0);
 
+	m_value = 0.0f;
 	m_minValue = 0.0f;
 	m_maxValue = 1.0f;
 	m_nobSize = 20.0f;

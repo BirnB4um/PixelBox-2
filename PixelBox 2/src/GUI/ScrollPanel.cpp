@@ -1,16 +1,18 @@
 #include "ScrollPanel.h"
 
 ScrollPanel::ScrollPanel() : Panel() {
-	m_sliderWidth = 30.0f;
+	m_sliderWidth = 25.0f;
 	m_minSliderNobSize = 20.0f;
 	m_elementsBorder = 10.0f;
+
+	m_totalRenderSize = sf::FloatRect(0, 0, 0, 0);
 
 	m_horizontalSlider.setRange(0, 1);
 	m_horizontalSlider.setBorderWidth(1);
 	m_horizontalSlider.setNobSize(m_minSliderNobSize);
 	m_horizontalSlider.setFunction([this]() {
-		m_textureViewRect.left = m_totalRenderSize.left + m_horizontalSlider.getValue();
-		updateViewFromRect(m_textureViewRect);
+		m_panelViewRect.left = m_totalRenderSize.left + m_horizontalSlider.getValue();
+		updateViewRect();
 		});
 	m_horizontalSlider.setValue(0);
 
@@ -18,8 +20,8 @@ ScrollPanel::ScrollPanel() : Panel() {
 	m_verticalSlider.setBorderWidth(1);
 	m_verticalSlider.setNobSize(m_minSliderNobSize);
 	m_verticalSlider.setFunction([this]() {
-		m_textureViewRect.top = m_totalRenderSize.top + m_verticalSlider.getValue();
-		updateViewFromRect(m_textureViewRect);
+		m_panelViewRect.top = m_totalRenderSize.top + m_verticalSlider.getValue();
+		updateViewRect();
 		});
 	m_verticalSlider.setValue(0);
 
@@ -73,37 +75,26 @@ void ScrollPanel::updateBounds() {
 	m_bounds.width = std::max(m_bounds.width, 2.0f * m_borderWidth);
 	m_bounds.height = std::max(m_bounds.height, 2.0f * m_borderWidth);
 
-	updateMouseOffset();
-
-	m_renderSprite.setPosition(m_bounds.left + m_borderWidth, m_bounds.top + m_borderWidth);
+	m_panelViewRect.width = m_bounds.width - 2.0f * m_borderWidth;
+	m_panelViewRect.height = m_bounds.height - 2.0f * m_borderWidth;
 
 	if (m_verticalScrollable) {
 		m_verticalSlider.setSize((m_sliderWidth), (m_bounds.height - 2.0f * m_borderWidth - (m_horizontalScrollable ? m_sliderWidth : 0.0f)));
 		m_verticalSlider.setPosition((m_bounds.left + m_bounds.width - m_borderWidth - m_sliderWidth), (m_bounds.top + m_borderWidth));
+		m_panelViewRect.width -= m_sliderWidth;
 	}
 
 	if (m_horizontalScrollable) {
 		m_horizontalSlider.setSize((m_bounds.width - 2.0f * m_borderWidth - (m_verticalScrollable ? m_sliderWidth : 0.0f)), (m_sliderWidth));
 		m_horizontalSlider.setPosition((m_bounds.left + m_borderWidth), (m_bounds.top + m_bounds.height - m_borderWidth - m_sliderWidth));
+		m_panelViewRect.height -= m_sliderWidth;
 	}
+
+	updateViewRect();
+	updateSliders();
 
 	m_ninePatch.setBorderWidth(m_borderWidth);
 	m_ninePatch.setBounds(m_bounds);
-
-	//resize texture if size changed
-	sf::Vector2i new_size((m_verticalScrollable ? m_verticalSlider.getPosition().x : m_bounds.left + m_bounds.width - m_borderWidth) - m_bounds.left - m_borderWidth,
-		(m_horizontalScrollable ? m_horizontalSlider.getPosition().y : m_bounds.top + m_bounds.height - m_borderWidth) - m_bounds.top - m_borderWidth);
-	new_size.x = std::min(std::max(new_size.x, 1), 2048);
-	new_size.y = std::min(std::max(new_size.y, 1), 2048);
-	if (m_renderTexture.getSize() != static_cast<sf::Vector2u>(new_size)) {
-		m_renderTexture.create(new_size.x, new_size.y);
-		m_renderSprite.setTexture(m_renderTexture.getTexture(), true);
-
-		m_textureViewRect.width = new_size.x;
-		m_textureViewRect.height = new_size.y;
-		updateViewFromRect(m_textureViewRect);
-		updateSliders();
-	}
 }
 
 void ScrollPanel::clearElements() {
@@ -128,7 +119,7 @@ void ScrollPanel::setSliderWidth(float width) {
 }
 
 void ScrollPanel::updateTotalRenderSize() {
-	float minX = 0, maxX = m_bounds.width, minY = 0, maxY = m_bounds.height;
+	float minX = 1000000, maxX = -1000000, minY = 1000000, maxY = -1000000;
 	for (GuiElement* element : m_elements) {
 		sf::FloatRect bounds = element->getBounds();
 		if (bounds.left - m_elementsBorder < minX)
@@ -146,10 +137,9 @@ void ScrollPanel::updateTotalRenderSize() {
 }
 
 void ScrollPanel::updateSliders() {
-
-	sf::Vector2f visiblePortion(m_textureViewRect.width / m_totalRenderSize.width, m_textureViewRect.height / m_totalRenderSize.height);
-	sf::Vector2f remainingSize(m_totalRenderSize.width - m_textureViewRect.width, m_totalRenderSize.height - m_textureViewRect.height);
-	sf::Vector2f offset(m_textureViewRect.left - m_totalRenderSize.left, m_textureViewRect.top - m_totalRenderSize.top);
+	sf::Vector2f visiblePortion(m_panelViewRect.width / m_totalRenderSize.width, m_panelViewRect.height / m_totalRenderSize.height);
+	sf::Vector2f remainingSize(m_totalRenderSize.width - m_panelViewRect.width, m_totalRenderSize.height - m_panelViewRect.height);
+	sf::Vector2f offset(m_panelViewRect.left - m_totalRenderSize.left, m_panelViewRect.top - m_totalRenderSize.top);
 
 	m_horizontalSlider.setNobSize(std::max(m_minSliderNobSize,
 		std::min(visiblePortion.x, 1.0f) * (m_horizontalSlider.getBounds().width - m_horizontalSlider.getBorderWidth() * 2.0f)));

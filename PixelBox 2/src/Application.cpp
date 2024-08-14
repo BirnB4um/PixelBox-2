@@ -20,7 +20,7 @@ void Application::init() {
 		throw std::runtime_error("Error loading resources");
 	}
 
-	createWindow(1200, 800, false, 60, "PixelBox 2");
+	createWindow(1200, 800, false, 60, "PixelBox 2", true);
 
 	m_allScreens.push_back(&homeScreen);
 	m_allScreens.push_back(&settingsScreen);

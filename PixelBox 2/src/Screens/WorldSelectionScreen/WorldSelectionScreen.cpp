@@ -30,30 +30,27 @@ void WorldSelectionScreen::init() {
 	button1.setFontSize(20);
 	button1.setText("Button1");
 	button1.setBounds(100, 100, 200, 60);
+	m_worldMenu.addElement(&button1);
 
 	button2.reloadResources();
 	button2.setFontSize(20);
 	button2.setText("Button2");
 	button2.setBounds(1000, 1000, 200, 60);
+	m_worldMenu.addElement(&button2);
 
-	button3.reloadResources();
-	button3.setFontSize(20);
-	button3.setText("Button3");
-	button3.setBounds(0, 0, 200, 60);
-	m_worldMenu.addElement(&button3);
+	textInput.reloadResources();
+	textInput.setBounds(300, 300, 500, 120);
+	textInput.setDefaultText("Text");
+	m_worldMenu.addElement(&textInput);
 
-	button4.reloadResources();
-	button4.setFontSize(20);
-	button4.setText("Button4");
-	button4.setBounds(2000, 2000, 200, 60);
-	m_worldMenu.addElement(&button4);
-
-	panel2.reloadResources();
-	panel2.setScrollable(true, true);
-	panel2.setBounds(800, 800, 500, 600);
-	panel2.addElement(&button1);
-	panel2.addElement(&button2);
-	m_worldMenu.addElement(&panel2);
+	textSlider.reloadResources();
+	textSlider.setBounds(300, 250, 200, 30);
+	textSlider.setRange(0, 200);
+	textSlider.setValue(50);
+	textSlider.setFunction([this]() {
+		textInput.setFontSize(textSlider.getValue());
+		});
+	m_worldMenu.addElement(&textSlider);
 
 
 	reloadGuiResources();

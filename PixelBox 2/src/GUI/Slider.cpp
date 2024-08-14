@@ -56,7 +56,7 @@ bool Slider::handleEvent(sf::Event& sfEvent) {
 
 void Slider::updateInteraction() {
 	sf::Vector2f mouse = getMousePos();
-	if (m_bounds.contains(mouse) && ((m_parentGui == nullptr) ? true : m_parentGui->getInteractableArea().contains(mouse))) {
+	if (isMouseOver()) {
 		if (!m_hovered) {
 			m_ninePatch.setPatches(PatchAtlas::angularHover);
 		}

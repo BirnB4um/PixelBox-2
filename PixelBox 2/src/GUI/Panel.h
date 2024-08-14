@@ -25,7 +25,7 @@ protected:
 	void updateMouseOffset() override;
 
 	//update the view based on the view of the parent
-	void updateView(sf::View& previousView);
+	void updateView(const sf::View& previousView);
 
 	//update everything that is dependent on the viewRect
 	virtual void updateViewRect();

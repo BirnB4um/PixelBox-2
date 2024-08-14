@@ -46,7 +46,7 @@ bool Button::handleEvent(sf::Event& sfEvent) {
 void Button::updateInteraction() {
 	sf::Vector2f mouse = getMousePos();
 
-	if (m_bounds.contains(mouse) && ((m_parentGui == nullptr) ? true : m_parentGui->getInteractableArea().contains(mouse))) {
+	if (isMouseOver()) {
 		if (m_pressed) {
 			m_ninePatch.setPatches(PatchAtlas::roundedPressed);
 		}

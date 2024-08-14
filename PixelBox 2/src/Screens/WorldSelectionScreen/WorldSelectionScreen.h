@@ -2,6 +2,7 @@
 #include "../Screen.h"
 #include "../../GUI/Panel.h"
 #include "../../GUI/ScrollPanel.h"
+#include "../../GUI/TextInput.h"
 
 class WorldSelectionScreen : public Screen
 {
@@ -35,9 +36,9 @@ private:
 
 	TextButton m_createNewWorldButton;
 
-	ScrollPanel panel2;
 	TextButton button1, button2;
-	TextButton button3, button4;
 
+	TextInput textInput;
+	HorizontalSlider textSlider;
 
 };

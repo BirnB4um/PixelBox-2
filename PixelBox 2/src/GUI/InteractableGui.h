@@ -10,6 +10,10 @@ public:
 	void setInteractable(bool interactable);
 	bool isInteractable();
 
+	//checks if the mouse is over the interactable area
+	//also works with recursiv parent containers
+	bool isMouseOver();
+
 protected:
 	sf::Vector2f getMousePos();
 

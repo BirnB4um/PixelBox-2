@@ -21,3 +21,8 @@ sf::Vector2f InteractableGui::getMousePos() {
 		return static_cast<sf::Vector2f>(Application::mousePos) - m_parentGui->getMouseOffset();
 	}
 }
+
+bool InteractableGui::isMouseOver() {
+	sf::Vector2f mouse = getMousePos();
+	return m_bounds.contains(mouse) && ((m_parentGui == nullptr) ? true : m_parentGui->getInteractableArea().contains(mouse));
+}

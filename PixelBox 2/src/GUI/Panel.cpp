@@ -60,12 +60,15 @@ void Panel::reloadResources() {
 }
 
 
-void Panel::updateView(sf::View& previousView) {
+void Panel::updateView(const sf::View& previousView) {
 	sf::Vector2f windowSize = static_cast<sf::Vector2f>(Application::instance().getWindowSize());
 
 	//position of the panelwindow
 	sf::Vector2f pos(m_bounds.left + m_borderWidth, m_bounds.top + m_borderWidth);
 	sf::Vector2f size(m_bounds.width - 2.0f * m_borderWidth, m_bounds.height - 2.0f * m_borderWidth);
+
+	sf::FloatRect view = m_panelViewRect;
+
 
 	//parent view position.
 	sf::Vector2f parentViewPos(0.0f, 0.0f); //no parent
@@ -82,8 +85,6 @@ void Panel::updateView(sf::View& previousView) {
 	}
 
 	sf::Vector2f offset = pos - parentViewPos;
-
-	sf::FloatRect view = m_panelViewRect;
 
 	sf::FloatRect viewport(0, 0, 0, 0);
 	viewport.left = parentVieportPos.x + offset.x;

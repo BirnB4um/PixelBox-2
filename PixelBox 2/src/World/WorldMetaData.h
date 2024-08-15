@@ -7,7 +7,6 @@ struct WorldMetaData
 {
 public:
 	WorldMetaData();
-	~WorldMetaData();
 
 	std::string worldName;
 	unsigned int width, height;

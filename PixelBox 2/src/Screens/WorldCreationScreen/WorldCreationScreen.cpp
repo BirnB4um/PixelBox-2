@@ -24,6 +24,7 @@ void WorldCreationScreen::init() {
 	m_createWorldButton.setFunction([this]() {
 		World* world = createNewWorld();
 		Application::instance().simulationScreen.setWorld(world);
+		Application::instance().closeCurrentScreen();
 		Application::instance().openScreen(ScreenID::SIMULATION);
 		});
 	m_createWorldButton.setText("Create world");
@@ -77,6 +78,7 @@ World* WorldCreationScreen::createNewWorld() {
 
 	World* world = new World;
 	world->setMetaData(metaData);
+	world->createWorld();
 
 	return world;
 }

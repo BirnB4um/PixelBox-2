@@ -7,7 +7,3 @@ WorldMetaData::WorldMetaData() {
 	worldName = "";
 }
 
-WorldMetaData::~WorldMetaData() {
-
-}
-

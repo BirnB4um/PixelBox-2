@@ -25,7 +25,7 @@ public:
 	inline double getDuration() { return m_duration.count(); }
 
 	//get time since betriebszeit in milliseconds
-	static long long getTime() {
+	static inline long long getTime() {
 		return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 	}
 };

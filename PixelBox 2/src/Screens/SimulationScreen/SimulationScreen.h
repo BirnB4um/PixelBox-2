@@ -26,7 +26,7 @@ public:
 
 	void render(sf::RenderTarget& window) override;
 
-	//ownership gets transfered
+	//ownership gets transferred
 	void setWorld(World* world);
 
 private:

@@ -133,6 +133,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Tools\ByteSet.h" />
+    <ClInclude Include="src\World\DrawInstruction.h" />
     <ClInclude Include="src\Screens\SimulationScreen\SimulationScreen.h" />
     <ClInclude Include="src\Ruleset\Ruleset.h" />
     <ClInclude Include="src\GUI\SpriteRect.h" />
@@ -174,6 +176,8 @@
     <ClInclude Include="src\GUI\TextInput.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Tools\ByteSet.cpp" />
+    <ClCompile Include="src\World\DrawInstruction.cpp" />
     <ClCompile Include="src\Screens\SimulationScreen\SimulationScreen.cpp" />
     <ClCompile Include="src\Ruleset\Ruleset.cpp" />
     <ClCompile Include="src\GUI\SpriteRect.cpp" />

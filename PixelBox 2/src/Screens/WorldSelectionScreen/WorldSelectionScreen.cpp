@@ -11,11 +11,11 @@ void WorldSelectionScreen::init() {
 	m_title.setFont(*ResourceManager::getPixelFont());
 	m_title.setString("Worlds");
 
-	m_worldMenu.reloadResources();
+	//m_worldMenu.reloadResources();
 	m_worldMenu.setScrollable(true, true);
 	addGuiElement(&m_worldMenu);
 
-	m_createNewWorldButton.reloadResources();
+	//m_createNewWorldButton.reloadResources();
 	m_createNewWorldButton.setFont(*ResourceManager::getPixelFont());
 	m_createNewWorldButton.setFontSize(20);
 	m_createNewWorldButton.setText("New World");
@@ -24,24 +24,24 @@ void WorldSelectionScreen::init() {
 		});
 	addGuiElement(&m_createNewWorldButton);
 
-	button1.reloadResources();
+	//button1.reloadResources();
 	button1.setFontSize(20);
 	button1.setText("Button1");
 	button1.setBounds(100, 100, 200, 60);
 	m_worldMenu.addElement(&button1);
 
-	button2.reloadResources();
+	//button2.reloadResources();
 	button2.setFontSize(20);
 	button2.setText("Button2");
 	button2.setBounds(1000, 1000, 200, 60);
 	m_worldMenu.addElement(&button2);
 
-	textInput.reloadResources();
+	//textInput.reloadResources();
 	textInput.setBounds(300, 300, 500, 120);
 	textInput.setDefaultText("Text");
 	m_worldMenu.addElement(&textInput);
 
-	textSlider.reloadResources();
+	//textSlider.reloadResources();
 	textSlider.setBounds(300, 250, 200, 30);
 	textSlider.setFunction([this]() {
 		textInput.setFontSize(textSlider.getValue());
@@ -51,7 +51,7 @@ void WorldSelectionScreen::init() {
 	textSlider.setValue(50);
 	m_worldMenu.addElement(&textSlider);
 
-	hValueSlider.reloadResources();
+	//hValueSlider.reloadResources();
 	hValueSlider.setBounds(200, 500, 200, 30);
 	hValueSlider.setRange(-400, -100);
 	hValueSlider.setValue(0);
@@ -60,7 +60,7 @@ void WorldSelectionScreen::init() {
 		});
 	m_worldMenu.addElement(&hValueSlider);
 
-	vValueSlider.reloadResources();
+	//vValueSlider.reloadResources();
 	vValueSlider.setBounds(150, 500, 30, 200);
 	vValueSlider.setRange(-100, 300);
 	vValueSlider.setValue(10);
@@ -69,14 +69,14 @@ void WorldSelectionScreen::init() {
 		});
 	m_worldMenu.addElement(&vValueSlider);
 
-	m_switch.reloadResources();
+	//m_switch.reloadResources();
 	m_switch.setBounds(400, 100, 80, 60);
 	m_switch.setFunction([this]() {
 		std::cout << (m_switch.isActivated() ? "Switch activated" : "Switch deactivated") << std::endl;
 		});
 	m_worldMenu.addElement(&m_switch);
 
-	m_textSwitch.reloadResources();
+	//m_textSwitch.reloadResources();
 	m_textSwitch.setBounds(500, 100, 120, 60);
 	m_textSwitch.setText("nice");
 	m_textSwitch.setFunction([this]() {
@@ -84,7 +84,7 @@ void WorldSelectionScreen::init() {
 		});
 	m_worldMenu.addElement(&m_textSwitch);
 
-	m_spriteSwitch.reloadResources();
+	//m_spriteSwitch.reloadResources();
 	m_spriteSwitch.setBounds(700, 100, 120, 80);
 	m_spriteSwitch.setTexturePatch(sf::IntRect(0, 0, 64, 64));
 	m_spriteSwitch.setFunction([this]() {
@@ -94,8 +94,8 @@ void WorldSelectionScreen::init() {
 
 	m_worldMenu.resetSliders();
 
-	reloadGuiResources();
-	onResize();
+	//reloadGuiResources();
+	//onResize();
 }
 
 void WorldSelectionScreen::onResize() {
@@ -117,18 +117,29 @@ void WorldSelectionScreen::onClosing() {
 }
 
 void WorldSelectionScreen::onSwitch() {
+	Screen::onSwitch();
 }
 
-void WorldSelectionScreen::handleEvent(sf::Event& sfEvent) {
-	handleGuiEvent(sfEvent);
+bool WorldSelectionScreen::handleEvent(sf::Event& sfEvent) {
+	if (handleGuiEvent(sfEvent))
+		return true;
 
 	switch (sfEvent.type) {
 	case sf::Event::MouseButtonPressed:
 		break;
 
+	case sf::Event::KeyReleased:
+		if (sfEvent.key.code == sf::Keyboard::Escape) {
+			Application::instance().closeCurrentScreen();
+			return true;
+		}
+		break;
+
 	default:
 		break;
 	}
+
+	return false;
 }
 
 void WorldSelectionScreen::update(float dt) {

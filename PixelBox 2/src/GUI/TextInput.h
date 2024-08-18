@@ -6,6 +6,10 @@
 #include "NinePatch.h"
 #include "../Tools/Timer.h"
 
+
+
+//TODO: change colors if mouse hovers over it
+
 class TextInput : public InteractableGui
 {
 public:
@@ -16,6 +20,8 @@ public:
 	void update(float dt) override;
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;
+
+	void resetInteractionState() override;
 
 	std::string getInputText();
 	void setDefaultText(std::string text);

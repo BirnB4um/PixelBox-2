@@ -26,3 +26,7 @@ bool InteractableGui::isMouseOver() {
 	sf::Vector2f mouse = getMousePos();
 	return m_bounds.contains(mouse) && ((m_parentGui == nullptr) ? true : m_parentGui->getInteractableArea().contains(mouse));
 }
+
+void InteractableGui::resetInteractionState() {
+
+}

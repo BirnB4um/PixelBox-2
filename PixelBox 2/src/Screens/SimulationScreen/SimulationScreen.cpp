@@ -27,34 +27,33 @@ void SimulationScreen::onClosing() {
 }
 
 void SimulationScreen::onSwitch() {
+	Screen::onSwitch();
 }
 
-void SimulationScreen::handleEvent(sf::Event& sfEvent) {
-	handleGuiEvent(sfEvent);
+bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
+	if (handleGuiEvent(sfEvent))
+		return true;
 
 	switch (sfEvent.type)
 	{
 	case sf::Event::KeyPressed:
-		if (sfEvent.key.code == sf::Keyboard::R) {
-			m_targetZoomLevel *= sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ? 1.1f : 0.9f;
-		}
-		else if (sfEvent.key.code == sf::Keyboard::E) {
-			m_targetViewCenter += sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ? sf::Vector2f(10, 5) : sf::Vector2f(-10, -5);
-		}
 		break;
 
 	case sf::Event::KeyReleased:
 		if (sfEvent.key.code == sf::Keyboard::Space) { // (un-)pause simulation
 			m_isSimulationPaused = !m_isSimulationPaused;
+			return true;
 		}
 		else if (sfEvent.key.code == sf::Keyboard::Escape) {
 			stopRenderingThread();
 			stopSimulationThread();
 			deleteWorld();
 			Application::instance().closeCurrentScreen();
+			return true;
 		}
 		else if (sfEvent.key.code == sf::Keyboard::Num0) {
 			resetView();
+			return true;
 		}
 		break;
 
@@ -71,6 +70,8 @@ void SimulationScreen::handleEvent(sf::Event& sfEvent) {
 			//sf::Vector2f originalMousePos = getMouseWorldPos();
 			//sf::Vector2f diff = originalMousePos - m_targetViewCenter;
 			//m_targetViewCenter = originalMousePos - diff / zoomAmount;
+
+			return true;
 		}
 
 		break;
@@ -81,18 +82,22 @@ void SimulationScreen::handleEvent(sf::Event& sfEvent) {
 			m_startGrabbedMousePos = Application::mousePos;
 			m_startGrabbedViewCenter = m_targetViewCenter;
 			m_boardGrabbed = true;
+			return true;
 		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
 		if (sfEvent.mouseButton.button == sf::Mouse::Middle) {
 			m_boardGrabbed = false;
+			return true;
 		}
 		break;
 
 	default:
 		break;
 	}
+
+	return false;
 }
 
 void SimulationScreen::update(float dt) {

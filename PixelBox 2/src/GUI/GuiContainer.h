@@ -12,6 +12,8 @@ public:
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;
 
+	void resetInteractionState() override;
+
 	// clear all elements and set their parent to null
 	virtual void clearElements();
 	// Ownership of element retains with the caller

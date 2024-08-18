@@ -31,18 +31,23 @@ bool ValueSlider::handleEvent(sf::Event& sfEvent) {
 	case sf::Event::MouseMoved:
 		updateInteraction();
 		updateValue();
+
+		if (m_pressed)
+			return true;
 		break;
 
 	case sf::Event::MouseButtonPressed:
 		if (m_hovered) {
 			m_pressed = true;
 			updateValue();
+			return true;
 		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
 		m_pressed = false;
 		updateInteraction();
+		return false;
 		break;
 
 	default:
@@ -135,4 +140,10 @@ void ValueSlider::updateZeroLine() {
 	updateNobPosition();
 }
 
+void ValueSlider::resetInteractionState() {
+	m_pressed = false;
+	m_hovered = false;
+	m_ninePatch.setPatches(PatchAtlas::angularIdle);
+	updateInteraction();
+}
 

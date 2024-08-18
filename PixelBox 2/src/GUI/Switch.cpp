@@ -22,6 +22,9 @@ bool Switch::handleEvent(sf::Event& sfEvent) {
 	{
 	case sf::Event::MouseMoved:
 		updateInteraction();
+
+		if (m_pressed)
+			return true;
 		break;
 
 	case sf::Event::MouseButtonPressed:
@@ -33,6 +36,7 @@ bool Switch::handleEvent(sf::Event& sfEvent) {
 				m_ninePatch.setPatches(PatchAtlas::roundedPressed);
 			}
 			m_pressed = true;
+			return true;
 		}
 		break;
 
@@ -41,6 +45,8 @@ bool Switch::handleEvent(sf::Event& sfEvent) {
 			m_ninePatch.setPatches(PatchAtlas::roundedHover);
 			m_activated = !m_activated;
 			m_function();
+			m_pressed = false;
+			return true;
 		}
 		m_pressed = false;
 		break;
@@ -108,4 +114,17 @@ void Switch::updateBounds() {
 
 bool Switch::isActivated() {
 	return m_activated;
+}
+
+void Switch::resetInteractionState() {
+	m_pressed = false;
+	m_hovered = false;
+	m_activated = false;//TODO: should activate be reset???
+	if (m_activated) {
+		m_ninePatch.setPatches(PatchAtlas::roundedPressed);
+	}
+	else {
+		m_ninePatch.setPatches(PatchAtlas::roundedIdle);
+	}
+	updateInteraction();
 }

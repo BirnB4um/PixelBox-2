@@ -29,8 +29,11 @@ void Application::init() {
 	m_allScreens.push_back(&worldCreationScreen);
 	m_allScreens.push_back(&simulationScreen);
 
-	for (Screen* screen : m_allScreens)
+	for (Screen* screen : m_allScreens) {
 		screen->init();
+		screen->reloadGuiResources();
+		screen->onResize();
+	}
 	openScreen(ScreenID::HOME);
 
 

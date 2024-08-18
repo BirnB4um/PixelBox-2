@@ -26,6 +26,8 @@ public:
 	void reloadResources() override;
 	void setParent(GuiContainer* parent) override;
 
+	void resetInteractionState() override;
+
 	// clear all elements and set their parent to null
 	void clearElements() override;
 

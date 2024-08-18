@@ -84,13 +84,21 @@ bool TextInput::handleEvent(sf::Event& sfEvent) {
 	switch (sfEvent.type)
 	{
 	case sf::Event::KeyPressed:
+	{
+		bool wasFocused = m_isFocused;
+
 		if (sfEvent.key.code == sf::Keyboard::Enter) {
 			m_isFocused = false;
 		}
 		else if (sfEvent.key.code == sf::Keyboard::Escape) {
 			m_isFocused = false;
 		}
-		break;
+
+		if (wasFocused)
+			return true;
+	}
+
+	break;
 
 	case sf::Event::TextEntered:
 		if (m_isFocused) {
@@ -120,11 +128,18 @@ bool TextInput::handleEvent(sf::Event& sfEvent) {
 				m_inputString += static_cast<unsigned char>(input);
 			}
 			updateText();
+
+			return true;
 		}
 		break;
 
 	case sf::Event::MouseButtonPressed:
-		m_isFocused = isMouseOver();
+		{
+			m_isFocused = isMouseOver();
+
+			if (m_isFocused)
+				return true;
+		}
 		break;
 
 	default:
@@ -264,4 +279,10 @@ void TextInput::updateTextView(const sf::View& previousView) {
 	m_textView.setSize(view.width, view.height);
 	m_textView.setCenter(view.left + view.width / 2.0f, view.top + view.height / 2.0f);
 	m_textView.setViewport(viewport);
+}
+
+void TextInput::resetInteractionState() {
+	m_isFocused = false;
+	m_ninePatch.setPatches(PatchAtlas::angularIdle);
+	
 }

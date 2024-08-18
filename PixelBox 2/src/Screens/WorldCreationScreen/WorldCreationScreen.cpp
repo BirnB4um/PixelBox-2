@@ -50,11 +50,14 @@ void WorldCreationScreen::onClosing() {
 }
 
 void WorldCreationScreen::onSwitch() {
-
+	Screen::onSwitch();
 }
 
-void WorldCreationScreen::handleEvent(sf::Event& sfEvent) {
-	handleGuiEvent(sfEvent);
+bool WorldCreationScreen::handleEvent(sf::Event& sfEvent) {
+	if (handleGuiEvent(sfEvent))
+		return true;
+
+	return false;
 }
 
 void WorldCreationScreen::update(float dt) {

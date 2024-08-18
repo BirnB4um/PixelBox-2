@@ -26,7 +26,7 @@ public:
 
 	void onSwitch() override;
 
-	void handleEvent(sf::Event& sfEvent) override;
+	bool handleEvent(sf::Event& sfEvent) override;
 
 	//update given deltatime dt in seconds
 	void update(float dt) override;

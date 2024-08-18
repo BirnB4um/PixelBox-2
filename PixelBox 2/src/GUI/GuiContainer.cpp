@@ -6,7 +6,6 @@ GuiContainer::GuiContainer() {
 }
 
 bool GuiContainer::handleEvent(sf::Event& sfEvent) {
-	//TODO: return true if any element captures the event
 
 	//switch (sfEvent.type)
 	//{
@@ -15,7 +14,8 @@ bool GuiContainer::handleEvent(sf::Event& sfEvent) {
 	//}
 
 	for (GuiElement* element : m_elements) {
-		element->handleEvent(sfEvent);
+		if (element->handleEvent(sfEvent))
+			return true;
 	}
 
 	return false;
@@ -76,4 +76,12 @@ sf::FloatRect GuiContainer::getInteractableArea() {
 	float y2 = std::min(parentArea.top + parentArea.height, m_interactableArea.top + m_interactableArea.height);
 	sf::FloatRect resultArea(x1, y1, x2 - x1, y2 - y1);
 	return resultArea;
+}
+
+void GuiContainer::resetInteractionState() {
+	for (GuiElement* element : m_elements) {
+		InteractableGui* interactable = dynamic_cast<InteractableGui*>(element);
+		if (interactable != nullptr)
+			interactable->resetInteractionState();
+	}
 }

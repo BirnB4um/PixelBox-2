@@ -18,6 +18,8 @@ public:
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;
 
+	void resetInteractionState() override;
+
 	void setFunction(std::function<void()> func);
 
 	bool isActivated();

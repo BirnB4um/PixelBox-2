@@ -14,6 +14,8 @@ public:
 	//also works with recursiv parent containers
 	bool isMouseOver();
 
+	virtual void resetInteractionState();
+
 protected:
 	sf::Vector2f getMousePos();
 

@@ -20,12 +20,15 @@ void Screen::onClosing() {
 }
 
 void Screen::onSwitch() {
+	resetGuiInteraction();
 }
 
-void Screen::handleGuiEvent(sf::Event& sfEvent) {
+bool Screen::handleGuiEvent(sf::Event& sfEvent) {
 	for (GuiElement* guiElement : m_guiElements) {
-		guiElement->handleEvent(sfEvent);
+		if (guiElement->handleEvent(sfEvent))
+			return true;
 	}
+	return false;
 }
 
 void Screen::updateGui(float dt) {
@@ -46,8 +49,17 @@ void Screen::reloadGuiResources() {
 	}
 }
 
-void Screen::handleEvent(sf::Event& sfEvent) {
+void Screen::resetGuiInteraction() {
+	for (GuiElement* guiElement : m_guiElements) {
+		InteractableGui* interactable = dynamic_cast<InteractableGui*>(guiElement);
+		if (interactable != nullptr)
+			interactable->resetInteractionState();
+	}
+}
+
+bool Screen::handleEvent(sf::Event& sfEvent) {
 	handleGuiEvent(sfEvent);
+	return false;
 }
 
 void Screen::update(float dt) {

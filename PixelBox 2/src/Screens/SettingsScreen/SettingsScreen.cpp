@@ -17,11 +17,12 @@ void SettingsScreen::onClosing() {
 }
 
 void SettingsScreen::onSwitch() {
-
+	Screen::onSwitch();
 }
 
-void SettingsScreen::handleEvent(sf::Event& sfEvent) {
-	handleGuiEvent(sfEvent);
+bool SettingsScreen::handleEvent(sf::Event& sfEvent) {
+	if(handleGuiEvent(sfEvent))
+		return true;
 
 	switch (sfEvent.type) {
 	case sf::Event::MouseButtonPressed:
@@ -32,6 +33,8 @@ void SettingsScreen::handleEvent(sf::Event& sfEvent) {
 	default:
 		break;
 	}
+
+	return false;
 }
 
 void SettingsScreen::update(float dt) {

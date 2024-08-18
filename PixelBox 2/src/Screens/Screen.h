@@ -20,7 +20,7 @@ public:
 	//called when switching to this screen
 	virtual void onSwitch();
 
-	virtual void handleEvent(sf::Event& sfEvent);
+	virtual bool handleEvent(sf::Event& sfEvent);
 
 	//update given deltatime dt in seconds
 	virtual void update(float dt);
@@ -29,10 +29,11 @@ public:
 
 
 
-	void handleGuiEvent(sf::Event& sfEvent);
+	bool handleGuiEvent(sf::Event& sfEvent);
 	void updateGui(float dt);
 	void renderGui(sf::RenderTarget& window);
 	void reloadGuiResources();
+	void resetGuiInteraction();
 
 
 

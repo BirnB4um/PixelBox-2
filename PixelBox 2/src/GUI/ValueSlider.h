@@ -18,6 +18,8 @@ public:
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;
 
+	void resetInteractionState() override;
+
 	//the given function gets called everytime the slider changes its value
 	void setFunction(std::function<void()> func);
 

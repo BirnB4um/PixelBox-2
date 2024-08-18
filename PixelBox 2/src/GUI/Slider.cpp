@@ -30,6 +30,8 @@ bool Slider::handleEvent(sf::Event& sfEvent) {
 	case sf::Event::MouseMoved:
 		updateInteraction();
 		updateValue();
+		if (m_pressed)
+			return true;
 		break;
 
 	case sf::Event::MouseButtonPressed:
@@ -39,12 +41,14 @@ bool Slider::handleEvent(sf::Event& sfEvent) {
 				m_mouseGrabOffset = getMousePos() - m_nob.getPosition();
 				updateValue();
 			}
+			return true;
 		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
 		m_pressed = false;
 		updateInteraction();
+		return false;
 		break;
 
 	default:
@@ -128,4 +132,11 @@ void Slider::setNobSize(float size) {
 }
 
 void Slider::updateValue() {
+}
+
+void Slider::resetInteractionState() {
+	m_pressed = false;
+	m_hovered = false;
+	m_ninePatch.setPatches(PatchAtlas::angularIdle);
+	updateInteraction();
 }

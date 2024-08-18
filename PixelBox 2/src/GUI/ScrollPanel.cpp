@@ -33,7 +33,6 @@ ScrollPanel::~ScrollPanel() {
 }
 
 bool ScrollPanel::handleEvent(sf::Event& sfEvent) {
-	//TODO: return true if anything captures the event
 
 	//switch (sfEvent.type)
 	//{
@@ -41,10 +40,14 @@ bool ScrollPanel::handleEvent(sf::Event& sfEvent) {
 	//	break;
 	//}
 
-	Panel::handleEvent(sfEvent);
+	if (Panel::handleEvent(sfEvent))
+		return true;
 
-	m_horizontalSlider.handleEvent(sfEvent);
-	m_verticalSlider.handleEvent(sfEvent);
+	if (m_horizontalSlider.handleEvent(sfEvent))
+		return true;
+
+	if (m_verticalSlider.handleEvent(sfEvent))
+		return true;
 
 	return false;
 }
@@ -163,4 +166,10 @@ void ScrollPanel::resetSliders() {
 	m_panelViewRect.left = m_totalRenderSize.left;
 	updateSliders();
 	updateViewRect();
+}
+
+void ScrollPanel::resetInteractionState() {
+	GuiContainer::resetInteractionState();
+	m_horizontalSlider.resetInteractionState();
+	m_verticalSlider.resetInteractionState();
 }

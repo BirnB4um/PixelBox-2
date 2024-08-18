@@ -15,7 +15,6 @@ Panel::~Panel() {
 }
 
 bool Panel::handleEvent(sf::Event& sfEvent) {
-	//TODO: return true if something captures the event
 
 	//switch (sfEvent.type)
 	//{
@@ -23,9 +22,11 @@ bool Panel::handleEvent(sf::Event& sfEvent) {
 	//	break;
 	//}
 
-	m_ninePatch.handleEvent(sfEvent);
+	if (m_ninePatch.handleEvent(sfEvent))
+		return true;
 
-	GuiContainer::handleEvent(sfEvent);
+	if (GuiContainer::handleEvent(sfEvent))
+		return true;
 
 	return false;
 }

@@ -19,12 +19,15 @@ bool Button::handleEvent(sf::Event& sfEvent) {
 	{
 	case sf::Event::MouseMoved:
 		updateInteraction();
+		if (m_pressed)
+			return true;
 		break;
 
 	case sf::Event::MouseButtonPressed:
 		if (m_hovered) {
 			m_ninePatch.setPatches(PatchAtlas::roundedPressed);
 			m_pressed = true;
+			return true;
 		}
 		break;
 
@@ -32,6 +35,8 @@ bool Button::handleEvent(sf::Event& sfEvent) {
 		if (m_hovered && m_pressed) {
 			m_ninePatch.setPatches(PatchAtlas::roundedHover);
 			m_function();
+			m_pressed = false;
+			return true;
 		}
 		m_pressed = false;
 		break;
@@ -84,5 +89,12 @@ void Button::updateBounds() {
 
 	m_ninePatch.setBorderWidth(m_borderWidth);
 	m_ninePatch.setBounds(m_bounds);
+	updateInteraction();
+}
+
+void Button::resetInteractionState() {
+	m_pressed = false;
+	m_hovered = false;
+	m_ninePatch.setPatches(PatchAtlas::roundedIdle);
 	updateInteraction();
 }

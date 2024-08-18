@@ -71,10 +71,12 @@ void HomeScreen::onClosing() {
 }
 
 void HomeScreen::onSwitch() {
+	Screen::onSwitch();
 }
 
-void HomeScreen::handleEvent(sf::Event& sfEvent) {
-	handleGuiEvent(sfEvent);
+bool HomeScreen::handleEvent(sf::Event& sfEvent) {
+	if (handleGuiEvent(sfEvent))
+		return true;
 
 	switch (sfEvent.type) {
 	case sf::Event::MouseButtonPressed:
@@ -83,6 +85,8 @@ void HomeScreen::handleEvent(sf::Event& sfEvent) {
 	default:
 		break;
 	}
+
+	return false;
 }
 
 void HomeScreen::update(float dt) {

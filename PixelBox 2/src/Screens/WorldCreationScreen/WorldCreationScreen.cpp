@@ -74,7 +74,7 @@ World* WorldCreationScreen::createNewWorld() {
 	metaData.width = 256;
 	metaData.height = 128;
 	metaData.worldName = "TestWorld";
-	metaData.ruleset = nullptr;
+	metaData.ruleset = ResourceManager::instance().getRuleset(1);
 
 	World* world = new World;
 	world->setMetaData(metaData);

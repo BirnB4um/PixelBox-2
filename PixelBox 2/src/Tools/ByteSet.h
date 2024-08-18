@@ -1,28 +1,73 @@
 #pragma once
 #include <vector>
+#include <cassert>
 
 class ByteSet
 {
 public:
-	ByteSet();
-	ByteSet(size_t maxSize);
-	~ByteSet();
 
-	inline void setMaxSize(size_t maxSize);
+	ByteSet() {
+		setMaxSize(1024);
+	}
 
-	inline void add(size_t item);
+	ByteSet(size_t maxSize) {
+		setMaxSize(maxSize);
+	}
 
-	inline bool isSet(size_t item) const;
 
-	inline void clear();
+	~ByteSet() {
+		delete[] map;
+	}
 
-	inline size_t size() const { return items.size(); }
+	inline void setMaxSize(size_t maxSize) {
+		this->maxSize = maxSize;
+		delete[] map;
+		map = new bool[maxSize];
+		clear();
+		items.reserve(maxSize);
+	}
 
-	std::vector<size_t>& getItems() { return items; }
+	inline size_t getMaxSize() const { 
+		return maxSize;
+	}
 
-	inline bool* getMap() const { return map; }
+	inline void add(size_t item) {
+		assert(item < maxSize);
+		if (!map[item]) {
+			map[item] = true;
+			items.push_back(item);
+		}
+	}
 
-	inline void swap(ByteSet& other);
+	inline bool isSet(size_t item) const {
+		assert(item < maxSize);
+		return map[item];
+	}
+
+	inline void clear() {
+		for (size_t item : items) {
+			map[item] = false;
+		}
+		items.clear();
+	}
+
+	inline size_t size() const { 
+		return items.size();
+	}
+
+	std::vector<size_t>& getItems() {
+		return items;
+	}
+
+	inline bool* getMap() const {
+		return map;
+	}
+
+	inline void swap(ByteSet& other) {
+		std::swap(maxSize, other.maxSize);
+		std::swap(map, other.map);
+		std::swap(items, other.items);
+	}
 
 
 private:

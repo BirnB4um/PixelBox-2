@@ -133,6 +133,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\GUI\HorizontalValueSlider.h" />
+    <ClInclude Include="src\Ruleset\CustomRuleset.h" />
+    <ClInclude Include="src\Ruleset\PixelBoxRuleset.h" />
+    <ClInclude Include="src\Ruleset\CircuitGridRuleset.h" />
     <ClInclude Include="src\Tools\ByteSet.h" />
     <ClInclude Include="src\World\DrawInstruction.h" />
     <ClInclude Include="src\Screens\SimulationScreen\SimulationScreen.h" />
@@ -174,8 +178,14 @@
     <ClInclude Include="src\World\WorldMetaData.h" />
     <ClInclude Include="src\Screens\WorldCreationScreen\WorldCreationScreen.h" />
     <ClInclude Include="src\GUI\TextInput.h" />
+    <ClInclude Include="src\GUI\ValueSlider.h" />
+    <ClInclude Include="src\GUI\VerticalValueSlider.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\GUI\HorizontalValueSlider.cpp" />
+    <ClCompile Include="src\Ruleset\CustomRuleset.cpp" />
+    <ClCompile Include="src\Ruleset\PixelBoxRuleset.cpp" />
+    <ClCompile Include="src\Ruleset\CircuitGridRuleset.cpp" />
     <ClCompile Include="src\Tools\ByteSet.cpp" />
     <ClCompile Include="src\World\DrawInstruction.cpp" />
     <ClCompile Include="src\Screens\SimulationScreen\SimulationScreen.cpp" />
@@ -214,6 +224,8 @@
     <ClCompile Include="src\World\WorldMetaData.cpp" />
     <ClCompile Include="src\Screens\WorldCreationScreen\WorldCreationScreen.cpp" />
     <ClCompile Include="src\GUI\TextInput.cpp" />
+    <ClCompile Include="src\GUI\ValueSlider.cpp" />
+    <ClCompile Include="src\GUI\VerticalValueSlider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\gui_texture.png" />
@@ -224,6 +236,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Todo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shader\pixelShader.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

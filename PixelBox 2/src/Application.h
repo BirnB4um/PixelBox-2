@@ -38,6 +38,7 @@ public:
 	sf::Vector2i getWindowSize();
 
 	static sf::Vector2i mousePos;
+	static sf::View normalView;
 
 	Screen* currentScreen;
 	HomeScreen homeScreen;
@@ -54,7 +55,6 @@ private:
 	sf::Event m_sfEvent;
 	sf::Clock m_deltaClock;
 	sf::Time m_deltaTime;
-	sf::View normalView;
 
 	std::string m_title;
 	int m_windowWidth;

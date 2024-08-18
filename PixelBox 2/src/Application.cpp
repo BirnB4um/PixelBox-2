@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 
 sf::Vector2i Application::mousePos = sf::Vector2i(0, 0);
+sf::View Application::normalView = sf::View(sf::FloatRect(0, 0, 1, 1));
 
 Application& Application::instance() {
 	static Application app;
@@ -100,7 +101,7 @@ void Application::onResize() {
 		m_windowedHeight = m_windowHeight;
 	}
 	normalView.setSize(m_windowWidth, m_windowHeight);
-	normalView.setCenter(m_windowWidth / 2.0f, m_windowHeight / 2.0f);
+	normalView.setCenter(static_cast<float>(m_windowWidth) / 2.0f, static_cast<float>(m_windowHeight) / 2.0f);
 
 	for (Screen* screen : m_allScreens) {
 		screen->onResize();
@@ -203,3 +204,4 @@ void Application::run() {
 			onClosing();
 	}
 }
+

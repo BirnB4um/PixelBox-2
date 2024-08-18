@@ -157,3 +157,10 @@ void ScrollPanel::setParent(GuiContainer* parent) {
 	m_horizontalSlider.setParent(parent);
 	m_verticalSlider.setParent(parent);
 }
+
+void ScrollPanel::resetSliders() {
+	m_panelViewRect.top = m_totalRenderSize.top;
+	m_panelViewRect.left = m_totalRenderSize.left;
+	updateSliders();
+	updateViewRect();
+}

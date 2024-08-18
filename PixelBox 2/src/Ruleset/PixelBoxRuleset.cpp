@@ -1,29 +1,29 @@
-#include "Ruleset.h"
+#include "PixelBoxRuleset.h"
 #include "../World/World.h"
 
-Ruleset::Ruleset() {
-	m_id = 0;
 
-	world = nullptr;
+PixelBoxRuleset::PixelBoxRuleset() {
+	m_id = 2;
+
 	frontBuffer = nullptr;
 	backBuffer = nullptr;
 	width = 0;
 	height = 0;
 }
 
-Ruleset::~Ruleset() {
+PixelBoxRuleset::~PixelBoxRuleset() {
 
 }
 
-
-
-void Ruleset::updateAllPixels(World* world) {
+void PixelBoxRuleset::updateAllPixels(World* world) {
 	this->world = world;
 	width = world->m_metaData.width;
 	height = world->m_metaData.height;
 
 	frontBuffer = world->m_worldDataFront;
 	backBuffer = world->m_worldDataBack;
+
+	//TODO: update from bottom to top
 
 	for (size_t index : world->m_updateList.getItems()) {
 		if (updatePixel(index)) {
@@ -33,7 +33,7 @@ void Ruleset::updateAllPixels(World* world) {
 
 }
 
-const bool Ruleset::updatePixel(size_t& index) const {
+const bool PixelBoxRuleset::updatePixel(size_t& index) const {
 
 	//FIXME: optimize by using bitshift, calculating indecies on the fly (as rvalues)
 
@@ -58,7 +58,7 @@ const bool Ruleset::updatePixel(size_t& index) const {
 	return false;
 }
 
-void Ruleset::addSurrondingPixels(size_t& index) const {
+void PixelBoxRuleset::addSurrondingPixels(size_t& index) const {
 
 	//update pixels from updateList, save next updates to updateListNext + renderUpdates
 

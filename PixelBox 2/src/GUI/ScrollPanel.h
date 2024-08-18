@@ -33,6 +33,7 @@ public:
 	void addElement(GuiElement* element) override;
 	void setScrollable(bool vertical, bool horizontal);
 	void setSliderWidth(float width);
+	void resetSliders();
 
 
 private:

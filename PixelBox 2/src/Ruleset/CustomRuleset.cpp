@@ -1,23 +1,21 @@
-#include "Ruleset.h"
+#include "CustomRuleset.h"
 #include "../World/World.h"
 
-Ruleset::Ruleset() {
-	m_id = 0;
 
-	world = nullptr;
+CustomRuleset::CustomRuleset() {
+	m_id = 3;
+
 	frontBuffer = nullptr;
 	backBuffer = nullptr;
 	width = 0;
 	height = 0;
 }
 
-Ruleset::~Ruleset() {
+CustomRuleset::~CustomRuleset() {
 
 }
 
-
-
-void Ruleset::updateAllPixels(World* world) {
+void CustomRuleset::updateAllPixels(World* world) {
 	this->world = world;
 	width = world->m_metaData.width;
 	height = world->m_metaData.height;
@@ -33,7 +31,7 @@ void Ruleset::updateAllPixels(World* world) {
 
 }
 
-const bool Ruleset::updatePixel(size_t& index) const {
+const bool CustomRuleset::updatePixel(size_t& index) const {
 
 	//FIXME: optimize by using bitshift, calculating indecies on the fly (as rvalues)
 
@@ -58,7 +56,7 @@ const bool Ruleset::updatePixel(size_t& index) const {
 	return false;
 }
 
-void Ruleset::addSurrondingPixels(size_t& index) const {
+void CustomRuleset::addSurrondingPixels(size_t& index) const {
 
 	//update pixels from updateList, save next updates to updateListNext + renderUpdates
 

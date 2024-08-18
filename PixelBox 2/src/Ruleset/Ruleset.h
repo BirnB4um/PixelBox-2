@@ -1,5 +1,4 @@
 #pragma once
-
 #include <cstdint>
 #include <vector>
 
@@ -12,12 +11,23 @@ public:
 	Ruleset();
 	~Ruleset();
 
-	inline uint64_t getID();
+	inline uint64_t getID() {
+		return m_id;
+	}
 
-	inline void updateAllPixels(World* world) const;
+	virtual void updateAllPixels(World* world);
+	virtual const bool updatePixel (size_t&index) const;
+	virtual void addSurrondingPixels(size_t& index) const;
 
 
-private:
+protected:
 	uint64_t m_id;
+
+	//temp values for updating pixels
+	World* world;
+	size_t width;
+	size_t height;
+	uint8_t* frontBuffer;
+	uint8_t* backBuffer;
 };
 

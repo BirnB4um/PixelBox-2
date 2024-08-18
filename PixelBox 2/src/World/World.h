@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 #include "../Ruleset/Ruleset.h"
+#include "../Ruleset/CircuitGridRuleset.h"
+#include "../Ruleset/PixelBoxRuleset.h"
+#include "../Ruleset/CustomRuleset.h"
 #include "WorldMetaData.h"
 #include "DrawInstruction.h"
 #include "../Tools/ByteSet.h"
@@ -14,6 +17,9 @@ class World
 public:
 
 	friend class Ruleset;
+	friend class CircuitGridRuleset;
+	friend class PixelBoxRuleset;
+	friend class CustomRuleset;
 
 	World();
 
@@ -53,6 +59,12 @@ public:
 	void addDrawInstruction(DrawInstruction& drawInstruction);
 
 	void updateRenderBuffer();
+	bool renderBufferHasChanges();
+
+	uint8_t* getRenderBuffer();
+
+	void updateAllPixels();
+	void renderAllPixels();
 
 private:
 
@@ -63,7 +75,7 @@ private:
 
 	ByteSet m_updateList;
 	ByteSet m_updateListNext;
-	ByteSet m_renderUpdates;//contains differences between last frame
+	ByteSet m_renderUpdates;//contains differences between last rendered frame
 
 	std::vector<DrawInstruction> m_drawInstructionList;
 

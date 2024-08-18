@@ -13,7 +13,9 @@ public:
 	}
 
 	//start timer
-	void start() { m_t = std::chrono::high_resolution_clock::now(); }
+	inline void start() { 
+		m_t = std::chrono::high_resolution_clock::now();
+	}
 
 	//stop timer and get time from timer in millisec
 	inline double stop() {
@@ -22,7 +24,9 @@ public:
 	}
 
 	//get duration of timer in milliseconds
-	inline double getDuration() { return m_duration.count(); }
+	inline double getDuration() {
+		return m_duration.count();
+	}
 
 	//get time since betriebszeit in milliseconds
 	static inline long long getTime() {

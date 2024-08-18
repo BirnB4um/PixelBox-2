@@ -3,6 +3,8 @@
 #include "../../GUI/Panel.h"
 #include "../../GUI/ScrollPanel.h"
 #include "../../GUI/TextInput.h"
+#include "../../GUI/HorizontalValueSlider.h"
+#include "../../GUI/VerticalValueSlider.h"
 
 class WorldSelectionScreen : public Screen
 {
@@ -40,5 +42,8 @@ private:
 
 	TextInput textInput;
 	HorizontalSlider textSlider;
+
+	HorizontalValueSlider hValueSlider;
+	VerticalValueSlider vValueSlider;
 
 };

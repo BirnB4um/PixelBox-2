@@ -45,12 +45,33 @@ void WorldSelectionScreen::init() {
 
 	textSlider.reloadResources();
 	textSlider.setBounds(300, 250, 200, 30);
-	textSlider.setRange(0, 200);
-	textSlider.setValue(50);
 	textSlider.setFunction([this]() {
 		textInput.setFontSize(textSlider.getValue());
+		hValueSlider.setRange(-1, textSlider.getValue());
 		});
+	textSlider.setRange(0, 200);
+	textSlider.setValue(50);
 	m_worldMenu.addElement(&textSlider);
+
+	hValueSlider.reloadResources();
+	hValueSlider.setBounds(200, 500, 200, 30);
+	hValueSlider.setRange(-400, -100);
+	hValueSlider.setValue(0);
+	hValueSlider.setFunction([this]() {
+		std::cout << hValueSlider.getValue() << std::endl;
+		});
+	m_worldMenu.addElement(&hValueSlider);
+
+	vValueSlider.reloadResources();
+	vValueSlider.setBounds(150, 500, 30, 200);
+	vValueSlider.setRange(-100, 300);
+	vValueSlider.setValue(10);
+	vValueSlider.setFunction([this]() {
+		std::cout << vValueSlider.getValue() << std::endl;
+		});
+	m_worldMenu.addElement(&vValueSlider);
+	
+	m_worldMenu.resetSliders();
 
 
 	reloadGuiResources();

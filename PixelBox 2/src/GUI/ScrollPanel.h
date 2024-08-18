@@ -9,7 +9,6 @@
 /*
 
 TODO: 
-- use view instead of rendering to a rendertexture
 - dont show scrollbar if the window covers all content
 
 */
@@ -29,10 +28,14 @@ public:
 
 	// clear all elements and set their parent to null
 	void clearElements() override;
+
 	// Ownership of element retains with the caller
 	void addElement(GuiElement* element) override;
+
 	void setScrollable(bool vertical, bool horizontal);
 	void setSliderWidth(float width);
+
+	//shift sliders to show top left corner
 	void resetSliders();
 
 

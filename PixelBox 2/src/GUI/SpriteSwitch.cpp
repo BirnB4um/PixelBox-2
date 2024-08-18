@@ -1,34 +1,34 @@
-#include "SpriteButton.h"
-#include "../Application.h"
+#include "SpriteSwitch.h"
 
-SpriteButton::SpriteButton(): Button() {
+
+SpriteSwitch::SpriteSwitch() : Switch() {
 	m_sprite.setPosition(0.0f, 0.0f);
 }
 
-SpriteButton::~SpriteButton() {
+SpriteSwitch::~SpriteSwitch() {
 }
 
-void SpriteButton::render(sf::RenderTarget& window) {
-	Button::render(window);
+void SpriteSwitch::render(sf::RenderTarget& window) {
+	Switch::render(window);
 	window.draw(m_sprite);
 }
 
-void SpriteButton::reloadResources() {
-	Button::reloadResources();
+void SpriteSwitch::reloadResources() {
+	Switch::reloadResources();
 	m_sprite.setTexture(*ResourceManager::getGuiTexture(), false);
 }
 
-void SpriteButton::setTexture(sf::Texture* texture) {
+void SpriteSwitch::setTexture(sf::Texture* texture) {
 	m_sprite.setTexture(*texture, false);
 }
 
-void SpriteButton::setTexturePatch(sf::IntRect area) {
+void SpriteSwitch::setTexturePatch(sf::IntRect area) {
 	m_sprite.setTextureRect(area);
 	updateBounds();
 }
 
-void SpriteButton::updateBounds() {
-	Button::updateBounds();
+void SpriteSwitch::updateBounds() {
+	Switch::updateBounds();
 
 	sf::IntRect spriteSize = m_sprite.getTextureRect();
 	float spriteRatio = static_cast<float>(spriteSize.width) / static_cast<float>(spriteSize.height);

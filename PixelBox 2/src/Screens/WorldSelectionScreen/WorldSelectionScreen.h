@@ -5,6 +5,9 @@
 #include "../../GUI/TextInput.h"
 #include "../../GUI/HorizontalValueSlider.h"
 #include "../../GUI/VerticalValueSlider.h"
+#include "../../GUI/Switch.h"
+#include "../../GUI/TextSwitch.h"
+#include "../../GUI/SpriteSwitch.h"
 
 class WorldSelectionScreen : public Screen
 {
@@ -45,5 +48,9 @@ private:
 
 	HorizontalValueSlider hValueSlider;
 	VerticalValueSlider vValueSlider;
+
+	Switch m_switch;
+	TextSwitch m_textSwitch;
+	SpriteSwitch m_spriteSwitch;
 
 };

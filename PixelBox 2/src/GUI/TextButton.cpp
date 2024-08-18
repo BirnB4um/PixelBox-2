@@ -10,13 +10,6 @@ TextButton::TextButton() : Button() {
 TextButton::~TextButton() {
 }
 
-bool TextButton::handleEvent(sf::Event& sfEvent) {
-	return Button::handleEvent(sfEvent);
-}
-
-void TextButton::update(float dt) {
-	Button::update(dt);
-}
 
 void TextButton::render(sf::RenderTarget& window) {
 	Button::render(window);
@@ -39,8 +32,8 @@ void TextButton::setText(std::string text) {
 }
 
 void TextButton::updateBounds() {
-	m_text.setPosition(getPosition() + getSize() / 2.0f - sf::Vector2f(m_text.getLocalBounds().width, m_text.getLocalBounds().height) / 2.0f);
 	Button::updateBounds();
+	m_text.setPosition(getPosition() + getSize() / 2.0f - sf::Vector2f(m_text.getLocalBounds().width, m_text.getLocalBounds().height) / 2.0f);
 }
 
 void TextButton::reloadResources() {

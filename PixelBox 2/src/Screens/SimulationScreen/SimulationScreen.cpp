@@ -50,7 +50,7 @@ void SimulationScreen::handleEvent(sf::Event& sfEvent) {
 		else if (sfEvent.key.code == sf::Keyboard::Escape) {
 			stopRenderingThread();
 			stopSimulationThread();
-			delete m_world;
+			deleteWorld();
 			Application::instance().closeCurrentScreen();
 		}
 		else if (sfEvent.key.code == sf::Keyboard::Num0) {
@@ -115,7 +115,7 @@ void SimulationScreen::setWorld(World* world) {
 	stopSimulationThread();
 	stopRenderingThread();
 
-	delete m_world;
+	deleteWorld();
 	m_world = world;
 	m_pixelTexture.create(world->getMetaData().width, world->getMetaData().height);
 	m_pixelSprite.setTexture(m_pixelTexture, true);
@@ -275,4 +275,9 @@ void SimulationScreen::stopRenderingThread() {
 
 sf::Vector2f SimulationScreen::getMouseWorldPos() {
 	return m_pixelView.getCenter() + static_cast<sf::Vector2f>(Application::mousePos - Application::instance().getWindowSize() / 2) / m_zoomLevel;
+}
+
+void SimulationScreen::deleteWorld() {
+	delete m_world;
+	m_world = nullptr;
 }

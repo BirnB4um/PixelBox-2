@@ -1,19 +1,13 @@
 #pragma once
 
-#include <functional>
 #include <SFML/Graphics.hpp>
-#include "GuiElement.h"
-#include "Button.h"
-#include "NinePatch.h"
-#include "../Tools/Utils.h"
-#include "../ResourceManager.h"
+#include "Switch.h"
 
-class SpriteButton : public Button
+class SpriteSwitch : public Switch
 {
 public:
-
-	SpriteButton();
-	~SpriteButton();
+	SpriteSwitch();
+	~SpriteSwitch();
 
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;
@@ -25,4 +19,7 @@ protected:
 	sf::Sprite m_sprite;
 
 	void updateBounds() override;
+
+
 };
+

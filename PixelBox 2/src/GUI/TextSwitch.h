@@ -1,18 +1,12 @@
 #pragma once
 
-#include <functional>
-#include <SFML/Graphics.hpp>
-#include "Button.h"
-#include "NinePatch.h"
-#include "../Tools/Utils.h"
-#include "../ResourceManager.h"
+#include "Switch.h"
 
-class TextButton : public Button
+class TextSwitch : public Switch
 {
 public:
-
-	TextButton();
-	~TextButton();
+	TextSwitch();
+	~TextSwitch();
 
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;
@@ -21,13 +15,9 @@ public:
 	void setFont(sf::Font& font);
 	void setFontSize(int size);
 
-
-
 protected:
 	sf::Text m_text;
 
 	void updateBounds() override;
-
-
-
 };
+

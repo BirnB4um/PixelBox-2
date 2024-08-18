@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\GUI\SpriteSwitch.h" />
     <ClInclude Include="src\GUI\HorizontalValueSlider.h" />
     <ClInclude Include="src\Ruleset\CustomRuleset.h" />
     <ClInclude Include="src\Ruleset\PixelBoxRuleset.h" />
@@ -180,8 +181,11 @@
     <ClInclude Include="src\GUI\TextInput.h" />
     <ClInclude Include="src\GUI\ValueSlider.h" />
     <ClInclude Include="src\GUI\VerticalValueSlider.h" />
+    <ClInclude Include="src\GUI\Switch.h" />
+    <ClInclude Include="src\GUI\TextSwitch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\GUI\SpriteSwitch.cpp" />
     <ClCompile Include="src\GUI\HorizontalValueSlider.cpp" />
     <ClCompile Include="src\Ruleset\CustomRuleset.cpp" />
     <ClCompile Include="src\Ruleset\PixelBoxRuleset.cpp" />
@@ -226,6 +230,8 @@
     <ClCompile Include="src\GUI\TextInput.cpp" />
     <ClCompile Include="src\GUI\ValueSlider.cpp" />
     <ClCompile Include="src\GUI\VerticalValueSlider.cpp" />
+    <ClCompile Include="src\GUI\Switch.cpp" />
+    <ClCompile Include="src\GUI\TextSwitch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\gui_texture.png" />

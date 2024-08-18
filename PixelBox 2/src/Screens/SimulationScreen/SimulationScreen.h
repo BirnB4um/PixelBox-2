@@ -74,6 +74,8 @@ private:
 
 	sf::Vector2f getMouseWorldPos();
 
+	void deleteWorld();
+
 
 
 };

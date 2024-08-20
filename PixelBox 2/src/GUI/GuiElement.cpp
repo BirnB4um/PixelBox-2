@@ -1,16 +1,5 @@
 #include "GuiElement.h"
 
-float GuiElement::m_guiScale = 1.0f;
-
-
-void GuiElement::setGuiScale(float scale) {
-	m_guiScale = scale;
-}
-
-float GuiElement::getGuiScale() {
-	return m_guiScale;
-}
-
 GuiElement::GuiElement() {
 	m_bounds = sf::FloatRect(0, 0, 0, 0);
 	m_borderWidth = 0;

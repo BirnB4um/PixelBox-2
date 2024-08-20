@@ -16,9 +16,11 @@ SimulationScreen::~SimulationScreen() {
 }
 
 void SimulationScreen::init() {
+	m_worldInteractionManager.init(this);
 }
 
 void SimulationScreen::onResize() {
+	m_worldInteractionManager.onResize();
 }
 
 void SimulationScreen::onClosing() {
@@ -28,10 +30,15 @@ void SimulationScreen::onClosing() {
 
 void SimulationScreen::onSwitch() {
 	Screen::onSwitch();
+	m_worldInteractionManager.resetAll();
+	m_selectedPixelData = 0;
 }
 
 bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 	if (handleGuiEvent(sfEvent))
+		return true;
+
+	if (m_worldInteractionManager.handleEvent(sfEvent))
 		return true;
 
 	switch (sfEvent.type)
@@ -41,7 +48,7 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 
 	case sf::Event::KeyReleased:
 		if (sfEvent.key.code == sf::Keyboard::Space) { // (un-)pause simulation
-			m_isSimulationPaused = !m_isSimulationPaused;
+			m_worldInteractionManager.m_pauseSwitch.callFunction();
 			return true;
 		}
 		else if (sfEvent.key.code == sf::Keyboard::Escape) {
@@ -101,9 +108,12 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 }
 
 void SimulationScreen::update(float dt) {
+
 	updateGui(dt);
 
 	updateView(dt);
+
+	m_worldInteractionManager.update(dt);
 }
 
 void SimulationScreen::render(sf::RenderTarget& window) {
@@ -112,6 +122,8 @@ void SimulationScreen::render(sf::RenderTarget& window) {
 	window.setView(m_pixelView);
 	window.draw(m_pixelSprite, ResourceManager::getPixelShader());
 	window.setView(Application::normalView);
+
+	m_worldInteractionManager.render(window);
 
 	renderGui(window);
 }
@@ -132,6 +144,7 @@ void SimulationScreen::setWorld(World* world) {
 	m_msPerTick = 100.0;
 	m_msPerFrame = 25.0;
 	m_boardGrabbed = false;
+	m_world->redrawWorld();
 
 	//set shader texture uniforms
 	ResourceManager::getPixelShader()->setUniform("worldSize", sf::Vector2f(world->getMetaData().width, world->getMetaData().height));
@@ -203,10 +216,13 @@ void SimulationScreen::th_simulationLoop() {
 	int waitTime;
 
 	while (!m_stopSimulationThread) {
-		{
-			std::lock_guard<std::mutex> lock(m_bufferMutex);
 
+		//FIXME: update multiple ticks per loop
+
+		{
 			timer.start();
+
+			std::lock_guard<std::mutex> lock(m_bufferMutex);
 
 			if (!m_isSimulationPaused) {
 				m_world->tick();
@@ -227,25 +243,27 @@ void SimulationScreen::th_renderingLoop() {
 	bool updateTexture;
 
 	while (!m_stopRenderingThread) {
+
+		timer.start();
+
 		//process updates
 		{
 			std::lock_guard<std::mutex> lock(m_bufferMutex);
 
-			timer.start();
+			m_world->drawToWorld();
 
 			updateTexture = m_world->renderBufferHasChanges();
 			if (updateTexture) {
 				m_world->updateRenderBuffer();
 			}
 
-			timer.stop();
 		}
 
 		//upload to GPU
-		timer.start();
 		if (updateTexture) {
 			m_pixelTexture.update(m_world->getRenderBuffer());
 		}
+
 		timer.stop();
 
 		//wait for next tick

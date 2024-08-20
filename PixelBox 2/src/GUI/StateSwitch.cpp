@@ -1,20 +1,24 @@
-#include "Button.h"
+#include "StateSwitch.h"
+#include "../Application.h"
 
-Button::Button() : InteractableGui() {
+StateSwitch::StateSwitch() : InteractableGui() {
 	m_ninePatch.setPatches(PatchAtlas::roundedIdle);
 	setBounds(sf::FloatRect(0, 0, 100, 60));
 	setBorderWidth(4);
 
 	m_hovered = false;
 	m_pressed = false;
+	m_currentState = 0;
 
 	m_function = []() {};
 }
 
-Button::~Button() {
+StateSwitch::~StateSwitch() {
+
 }
 
-bool Button::handleEvent(sf::Event& sfEvent) {
+
+bool StateSwitch::handleEvent(sf::Event& sfEvent) {
 	switch (sfEvent.type)
 	{
 	case sf::Event::MouseMoved:
@@ -34,7 +38,7 @@ bool Button::handleEvent(sf::Event& sfEvent) {
 	case sf::Event::MouseButtonReleased:
 		if (m_hovered && m_pressed) {
 			m_ninePatch.setPatches(PatchAtlas::roundedHover);
-			m_function();
+			callFunction();
 			m_pressed = false;
 			return true;
 		}
@@ -48,7 +52,7 @@ bool Button::handleEvent(sf::Event& sfEvent) {
 	return false;
 }
 
-void Button::updateInteraction() {
+void StateSwitch::updateInteraction() {
 	if (isMouseOver()) {
 		if (m_pressed) {
 			m_ninePatch.setPatches(PatchAtlas::roundedPressed);
@@ -66,26 +70,31 @@ void Button::updateInteraction() {
 	}
 }
 
-void Button::update(float dt) {
+void StateSwitch::update(float dt) {
 }
 
-void Button::render(sf::RenderTarget& window) {
+void StateSwitch::render(sf::RenderTarget& window) {
 	m_ninePatch.render(window);
 }
 
-void Button::reloadResources() {
+void StateSwitch::reloadResources() {
 	m_ninePatch.reloadResources();
 }
 
-void Button::setFunction(std::function<void()> func) {
+void StateSwitch::setFunction(std::function<void()> func) {
 	m_function = func;
 }
 
-void Button::callFunction() {
+void StateSwitch::callFunction() {
+	incrementState();
 	m_function();
 }
 
-void Button::updateBounds() {
+void StateSwitch::setState(size_t id) {
+
+}
+
+void StateSwitch::updateBounds() {
 	m_bounds.width = std::max(m_bounds.width, 2.0f * m_borderWidth);
 	m_bounds.height = std::max(m_bounds.height, 2.0f * m_borderWidth);
 
@@ -94,9 +103,14 @@ void Button::updateBounds() {
 	updateInteraction();
 }
 
-void Button::resetInteractionState() {
+
+void StateSwitch::resetInteractionState() {
 	m_pressed = false;
 	m_hovered = false;
 	m_ninePatch.setPatches(PatchAtlas::roundedIdle);
 	updateInteraction();
+}
+
+void StateSwitch::incrementState() {
+
 }

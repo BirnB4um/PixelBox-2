@@ -24,6 +24,8 @@ public:
 	NinePatch();
 	~NinePatch();
 
+	//TODO: add copy construtor and assignment operator, add move constructor and assignment operator
+
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;
 	void setTexture(sf::Texture* texture);

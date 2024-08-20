@@ -22,6 +22,7 @@ public:
 
 	//the given function gets called everytime the slider changes its value
 	void setFunction(std::function<void()> func);
+	void callFunction();
 
 	float getValue();
 	void setValue(float value);

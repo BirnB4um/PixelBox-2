@@ -43,8 +43,7 @@ bool Switch::handleEvent(sf::Event& sfEvent) {
 	case sf::Event::MouseButtonReleased:
 		if (m_hovered && m_pressed) {
 			m_ninePatch.setPatches(PatchAtlas::roundedHover);
-			m_activated = !m_activated;
-			m_function();
+			callFunction();
 			m_pressed = false;
 			return true;
 		}
@@ -103,6 +102,12 @@ void Switch::setFunction(std::function<void()> func) {
 	m_function = func;
 }
 
+void Switch::callFunction() {
+	m_activated = !m_activated;
+	m_function();
+	m_ninePatch.setPatches(m_activated ? PatchAtlas::roundedPressed : PatchAtlas::roundedIdle);
+}
+
 void Switch::updateBounds() {
 	m_bounds.width = std::max(m_bounds.width, 2.0f * m_borderWidth);
 	m_bounds.height = std::max(m_bounds.height, 2.0f * m_borderWidth);
@@ -114,6 +119,11 @@ void Switch::updateBounds() {
 
 bool Switch::isActivated() {
 	return m_activated;
+}
+
+void Switch::setActivated(bool activated) {
+	m_activated = activated;
+	m_ninePatch.setPatches(m_activated ? PatchAtlas::roundedPressed : PatchAtlas::roundedIdle);
 }
 
 void Switch::resetInteractionState() {

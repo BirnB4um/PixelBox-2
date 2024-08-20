@@ -5,7 +5,7 @@
 #include "NinePatch.h"
 #include "PatchAtlas.h"
 
-class Application;
+
 
 class Switch : public InteractableGui
 {
@@ -21,8 +21,12 @@ public:
 	void resetInteractionState() override;
 
 	void setFunction(std::function<void()> func);
+	void callFunction();
 
 	bool isActivated();
+
+	//calling this function will not trigger the Switch-function
+	void setActivated(bool activated);
 
 protected:
 	NinePatch m_ninePatch;

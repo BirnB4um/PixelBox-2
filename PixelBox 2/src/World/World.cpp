@@ -12,9 +12,9 @@ World::World(WorldMetaData& metaData) : World() {
 }
 
 World::~World() {
-	delete[] m_worldDataFront;
-	delete[] m_worldDataBack;
-	delete[] m_worldRenderBuffer;
+	delete[] reinterpret_cast<uint32_t*>(m_worldDataFront);
+	delete[] reinterpret_cast<uint32_t*>(m_worldDataBack);
+	delete[] reinterpret_cast<uint32_t*>(m_worldRenderBuffer);
 }
 
 const WorldMetaData& World::getMetaData() {
@@ -57,14 +57,14 @@ bool World::isCreated() const {
 }
 
 void World::createWorld() {
-	delete[] m_worldDataFront;
-	delete[] m_worldDataBack;
-	delete[] m_worldRenderBuffer;
+	delete[] reinterpret_cast<uint32_t*>(m_worldDataFront);
+	delete[] reinterpret_cast<uint32_t*>(m_worldDataBack);
+	delete[] reinterpret_cast<uint32_t*>(m_worldRenderBuffer);
 
-	//FIXME: allocate using uint32_t to ensure 4 byte alignment (for faster access)
-	m_worldDataFront = new uint8_t[m_metaData.width * m_metaData.height * 4];
-	m_worldDataBack = new uint8_t[m_metaData.width * m_metaData.height * 4];
-	m_worldRenderBuffer = new uint8_t[m_metaData.width * m_metaData.height * 4];
+	//allocate using uint32_t to ensure 4 byte alignment for faster access and compatability with older systems (ARM & RISC)
+	m_worldDataFront = reinterpret_cast<uint8_t*>(new uint32_t[m_metaData.width * m_metaData.height]);
+	m_worldDataBack = reinterpret_cast<uint8_t*>(new uint32_t[m_metaData.width * m_metaData.height]);
+	m_worldRenderBuffer = reinterpret_cast<uint8_t*>(new uint32_t[m_metaData.width * m_metaData.height]);
 	m_updateList.setMaxSize(m_metaData.width * m_metaData.height);
 	m_updateListNext.setMaxSize(m_metaData.width * m_metaData.height);
 	m_renderUpdates.setMaxSize(m_metaData.width * m_metaData.height);
@@ -72,10 +72,10 @@ void World::createWorld() {
 
 	//DEBUG
 	for (size_t i = 0; i < m_metaData.width * m_metaData.height * 4; i += 4) {
-		m_worldRenderBuffer[i] = rand() % 255;
-		m_worldRenderBuffer[i + 1] = rand() % 255;
-		m_worldRenderBuffer[i + 2] = rand() % 255;
-		m_worldRenderBuffer[i + 3] = 255;
+		m_worldDataFront[i] = rand() % 255;
+		m_worldDataFront[i + 1] = rand() % 255;
+		m_worldDataFront[i + 2] = rand() % 255;
+		m_worldDataFront[i + 3] = 255;
 	}
 }
 
@@ -103,17 +103,134 @@ void World::tick() {
 }
 
 void World::drawToWorld() {
-	if (isCreated() && m_drawInstructionList.size() > 0) {
-		//TODO: draw to board. probably use mutex
+	if (!isCreated())
+		return;
+
+	if (m_drawInstructionList.size() > 0) {
+
+		//draw to board
+		for (DrawInstruction& instruction : m_drawInstructionList) {
+			
+
+			if (instruction.type == DrawInstruction::Type::LINE) {
+
+				//FIXME: dont just snap to board edges, find the next position that is inside the board
+				//FIXME: optimize the shit out of this, probably by better algorithm + drawing directly to renderBuffer
+
+				//constrain positions to board size
+				instruction.startPos.x = Utils::constrain(instruction.startPos.x, 0, static_cast<int>(m_metaData.width) - 1);
+				instruction.startPos.y = Utils::constrain(instruction.startPos.y, 0, static_cast<int>(m_metaData.height) - 1);
+
+				instruction.endPos.x = Utils::constrain(instruction.endPos.x, 0, static_cast<int>(m_metaData.width) - 1);
+				instruction.endPos.y = Utils::constrain(instruction.endPos.y, 0, static_cast<int>(m_metaData.height) - 1);
+				instruction.width = Utils::constrain(instruction.width, 1.0f, 4000.0f);
+
+				//swap positions if needed
+				if (instruction.startPos.x > instruction.endPos.x) {
+					std::swap(instruction.startPos.x, instruction.endPos.x);
+					std::swap(instruction.startPos.y, instruction.endPos.y);
+				}
+
+				int dx = instruction.endPos.x - instruction.startPos.x;
+				double m = (double(instruction.endPos.y) - instruction.startPos.y) / ((dx == 0) ? 1 : dx);
+
+				int next_y = instruction.startPos.y;
+				int last_y = instruction.startPos.y;
+				int y;
+				for (int x = instruction.startPos.x; x <= instruction.endPos.x; ++x) {
+
+					next_y = instruction.startPos.y + floor(m * (x - instruction.startPos.x + ((dx == 0) ? 1 : 0)));
+
+					for (y = next_y; (next_y >= last_y && y >= last_y) || (next_y < last_y && y <= last_y); y += next_y >= last_y ? -1 : 1) {
+
+						if (y < 0)
+							break;
+
+						if (y < m_metaData.height) {
+
+							//brushsize
+							for (int _y = y - (instruction.width - 1); _y < y + instruction.width; _y++) {
+								for (int _x = x - (instruction.width - 1); _x < int(x + instruction.width); _x++) {
+
+									if (_y >= 0 && _y < m_metaData.height && _x >= 0 && _x < m_metaData.width) {
+										if (sqrt((_x - x) * (_x - x) + (_y - y) * (_y - y)) <= instruction.width - 1) {
+
+											reinterpret_cast<uint32_t*>(m_worldDataFront)[_x + _y * m_metaData.width] = instruction.pixelData;
+											m_renderUpdates.add(_x + _y * m_metaData.width);
+
+											for (int uy = Utils::constrain(_y - 1, 1, static_cast<int>(m_metaData.height) - 2); uy <= Utils::constrain(_y + 1, 1, static_cast<int>(m_metaData.height) - 2); ++uy) {
+												for (int ux = Utils::constrain(_x - 1, 1, static_cast<int>(m_metaData.width) - 2); ux <= Utils::constrain(_x + 1, 1, static_cast<int>(m_metaData.width) - 2); ++ux) {
+													m_updateList.add(ux + uy * m_metaData.width);
+													//this code runs 7 for loop deep lol
+													//TODO: optimize, but i currently don't care
+												}
+											}
+
+										}
+									}
+								}
+							}
+
+						}
+					}
+					last_y = next_y;
+
+				}
+			}
+			else if (instruction.type == DrawInstruction::Type::RECTANGLE) {
+
+				//constrain positions to board size
+				instruction.startPos.x = Utils::constrain(instruction.startPos.x, 0, static_cast<int>(m_metaData.width) - 1);
+				instruction.startPos.y = Utils::constrain(instruction.startPos.y, 0, static_cast<int>(m_metaData.height) - 1);
+				instruction.endPos.x = Utils::constrain(instruction.endPos.x, 0, static_cast<int>(m_metaData.width) - 1);
+				instruction.endPos.y = Utils::constrain(instruction.endPos.y, 0, static_cast<int>(m_metaData.height) - 1);
+
+				//swap positions if needed
+				if (instruction.startPos.x > instruction.endPos.x) {
+					std::swap(instruction.startPos.x, instruction.endPos.x);
+				}
+				if (instruction.startPos.y > instruction.endPos.y) {
+					std::swap(instruction.startPos.y, instruction.endPos.y);
+				}
+
+				//copy pixel data to board + add to renderList
+				for (size_t y = instruction.startPos.y; y <= instruction.endPos.y; ++y) {
+					for (size_t x = instruction.startPos.x; x <= instruction.endPos.x; ++x) {
+						reinterpret_cast<uint32_t*>(m_worldDataFront)[x + y * m_metaData.width] = instruction.pixelData;
+						m_renderUpdates.add(x + y * m_metaData.width);
+					}
+				}
+
+				//add to update list
+				instruction.startPos.x = Utils::constrain(instruction.startPos.x - 1, 1, static_cast<int>(m_metaData.width) - 2);
+				instruction.startPos.y = Utils::constrain(instruction.startPos.y - 1, 1, static_cast<int>(m_metaData.height) - 2);
+				instruction.endPos.x = Utils::constrain(instruction.endPos.x + 1, 1, static_cast<int>(m_metaData.width) - 2);
+				instruction.endPos.y = Utils::constrain(instruction.endPos.y + 1, 1, static_cast<int>(m_metaData.height) - 2);
+				for (size_t y = instruction.startPos.y; y <= instruction.endPos.y; ++y) {
+					for (size_t x = instruction.startPos.x; x <= instruction.endPos.x; ++x) {
+						m_updateList.add(x + y * m_metaData.width);
+					}
+				}
+
+			}
+			else if (instruction.type == DrawInstruction::Type::FILL) {
+
+			}
+			else if (instruction.type == DrawInstruction::Type::STRUCTURE) {
+
+			}
+
+		}
 
 		m_drawInstructionList.clear();
 	}
 }
 
 void World::addDrawInstruction(DrawInstruction& drawInstruction) {
-	if (isCreated()) {
-		m_drawInstructionList.push_back(drawInstruction);
-	}
+	if (!isCreated())
+		return;
+
+	m_drawInstructionList.push_back(drawInstruction);
 }
 
 void World::updateRenderBuffer() {
@@ -124,7 +241,6 @@ void World::updateRenderBuffer() {
 }
 
 bool World::renderBufferHasChanges() {
-	return true;
 	return m_renderUpdates.size() > 0;
 }
 
@@ -141,7 +257,7 @@ void World::updateAllPixels() {
 	}
 }
 
-void World::renderAllPixels() {
+void World::redrawWorld() {
 	for (size_t i = 0; i < m_metaData.width * m_metaData.height * 4; ++i) {
 		m_worldRenderBuffer[i] = m_worldDataFront[i];
 	}

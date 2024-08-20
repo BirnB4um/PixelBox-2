@@ -5,10 +5,14 @@
 #include <mutex>
 #include "../Screen.h"
 #include "../../World/World.h"
+#include "WorldInteractionManager.h"
 
 class SimulationScreen : public Screen
 {
 public:
+
+	friend class WorldInteractionManager;
+
 	SimulationScreen();
 	~SimulationScreen();
 
@@ -60,6 +64,10 @@ private:
 	bool m_stopSimulationThread;
 	bool m_stopRenderingThread;
 	std::mutex m_bufferMutex; //mutex for all buffers in World
+
+	WorldInteractionManager m_worldInteractionManager;
+
+	uint32_t m_selectedPixelData;
 
 	void resetView();
 	void updateView(float dt);

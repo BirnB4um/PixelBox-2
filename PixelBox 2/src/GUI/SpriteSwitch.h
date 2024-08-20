@@ -15,11 +15,12 @@ public:
 	void setTexture(sf::Texture* texture);
 	void setTexturePatch(sf::IntRect area);
 
+	void setSpritePadding(float padding);
+	inline float getSpritePadding() { return m_spritePadding; }
+
 protected:
 	sf::Sprite m_sprite;
+	float m_spritePadding;
 
 	void updateBounds() override;
-
-
 };
-

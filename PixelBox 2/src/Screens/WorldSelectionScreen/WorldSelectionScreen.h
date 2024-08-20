@@ -1,13 +1,6 @@
 #pragma once
 #include "../Screen.h"
-#include "../../GUI/Panel.h"
-#include "../../GUI/ScrollPanel.h"
-#include "../../GUI/TextInput.h"
-#include "../../GUI/HorizontalValueSlider.h"
-#include "../../GUI/VerticalValueSlider.h"
-#include "../../GUI/Switch.h"
-#include "../../GUI/TextSwitch.h"
-#include "../../GUI/SpriteSwitch.h"
+#include "../../GUI/GUI.h"
 
 class WorldSelectionScreen : public Screen
 {
@@ -52,5 +45,8 @@ private:
 	Switch m_switch;
 	TextSwitch m_textSwitch;
 	SpriteSwitch m_spriteSwitch;
+
+	TextStateSwitch m_textStateSwitch;
+	SpriteStateSwitch m_spriteStateSwitch;
 
 };

@@ -7,8 +7,6 @@ class GuiContainer;
 class GuiElement
 {
 public:
-	static void setGuiScale(float scale);
-	static float getGuiScale();
 
 	GuiElement();
 	~GuiElement();
@@ -37,7 +35,6 @@ public:
 	GuiContainer* getParent();
 
 protected:
-	static float m_guiScale;
 
 	GuiContainer* m_parentGui;
 

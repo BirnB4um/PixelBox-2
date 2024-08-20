@@ -23,6 +23,7 @@ public:
 		this->maxSize = maxSize;
 		delete[] map;
 		map = new bool[maxSize];
+		memset(map, 0, maxSize);
 		clear();
 		items.reserve(maxSize);
 	}
@@ -31,12 +32,17 @@ public:
 		return maxSize;
 	}
 
-	inline void add(size_t item) {
+	//add item to set
+	//returns true if item was added, false if it was already in the set
+	inline bool add(size_t item) {
 		assert(item < maxSize);
-		if (!map[item]) {
-			map[item] = true;
-			items.push_back(item);
-		}
+
+		if (map[item])
+			return false;
+
+		map[item] = true;
+		items.push_back(item);
+		return true;
 	}
 
 	inline bool isSet(size_t item) const {

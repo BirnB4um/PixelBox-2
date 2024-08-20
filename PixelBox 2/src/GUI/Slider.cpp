@@ -91,6 +91,10 @@ void Slider::setFunction(std::function<void()> func) {
 	m_function = func;
 }
 
+void Slider::callFunction() {
+	m_function();
+}
+
 void Slider::updateBounds() {
 	m_bounds.width = std::max(m_bounds.width, 2.0f * m_borderWidth);
 	m_bounds.height = std::max(m_bounds.height, 2.0f * m_borderWidth);

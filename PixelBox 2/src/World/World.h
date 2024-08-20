@@ -10,6 +10,7 @@
 #include "WorldMetaData.h"
 #include "DrawInstruction.h"
 #include "../Tools/ByteSet.h"
+#include "../Tools/Utils.h"
 
 
 class World
@@ -55,6 +56,7 @@ public:
 
 	//draw all DrawInstructions to World
 	void drawToWorld();
+	void redrawWorld();
 
 	void addDrawInstruction(DrawInstruction& drawInstruction);
 
@@ -64,7 +66,6 @@ public:
 	uint8_t* getRenderBuffer();
 
 	void updateAllPixels();
-	void renderAllPixels();
 
 private:
 
@@ -75,7 +76,7 @@ private:
 
 	ByteSet m_updateList;
 	ByteSet m_updateListNext;
-	ByteSet m_renderUpdates;//contains differences between last rendered frame
+	ByteSet m_renderUpdates;//contains indecies of differences between now and last rendered frame
 
 	std::vector<DrawInstruction> m_drawInstructionList;
 

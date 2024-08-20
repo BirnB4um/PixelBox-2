@@ -93,6 +93,10 @@ void ValueSlider::setFunction(std::function<void()> func) {
 	m_function = func;
 }
 
+void ValueSlider::callFunction() {
+	m_function();
+}
+
 void ValueSlider::updateBounds() {
 	m_bounds.width = std::max(m_bounds.width, 2.0f * m_borderWidth);
 	m_bounds.height = std::max(m_bounds.height, 2.0f * m_borderWidth);

@@ -74,8 +74,8 @@ World* WorldCreationScreen::createNewWorld() {
 	//TODO: create a new world based on all infos the user entered in the fields
 
 	WorldMetaData metaData;
-	metaData.width = 256;
-	metaData.height = 128;
+	metaData.width = 4096;
+	metaData.height = 4096;
 	metaData.worldName = "TestWorld";
 	metaData.ruleset = ResourceManager::instance().getRuleset(1);
 

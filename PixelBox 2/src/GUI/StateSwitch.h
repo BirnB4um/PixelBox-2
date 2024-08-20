@@ -1,21 +1,16 @@
 #pragma once
 
 #include <functional>
-#include <SFML/Graphics.hpp>
+#include <vector>
 #include "InteractableGui.h"
 #include "NinePatch.h"
-#include "PatchAtlas.h"
-#include "../Tools/Utils.h"
-#include "GuiContainer.h"
 
-class Application;
 
-class Button : public InteractableGui
+class StateSwitch : public InteractableGui
 {
 public:
-
-	Button();
-	~Button();
+	StateSwitch();
+	~StateSwitch();
 
 	bool handleEvent(sf::Event& sfEvent) override;
 	void update(float dt) override;
@@ -27,12 +22,21 @@ public:
 	void setFunction(std::function<void()> func);
 	void callFunction();
 
+	virtual void setState(size_t id);
+
+
 protected:
 	NinePatch m_ninePatch;
 	bool m_hovered;
 	bool m_pressed;
 	std::function<void()> m_function;
 
+	size_t m_currentState;
+
 	void updateBounds() override;
 	void updateInteraction();
+
+	virtual void incrementState();
+
 };
+

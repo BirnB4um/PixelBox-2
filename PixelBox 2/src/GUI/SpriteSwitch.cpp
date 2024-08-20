@@ -3,6 +3,7 @@
 
 SpriteSwitch::SpriteSwitch() : Switch() {
 	m_sprite.setPosition(0.0f, 0.0f);
+	m_spritePadding = 0.0f;
 }
 
 SpriteSwitch::~SpriteSwitch() {
@@ -35,12 +36,18 @@ void SpriteSwitch::updateBounds() {
 	float buttonRatio = (m_bounds.width - 2.0f * m_borderWidth) / (m_bounds.height - 2.0f * m_borderWidth);
 	float scale = 1.0f;
 	if (buttonRatio > spriteRatio) { // button wider than sprite
-		scale = (m_bounds.height - 2.0f * m_borderWidth) / static_cast<float>(spriteSize.height);
+		scale = (m_bounds.height - 2.0f * (m_borderWidth + m_spritePadding)) / static_cast<float>(spriteSize.height);
 	}
 	else {
-		scale = (m_bounds.width - 2.0f * m_borderWidth) / static_cast<float>(spriteSize.width);
+		scale = (m_bounds.width - 2.0f * (m_borderWidth + m_spritePadding)) / static_cast<float>(spriteSize.width);
 	}
 	m_sprite.setScale(scale, scale);
 	m_sprite.setPosition(m_bounds.left + m_bounds.width / 2.0f - spriteSize.width * scale / 2.0f, m_bounds.top + m_bounds.height / 2.0f - spriteSize.height * scale / 2.0f);
 
 }
+
+void SpriteSwitch::setSpritePadding(float padding) {
+	m_spritePadding = padding;
+	updateBounds();
+}
+

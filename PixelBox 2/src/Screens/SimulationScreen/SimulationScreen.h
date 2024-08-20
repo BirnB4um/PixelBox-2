@@ -5,6 +5,7 @@
 #include <mutex>
 #include "../Screen.h"
 #include "../../World/World.h"
+#include "../../World/DrawInstruction.h"
 #include "WorldInteractionManager.h"
 
 class SimulationScreen : public Screen
@@ -68,6 +69,10 @@ private:
 	WorldInteractionManager m_worldInteractionManager;
 
 	uint32_t m_selectedPixelData;
+
+	//for collecting instructions before copying to worlds instruction buffer
+	std::mutex m_drawingMutex;
+	std::vector<DrawInstruction> m_collectedDrawInstructions;
 
 	void resetView();
 	void updateView(float dt);

@@ -7,7 +7,7 @@ WorldInteractionManager::WorldInteractionManager() {
 	m_simulation = nullptr;
 	m_isDrawing = false;
 
-	m_linePreview.setFillColor(sf::Color(255,0,0));
+	m_linePreview.setFillColor(sf::Color(255, 0, 0));
 	m_rectPreview.setFillColor(sf::Color::Transparent);
 	m_rectPreview.setOutlineColor(sf::Color(255, 0, 0));
 	m_circlePreview.setFillColor(sf::Color::Transparent);
@@ -104,7 +104,6 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		});
 	m_simulation->addGuiElement(&m_selectionSwitch);
 
-
 	//Toggle switches
 
 	m_gridSwitch.setBorderWidth(2.0f);
@@ -144,7 +143,7 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 	switch (sfEvent.type)
 	{
 	case sf::Event::KeyReleased:
-		if(sfEvent.key.code == sf::Keyboard::R){
+		if (sfEvent.key.code == sf::Keyboard::R) {
 			uint32_t data = 0xff0000ff;
 			reinterpret_cast<uint8_t*>(&data)[0] = rand() % 255;
 			reinterpret_cast<uint8_t*>(&data)[1] = rand() % 255;
@@ -154,20 +153,13 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 			DrawInstruction instruction(
 				data,
 				{ 0,0 },
-				{ 0, 0 },
-				DrawInstruction::Type::LINE,
+				{ static_cast<int>(m_simulation->m_world->getMetaData().width),static_cast<int>(m_simulation->m_world->getMetaData().height) },
+				DrawInstruction::Type::RECTANGLE,
 				1.0f,
 				nullptr);
 
-			std::lock_guard<std::mutex> lock(m_simulation->m_bufferMutex);
-
-			for (size_t y = 0; y < m_simulation->m_world->getMetaData().height; ++y) {
-				for (size_t x = 0; x < m_simulation->m_world->getMetaData().width; ++x) {
-					reinterpret_cast<uint32_t*>(m_simulation->m_world->getRenderBuffer())[x + y * m_simulation->m_world->getMetaData().width] = data;
-				}
-			}
-
-			m_simulation->m_world->addDrawInstruction(instruction);
+			std::lock_guard<std::mutex> lock(m_simulation->m_drawingMutex);
+			m_simulation->m_collectedDrawInstructions.push_back(instruction);
 
 			return true;
 		}
@@ -182,13 +174,12 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 				return true;
 			}
 			else { //interacting
-
 			}
 		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
-		{
+	{
 		if (m_isDrawing) {
 			m_isDrawing = false;
 
@@ -217,17 +208,13 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 				instruction.startPos = instruction.endPos;
 			}
 
-			std::lock_guard<std::mutex> lock(m_simulation->m_bufferMutex);
-
-			m_simulation->m_world->addDrawInstruction(instruction);
+			std::lock_guard<std::mutex> lock(m_simulation->m_drawingMutex);
+			m_simulation->m_collectedDrawInstructions.push_back(instruction);
 
 			return true;
 		}
-
-
-
-		}
-		break;
+	}
+	break;
 
 	default:
 		break;
@@ -237,16 +224,12 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 }
 
 void WorldInteractionManager::update(float dt) {
-
 	//if drawing with brush
 	if (m_brushSwitch.isActivated() && m_isDrawing) {
-
 		//if mouse moved relative to board
 		if (m_startDrawingPosition != m_simulation->getMouseWorldPos()) {
-
 			//create drawing instruction for brush
 			{
-
 				DrawInstruction instruction(
 					m_simulation->m_selectedPixelData,
 					static_cast<sf::Vector2i>(m_startDrawingPosition),
@@ -257,15 +240,11 @@ void WorldInteractionManager::update(float dt) {
 
 				m_startDrawingPosition = m_simulation->getMouseWorldPos();
 
-				std::lock_guard<std::mutex> lock(m_simulation->m_bufferMutex);
-				
-				m_simulation->m_world->addDrawInstruction(instruction);
-
+				std::lock_guard<std::mutex> lock(m_simulation->m_drawingMutex);
+				m_simulation->m_collectedDrawInstructions.push_back(instruction);
 			}
-
 		}
 	}
-
 }
 
 void WorldInteractionManager::render(sf::RenderTarget& window) {
@@ -293,7 +272,6 @@ void WorldInteractionManager::render(sf::RenderTarget& window) {
 			m_rectPreview.setSize(m_simulation->getMouseWorldPos() - m_startDrawingPosition);
 			m_rectPreview.setOutlineThickness(4.0f / m_simulation->m_zoomLevel);
 			window.draw(m_rectPreview);
-
 		}
 		else if (m_circleSwitch.isActivated()) {
 			//draw circle preview
@@ -342,7 +320,6 @@ void WorldInteractionManager::onResize() {
 	y += w + margin;
 	m_resetButton.setBounds(x, y, w, w);
 	m_undoButton.setBounds(x + w + margin, y, w, w);
-
 }
 
 void WorldInteractionManager::resetAll() {

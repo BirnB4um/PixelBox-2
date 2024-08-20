@@ -248,6 +248,12 @@ void SimulationScreen::th_renderingLoop() {
 
 		//process updates
 		{
+			{
+				std::lock_guard<std::mutex> lock(m_drawingMutex);
+				m_world->addDrawInstruction(m_collectedDrawInstructions);
+				m_collectedDrawInstructions.clear();
+			}
+
 			std::lock_guard<std::mutex> lock(m_bufferMutex);
 
 			m_world->drawToWorld();

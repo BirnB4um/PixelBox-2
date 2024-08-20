@@ -115,7 +115,7 @@ void World::drawToWorld() {
 			if (instruction.type == DrawInstruction::Type::LINE) {
 
 				//FIXME: dont just snap to board edges, find the next position that is inside the board
-				//FIXME: optimize the shit out of this, probably by better algorithm + drawing directly to renderBuffer
+				//FIXME: optimize the shit out of this, probably by better algorithm + drawing directly to renderBuffer (which causes tearing)
 
 				//constrain positions to board size
 				instruction.startPos.x = Utils::constrain(instruction.startPos.x, 0, static_cast<int>(m_metaData.width) - 1);
@@ -123,7 +123,7 @@ void World::drawToWorld() {
 
 				instruction.endPos.x = Utils::constrain(instruction.endPos.x, 0, static_cast<int>(m_metaData.width) - 1);
 				instruction.endPos.y = Utils::constrain(instruction.endPos.y, 0, static_cast<int>(m_metaData.height) - 1);
-				instruction.width = Utils::constrain(instruction.width, 1.0f, 4000.0f);
+				instruction.width = std::max(instruction.width, 1.0f);
 
 				//swap positions if needed
 				if (instruction.startPos.x > instruction.endPos.x) {
@@ -215,6 +215,52 @@ void World::drawToWorld() {
 			}
 			else if (instruction.type == DrawInstruction::Type::FILL) {
 
+				//constrain positions to board size
+				instruction.startPos.x = Utils::constrain(instruction.startPos.x, 0, static_cast<int>(m_metaData.width) - 1);
+				instruction.startPos.y = Utils::constrain(instruction.startPos.y, 0, static_cast<int>(m_metaData.height) - 1);
+
+				uint8_t itemIDtoOverride = m_worldDataFront[(instruction.startPos.y * m_metaData.width + instruction.startPos.x) * 4];
+				uint8_t itemID = *reinterpret_cast<uint8_t*>(&instruction.pixelData);
+
+				if (itemIDtoOverride == itemID)
+					continue;
+
+				std::vector<size_t> test_list;
+				test_list.reserve(4 * 1000);
+				test_list.push_back(instruction.startPos.y * m_metaData.width + instruction.startPos.x);
+
+				size_t next_i;
+				while (test_list.size() > 0) {
+					next_i = test_list[test_list.size() - 1];
+					test_list.pop_back();
+
+					uint8_t id = m_worldDataFront[next_i * 4];
+					if (id == itemIDtoOverride) {
+						reinterpret_cast<uint32_t*>(m_worldDataFront)[next_i] = instruction.pixelData;
+						m_renderUpdates.add(next_i);
+						m_updateList.add(next_i);
+
+						if (next_i % m_metaData.width > 0) {
+							test_list.push_back(next_i - 1);
+
+						}
+
+						if (next_i % m_metaData.width < m_metaData.width - 1) {
+							test_list.push_back(next_i + 1);
+
+						}
+
+						if (next_i <= m_metaData.width * (m_metaData.height - 1)) {
+							test_list.push_back(next_i + m_metaData.width);
+
+						}
+
+						if (next_i >= m_metaData.width) {
+							test_list.push_back(next_i - m_metaData.width);
+
+						}
+					}
+				}
 			}
 			else if (instruction.type == DrawInstruction::Type::STRUCTURE) {
 
@@ -231,6 +277,15 @@ void World::addDrawInstruction(DrawInstruction& drawInstruction) {
 		return;
 
 	m_drawInstructionList.push_back(drawInstruction);
+}
+
+void World::addDrawInstruction(std::vector<DrawInstruction>& drawInstructionList) {
+	if (!isCreated())
+		return;
+
+	//extend m_drawInstructionList with drawInstructionList
+	m_drawInstructionList.reserve(m_drawInstructionList.size() + drawInstructionList.size());
+	m_drawInstructionList.insert(m_drawInstructionList.end(), drawInstructionList.begin(), drawInstructionList.end());
 }
 
 void World::updateRenderBuffer() {

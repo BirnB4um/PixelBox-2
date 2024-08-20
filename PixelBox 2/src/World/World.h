@@ -59,6 +59,7 @@ public:
 	void redrawWorld();
 
 	void addDrawInstruction(DrawInstruction& drawInstruction);
+	void addDrawInstruction(std::vector<DrawInstruction>& drawInstructionList);
 
 	void updateRenderBuffer();
 	bool renderBufferHasChanges();

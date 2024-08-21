@@ -110,7 +110,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_gridSwitch.setSpritePadding(4.0f);
 	m_gridSwitch.setTexturePatch({ 68, 13, 7, 7 });
 	m_gridSwitch.setFunction([this]() {
-		std::cout << "grid: " << m_gridSwitch.isActivated() << std::endl;
+		ResourceManager::getPixelShader()->setUniform("drawGrid", m_gridSwitch.isActivated());
 		});
 	m_simulation->addGuiElement(&m_gridSwitch);
 
@@ -163,6 +163,9 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 			m_simulation->m_collectedDrawInstructions.push_back(instruction);
 
 			return true;
+		}
+		else if (sfEvent.key.code == sf::Keyboard::F) {
+			m_fillSwitch.callFunction();
 		}
 		break;
 

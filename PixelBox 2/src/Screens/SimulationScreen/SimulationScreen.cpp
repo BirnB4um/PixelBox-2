@@ -91,10 +91,20 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 			m_boardGrabbed = true;
 			return true;
 		}
+		else if (sfEvent.mouseButton.button == sf::Mouse::Left && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+			m_startGrabbedMousePos = Application::mousePos;
+			m_startGrabbedViewCenter = m_targetViewCenter;
+			m_boardGrabbed = true;
+			return true;
+		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
 		if (sfEvent.mouseButton.button == sf::Mouse::Middle) {
+			m_boardGrabbed = false;
+			return true;
+		}
+		else if (sfEvent.mouseButton.button == sf::Mouse::Left) {
 			m_boardGrabbed = false;
 			return true;
 		}
@@ -151,6 +161,7 @@ void SimulationScreen::setWorld(World* world) {
 	ResourceManager::getPixelShader()->setUniform("pixelColorTexture", *world->getMetaData().ruleset->getPixelTexture());
 	ResourceManager::getPixelShader()->setUniform("pixelDetailTexture", *world->getMetaData().ruleset->getDetailedPixelTexture());
 	ResourceManager::getPixelShader()->setUniform("detailMode", false);
+	ResourceManager::getPixelShader()->setUniform("drawGrid", false);
 
 	startSimulationThread();
 	startRenderingThread();

@@ -148,6 +148,9 @@ void SimulationScreen::setWorld(World* world) {
 
 	//set shader texture uniforms
 	ResourceManager::getPixelShader()->setUniform("worldSize", sf::Vector2f(world->getMetaData().width, world->getMetaData().height));
+	ResourceManager::getPixelShader()->setUniform("pixelColorTexture", *world->getMetaData().ruleset->getPixelTexture());
+	ResourceManager::getPixelShader()->setUniform("pixelDetailTexture", *world->getMetaData().ruleset->getDetailedPixelTexture());
+	ResourceManager::getPixelShader()->setUniform("detailMode", false);
 
 	startSimulationThread();
 	startRenderingThread();

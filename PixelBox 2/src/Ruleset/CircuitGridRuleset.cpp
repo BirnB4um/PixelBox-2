@@ -5,6 +5,14 @@
 CircuitGridRuleset::CircuitGridRuleset() {
 	m_id = 1;
 
+	if (!m_pixels.loadFromFile("res/textures/CircuitGrid/pixels.png")) {
+		throw std::runtime_error("Error loading res/textures/CircuitGrid/pixels.png");
+	}
+
+	if (!m_detailedPixels.loadFromFile("res/textures/CircuitGrid/detailed_pixels.png")) {
+		throw std::runtime_error("Error loading res/textures/CircuitGrid/detailed_pixels.png");
+	}
+
 	frontBuffer = nullptr;
 	backBuffer = nullptr;
 	width = 0;

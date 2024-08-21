@@ -18,8 +18,6 @@ public:
 
 	static bool loadResources();
 
-	static bool reloadShader();
-
 	static sf::Texture* getGuiTexture();
 	static sf::Texture* getLogoTexture();
 	static sf::Font* getPixelFont();
@@ -35,6 +33,7 @@ private:
 
 	sf::Texture m_guiTexture;
 	sf::Texture m_logoTexture;
+
 	sf::Font m_pixelfont;
 	sf::Shader m_pixelShader;
 

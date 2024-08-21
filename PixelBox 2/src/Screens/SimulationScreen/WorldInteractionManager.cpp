@@ -114,11 +114,12 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		});
 	m_simulation->addGuiElement(&m_gridSwitch);
 
+
 	m_detailSwitch.setBorderWidth(2.0f);
 	m_detailSwitch.setSpritePadding(4.0f);
 	m_detailSwitch.setTexturePatch({ 61, 20, 4, 6 });
 	m_detailSwitch.setFunction([this]() {
-		std::cout << "detail: " << m_detailSwitch.isActivated() << std::endl;
+		ResourceManager::getPixelShader()->setUniform("detailMode", m_detailSwitch.isActivated());
 		});
 	m_simulation->addGuiElement(&m_detailSwitch);
 
@@ -162,10 +163,6 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 			m_simulation->m_collectedDrawInstructions.push_back(instruction);
 
 			return true;
-		}
-		else if (sfEvent.key.code == sf::Keyboard::Y) {
-			ResourceManager::reloadShader();
-			ResourceManager::getPixelShader()->setUniform("worldSize", sf::Vector2f(m_simulation->m_world->getMetaData().width, m_simulation->m_world->getMetaData().height));
 		}
 		break;
 

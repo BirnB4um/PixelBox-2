@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include "Ruleset.h"
 
 class CircuitGridRuleset : public Ruleset
@@ -6,7 +7,7 @@ class CircuitGridRuleset : public Ruleset
 
 public:
 	CircuitGridRuleset();
-	~CircuitGridRuleset();
+	~CircuitGridRuleset() override;
 
 	void updateAllPixels(World* world) override;
 	const bool updatePixel(size_t& index) const override;

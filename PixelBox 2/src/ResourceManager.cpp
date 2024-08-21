@@ -18,17 +18,17 @@ bool ResourceManager::loadResources()
 
 	// Load textures
 	if (!resourceManager.m_guiTexture.loadFromFile("res/textures/gui_texture.png")) {
-		std::cout << "Failed to load gui_texture.png" << std::endl;
+		std::cout << "Failed to load res/textures/gui_texture.png" << std::endl;
 		return false;
 	}
 	if (!resourceManager.m_logoTexture.loadFromFile("res/textures/logo.png")) {
-		std::cout << "Failed to load logo.png" << std::endl;
+		std::cout << "Failed to load res/textures/logo.png" << std::endl;
 		return false;
 	}
 
 	// Load font
 	if (!resourceManager.m_pixelfont.loadFromFile("res/fonts/pixelfont.ttf")) {
-		std::cout << "Failed to load pixelfont.ttf" << std::endl;
+		std::cout << "Failed to load res/fonts/pixelfont.ttf" << std::endl;
 		return false;
 	}
 
@@ -47,24 +47,10 @@ bool ResourceManager::loadResources()
 
 	//load shaders
 	if (!resourceManager.m_pixelShader.loadFromFile("res/shader/pixelShader.frag", sf::Shader::Fragment)) {
-		std::cout << "Failed to load pixelShader.frag" << std::endl;
+		std::cout << "Failed to load res/shader/pixelShader.frag" << std::endl;
 		return false;
 	}
 	
-	return true;
-}
-
-
-bool ResourceManager::reloadShader()
-{
-	ResourceManager& resourceManager = instance();
-
-	//load shaders
-	if (!resourceManager.m_pixelShader.loadFromFile("res/shader/pixelShader.frag", sf::Shader::Fragment)) {
-		std::cout << "Failed to load pixelShader.frag" << std::endl;
-		return false;
-	}
-
 	return true;
 }
 

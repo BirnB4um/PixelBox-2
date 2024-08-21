@@ -68,7 +68,7 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 		{
 			float delta = sfEvent.mouseWheelScroll.delta; // up = 1 ; down = -1
 			float zoomAmount = delta > 0 ? 1.0f/0.8f : delta < 0 ? 0.8f : 0.0f;
-			m_targetZoomLevel = std::max(0.2f, std::min(2000.0f, m_targetZoomLevel * zoomAmount));
+			m_targetZoomLevel = std::max(0.1f, std::min(2000.0f, m_targetZoomLevel * zoomAmount));
 
 			
 			//FIXME: zooming in on mouse works, but the animation is not direct because zoomLevel and center approximate

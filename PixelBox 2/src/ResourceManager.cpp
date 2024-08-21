@@ -54,6 +54,20 @@ bool ResourceManager::loadResources()
 	return true;
 }
 
+
+bool ResourceManager::reloadShader()
+{
+	ResourceManager& resourceManager = instance();
+
+	//load shaders
+	if (!resourceManager.m_pixelShader.loadFromFile("res/shader/pixelShader.frag", sf::Shader::Fragment)) {
+		std::cout << "Failed to load pixelShader.frag" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
 sf::Texture* ResourceManager::getGuiTexture() {
 	return &ResourceManager::instance().m_guiTexture;
 }

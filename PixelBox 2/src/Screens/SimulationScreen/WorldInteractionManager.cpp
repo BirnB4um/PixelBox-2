@@ -163,6 +163,10 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 
 			return true;
 		}
+		else if (sfEvent.key.code == sf::Keyboard::Y) {
+			ResourceManager::reloadShader();
+			ResourceManager::getPixelShader()->setUniform("worldSize", sf::Vector2f(m_simulation->m_world->getMetaData().width, m_simulation->m_world->getMetaData().height));
+		}
 		break;
 
 	case sf::Event::MouseButtonPressed:

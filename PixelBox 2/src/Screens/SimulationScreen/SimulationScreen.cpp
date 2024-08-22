@@ -17,10 +17,12 @@ SimulationScreen::~SimulationScreen() {
 
 void SimulationScreen::init() {
 	m_worldInteractionManager.init(this);
+	m_inventory.init(this);
 }
 
 void SimulationScreen::onResize() {
 	m_worldInteractionManager.onResize();
+	m_inventory.onResize();
 }
 
 void SimulationScreen::onClosing() {
@@ -31,15 +33,19 @@ void SimulationScreen::onClosing() {
 void SimulationScreen::onSwitch() {
 	Screen::onSwitch();
 	m_worldInteractionManager.resetAll();
-	m_selectedPixelData = 0;
+	m_inventory.resetAll();
 }
 
 bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 	if (handleGuiEvent(sfEvent))
 		return true;
 
+	if (m_inventory.handleEvent(sfEvent))
+		return true;
+
 	if (m_worldInteractionManager.handleEvent(sfEvent))
 		return true;
+
 
 	switch (sfEvent.type)
 	{
@@ -124,6 +130,7 @@ void SimulationScreen::update(float dt) {
 	updateView(dt);
 
 	m_worldInteractionManager.update(dt);
+	m_inventory.update(dt);
 }
 
 void SimulationScreen::render(sf::RenderTarget& window) {
@@ -134,6 +141,7 @@ void SimulationScreen::render(sf::RenderTarget& window) {
 	window.setView(Application::normalView);
 
 	m_worldInteractionManager.render(window);
+	m_inventory.render(window);
 
 	renderGui(window);
 }
@@ -155,6 +163,7 @@ void SimulationScreen::setWorld(World* world) {
 	m_msPerFrame = 25.0;
 	m_boardGrabbed = false;
 	m_world->redrawWorld();
+	m_inventory.createFromRuleset(m_world->getMetaData().ruleset);
 
 	//set shader texture uniforms
 	ResourceManager::getPixelShader()->setUniform("worldSize", sf::Vector2f(world->getMetaData().width, world->getMetaData().height));

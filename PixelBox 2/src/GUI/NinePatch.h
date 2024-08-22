@@ -24,7 +24,60 @@ public:
 	NinePatch();
 	~NinePatch();
 
-	//TODO: add copy construtor and assignment operator, add move constructor and assignment operator
+	
+	//copy constructor
+	NinePatch(const NinePatch& other) : GuiElement(other) {
+		m_vertexBuffer = other.m_vertexBuffer;
+		m_renderState = other.m_renderState;
+
+		m_verticesArray = new sf::Vertex[54];
+		for (int i = 0; i < 54; ++i) {
+			m_verticesArray[i] = other.m_verticesArray[i];
+		}
+	}
+
+	//copy assignment operator
+	NinePatch& operator=(const NinePatch& other) {
+		if (this != &other) {
+			GuiElement::operator=(other);
+
+			m_vertexBuffer = other.m_vertexBuffer;
+			m_renderState = other.m_renderState;
+
+			delete[] m_verticesArray;
+			m_verticesArray = new sf::Vertex[54];
+			for (int i = 0; i < 54; ++i) {
+				m_verticesArray[i] = other.m_verticesArray[i];
+			}
+		}
+		return *this;
+	}
+
+	//move constructor
+	NinePatch(NinePatch&& other) noexcept : GuiElement(std::move(other)) {
+		m_vertexBuffer = other.m_vertexBuffer;
+		m_renderState = other.m_renderState;
+
+		m_verticesArray = other.m_verticesArray;
+		other.m_verticesArray = nullptr;
+	}
+
+	//move assignment operator
+	NinePatch& operator=(NinePatch&& other) noexcept {
+		if (this != &other) {
+			GuiElement::operator=(std::move(other));
+
+			m_vertexBuffer = other.m_vertexBuffer;
+			m_renderState = other.m_renderState;
+
+			delete[] m_verticesArray;
+			m_verticesArray = other.m_verticesArray;
+			other.m_verticesArray = nullptr;
+		}
+		return *this;
+	}
+
+
 
 	void render(sf::RenderTarget& window) override;
 	void reloadResources() override;

@@ -33,13 +33,6 @@ ScrollPanel::~ScrollPanel() {
 }
 
 bool ScrollPanel::handleEvent(sf::Event& sfEvent) {
-
-	//switch (sfEvent.type)
-	//{
-	//default:
-	//	break;
-	//}
-
 	if (Panel::handleEvent(sfEvent))
 		return true;
 
@@ -48,6 +41,29 @@ bool ScrollPanel::handleEvent(sf::Event& sfEvent) {
 
 	if (m_verticalSlider.handleEvent(sfEvent))
 		return true;
+
+	switch (sfEvent.type)
+	{
+	case sf::Event::MouseButtonPressed:
+		if (isMouseOver())
+			return true;
+	case sf::Event::MouseWheelScrolled:
+		if (isMouseOver()) {
+			float delta = -sfEvent.mouseWheelScroll.delta * 50.0f;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+				if (m_horizontalScrollable)
+					m_horizontalSlider.setValue(m_horizontalSlider.getValue() + delta);
+			}
+			else {
+				if (m_verticalScrollable)
+					m_verticalSlider.setValue(m_verticalSlider.getValue() + delta);
+			}
+
+			return true;
+		}
+	default:
+		break;
+	}
 
 	return false;
 }

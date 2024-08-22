@@ -97,3 +97,7 @@ void Ruleset::addSurrondingPixels(size_t& index) const {
 	}
 
 }
+
+void Ruleset::createInventory() {
+
+}

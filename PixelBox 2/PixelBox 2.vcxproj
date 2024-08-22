@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Screens\SimulationScreen\Inventory.h" />
     <ClInclude Include="src\GUI\SpriteStateSwitch.h" />
     <ClInclude Include="src\GUI\GUI.h" />
     <ClInclude Include="src\GUI\SpriteSwitch.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="src\Tools\Utils.h" />
     <ClInclude Include="src\GUI\VerticalSlider.h" />
     <ClInclude Include="src\Screens\WorldSelectionScreen\WorldsPanel.h" />
+    <ClInclude Include="src\World\PixelData.h" />
     <ClInclude Include="src\World\World.h" />
     <ClInclude Include="src\World\WorldMetaData.h" />
     <ClInclude Include="src\Screens\WorldCreationScreen\WorldCreationScreen.h" />
@@ -188,8 +190,10 @@
     <ClInclude Include="src\GUI\StateSwitch.h" />
     <ClInclude Include="src\GUI\TextStateSwitch.h" />
     <ClInclude Include="src\Screens\SimulationScreen\WorldInteractionManager.h" />
+    <ClInclude Include="src\GUI\TextRect.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Screens\SimulationScreen\Inventory.cpp" />
     <ClCompile Include="src\GUI\SpriteStateSwitch.cpp" />
     <ClCompile Include="src\GUI\SpriteSwitch.cpp" />
     <ClCompile Include="src\GUI\HorizontalValueSlider.cpp" />
@@ -241,6 +245,7 @@
     <ClCompile Include="src\GUI\StateSwitch.cpp" />
     <ClCompile Include="src\GUI\TextStateSwitch.cpp" />
     <ClCompile Include="src\Screens\SimulationScreen\WorldInteractionManager.cpp" />
+    <ClCompile Include="src\GUI\TextRect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\gui_texture.png" />

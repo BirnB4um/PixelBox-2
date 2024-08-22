@@ -6,13 +6,16 @@
 #include "../Screen.h"
 #include "../../World/World.h"
 #include "../../World/DrawInstruction.h"
+#include "../../World/PixelData.h"
 #include "WorldInteractionManager.h"
+#include "Inventory.h"
 
 class SimulationScreen : public Screen
 {
 public:
 
 	friend class WorldInteractionManager;
+	friend class Inventory;
 
 	SimulationScreen();
 	~SimulationScreen();
@@ -67,8 +70,8 @@ private:
 	std::mutex m_bufferMutex; //mutex for all buffers in World
 
 	WorldInteractionManager m_worldInteractionManager;
+	Inventory m_inventory;
 
-	uint32_t m_selectedPixelData;
 
 	//for collecting instructions before copying to worlds instruction buffer
 	std::mutex m_drawingMutex;

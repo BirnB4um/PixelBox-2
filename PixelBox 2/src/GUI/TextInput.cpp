@@ -208,16 +208,15 @@ void TextInput::updateTextView(const sf::View& previousView) {
 	//textArea.height += 2 * padding;
 	textArea.width += 2 * padding;
 
-	sf::FloatRect view;
+	//view has to be same size as m_bounds - border
+	sf::FloatRect view(0.0f, 0.0f, size.x, size.y);
 
 	//constrain the height and width so the text doesnt render outside the bounds
 	view.left = textArea.left;
-	view.width = std::min(textArea.width, size.x);
-	view.height = std::min(textArea.height, size.y);
 	view.top = textArea.top + (textArea.height - view.height) / 2.0f; //center the text vertically
 
 	//shift the view to be at end of text if input is not empty. otherwise stay at front
-	if (!isInputEmpty()) {
+	if (!isInputEmpty() && textArea.width > view.width) {
 		view.left += textArea.width - view.width;
 	}
 
@@ -227,7 +226,7 @@ void TextInput::updateTextView(const sf::View& previousView) {
 	sf::Vector2f parentVieportPos(0.0f, 0.0f);
 	sf::Vector2f parentViewportSize = windowSize;
 	if (m_parentGui != nullptr) {
-		parentViewPos = previousView.getCenter() - previousView.getSize() * 0.5f;
+		parentViewPos = previousView.getCenter() - previousView.getSize() / 2.0f;
 		parentViewSize = previousView.getSize();
 		parentVieportPos.x = previousView.getViewport().left * windowSize.x;
 		parentVieportPos.y = previousView.getViewport().top * windowSize.y;
@@ -235,39 +234,35 @@ void TextInput::updateTextView(const sf::View& previousView) {
 		parentViewportSize.y = previousView.getViewport().height * windowSize.y;
 	}
 
+
 	sf::Vector2f offset = pos - parentViewPos;
 
 	sf::FloatRect viewport(0, 0, 0, 0);
 	viewport.left = parentVieportPos.x + offset.x;
 	viewport.top = parentVieportPos.y + offset.y + size.y / 2.0f - view.height / 2.0f;
 
+
 	//check if offset is outside of parentView and correct it
 	if (offset.x < 0) {
 		view.left -= offset.x;
 		view.width += offset.x;
-		viewport.left = parentVieportPos.x;
 	}
 	if (offset.x > parentViewSize.x - view.width) {
 		view.width = parentViewportSize.x - offset.x;
-	}
-	if (offset.x > parentViewportSize.x) {//useless???
-		offset.x = parentViewportSize.x;
 	}
 
 	if (offset.y < 0) {
 		view.top -= offset.y;
 		view.height += offset.y;
-		viewport.top = parentVieportPos.y;
 	}
 	if (offset.y > parentViewSize.y - view.height) {
 		view.height = parentViewportSize.y - offset.y;
 	}
-	if (offset.y > parentViewportSize.y) {//useless???
-		offset.y = parentViewportSize.y;
-	}
 
 	viewport.width = std::max(view.width, 0.0f);
 	viewport.height = std::max(view.height, 0.0f);
+	viewport.left = Utils::constrain(viewport.left, parentVieportPos.x, parentVieportPos.x + parentViewportSize.x - viewport.width);
+	viewport.top = Utils::constrain(viewport.top, parentVieportPos.y, parentVieportPos.y + parentViewportSize.y - viewport.height);
 
 	//normalize viewport
 	viewport.left /= windowSize.x;

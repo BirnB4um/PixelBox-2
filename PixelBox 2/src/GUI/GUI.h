@@ -23,3 +23,5 @@
 
 #include "TextStateSwitch.h"
 #include "SpriteStateSwitch.h"
+
+#include "TextRect.h"

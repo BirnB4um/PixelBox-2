@@ -13,6 +13,13 @@ CircuitGridRuleset::CircuitGridRuleset() {
 		throw std::runtime_error("Error loading res/textures/CircuitGrid/detailed_pixels.png");
 	}
 
+	if (!m_inventoryTexture.loadFromFile("res/textures/CircuitGrid/inventory.png")) {
+		throw std::runtime_error("Error loading res/textures/CircuitGrid/inventory.png");
+	}
+
+	createInventory();
+
+
 	frontBuffer = nullptr;
 	backBuffer = nullptr;
 	width = 0;
@@ -21,6 +28,50 @@ CircuitGridRuleset::CircuitGridRuleset() {
 
 CircuitGridRuleset::~CircuitGridRuleset() {
 
+}
+
+void CircuitGridRuleset::createInventory() {
+	InventoryCategory category;
+	InventoryItem item;
+
+
+	category.name = "Stuff";
+	category.items.clear();
+	item = { "Air", {0,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Wire", {1,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Output", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Battery", {3,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Delay", {4,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Bridge", {5,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Lamp", {6,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	m_inventory.push_back(category);
+
+	category.name = "Logic gates";
+	category.items.clear();
+	item = { "NOT", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "OR", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "NOR", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "XOR", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "XNOR", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "AND", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "NAND", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	m_inventory.push_back(category);
+
+	category.name = "Special";
+	category.items.clear();
+	item = { "Button", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Switch", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Clock", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Debug", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	m_inventory.push_back(category);
+
+	for (InventoryCategory& category : m_inventory) {
+		std::cout << category.name << "\n";
+		for (InventoryItem& item : category.items) {
+			std::cout << item.name << ", " << item.data.toUInt32() << ", " << item.rect.left << "/" << item.rect.top << "/" << item.rect.width << "/" << item.rect.height << "\n";
+		}
+		std::cout << "\n";
+	}
 }
 
 void CircuitGridRuleset::updateAllPixels(World* world) {

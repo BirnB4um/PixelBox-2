@@ -1,7 +1,6 @@
 #pragma once
 #include "../Screen.h"
-#include "../../GUI/TextButton.h"
-#include "../../GUI/TextInput.h"
+#include "../../GUI/GUI.h"
 
 class HomeScreen : public Screen
 {
@@ -33,5 +32,6 @@ private:
 	TextButton m_worldsButton;
 	TextButton m_settingsButton;
 	TextButton m_exitButton;
+
 
 };

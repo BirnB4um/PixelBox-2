@@ -36,6 +36,7 @@ public:
 
 	void setScrollable(bool vertical, bool horizontal);
 	void setSliderWidth(float width);
+	inline float getSliderWidth() { return m_sliderWidth; }
 
 	//shift sliders to show top left corner
 	void resetSliders();

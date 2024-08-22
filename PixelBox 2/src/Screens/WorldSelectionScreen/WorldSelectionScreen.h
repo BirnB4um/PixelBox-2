@@ -49,4 +49,6 @@ private:
 	TextStateSwitch m_textStateSwitch;
 	SpriteStateSwitch m_spriteStateSwitch;
 
+	TextRect m_textRect;
+
 };

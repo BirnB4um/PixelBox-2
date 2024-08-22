@@ -13,6 +13,9 @@ public:
 	const bool updatePixel(size_t& index) const override;
 	void addSurrondingPixels(size_t& index) const override;
 
+private:
+
+	void createInventory() override;
 
 
 };

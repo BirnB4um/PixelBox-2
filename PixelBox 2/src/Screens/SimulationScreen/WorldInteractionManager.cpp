@@ -164,8 +164,29 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 
 			return true;
 		}
-		else if (sfEvent.key.code == sf::Keyboard::F) {
+		else if (sfEvent.key.code == sf::Keyboard::Num1) {
+			m_brushSwitch.callFunction();
+		}
+		else if (sfEvent.key.code == sf::Keyboard::Num2) {
+			m_lineSwitch.callFunction();
+		}
+		else if (sfEvent.key.code == sf::Keyboard::Num3) {
+			m_rectangleSwitch.callFunction();
+		}
+		else if (sfEvent.key.code == sf::Keyboard::Num4) {
+			m_circleSwitch.callFunction();
+		}
+		else if (sfEvent.key.code == sf::Keyboard::Num5) {
 			m_fillSwitch.callFunction();
+		}
+		else if (sfEvent.key.code == sf::Keyboard::Num6) {
+			m_selectionSwitch.callFunction();
+		}
+		else if (sfEvent.key.code == sf::Keyboard::G) {
+			m_gridSwitch.callFunction();
+		}
+		else if (sfEvent.key.code == sf::Keyboard::Y) {
+			m_detailSwitch.callFunction();
 		}
 		break;
 
@@ -190,7 +211,7 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 			//create drawing instruction
 			//by default draw LINE
 			DrawInstruction instruction(
-				m_simulation->m_selectedPixelData,
+				m_simulation->m_inventory.getSelectedPixel().toUInt32(),
 				static_cast<sf::Vector2i>(m_startDrawingPosition),
 				static_cast<sf::Vector2i>(m_simulation->getMouseWorldPos()),
 				DrawInstruction::Type::LINE,
@@ -235,7 +256,7 @@ void WorldInteractionManager::update(float dt) {
 			//create drawing instruction for brush
 			{
 				DrawInstruction instruction(
-					m_simulation->m_selectedPixelData,
+					m_simulation->m_inventory.getSelectedPixel().toUInt32(),
 					static_cast<sf::Vector2i>(m_startDrawingPosition),
 					static_cast<sf::Vector2i>(m_simulation->getMouseWorldPos()),
 					DrawInstruction::Type::LINE,

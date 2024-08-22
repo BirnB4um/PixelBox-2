@@ -180,6 +180,15 @@
     <ClInclude Include="src\Screens\SimulationScreen\WorldInteractionManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\World\PixelData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Screens\SimulationScreen\Inventory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\TextRect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -333,6 +342,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Screens\SimulationScreen\WorldInteractionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Screens\SimulationScreen\Inventory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\TextRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

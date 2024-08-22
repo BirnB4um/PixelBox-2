@@ -38,40 +38,41 @@ void CircuitGridRuleset::createInventory() {
 	category.name = "Stuff";
 	category.items.clear();
 	item = { "Air", {0,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Wire", {1,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Output", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Battery", {3,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Delay", {4,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Bridge", {5,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Lamp", {6,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Wire", {1,0,0,0}, sf::IntRect(0, 16, 16, 16) }; category.items.push_back(item);
+	item = { "Output", {2,0,0,0}, sf::IntRect(0, 32, 16, 16) }; category.items.push_back(item);
+	item = { "Battery", {3,0,0,0}, sf::IntRect(0, 48, 16, 16) }; category.items.push_back(item);
+	item = { "Delay", {4,0,0,0}, sf::IntRect(0, 64, 16, 16) }; category.items.push_back(item);
+	item = { "Bridge", {5,0,0,0}, sf::IntRect(0, 80, 16, 16) }; category.items.push_back(item);
+	item = { "Lamp", {6,0,0,0}, sf::IntRect(0, 96, 16, 16) }; category.items.push_back(item);
 	m_inventory.push_back(category);
 
 	category.name = "Logic gates";
 	category.items.clear();
-	item = { "NOT", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "OR", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "NOR", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "XOR", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "XNOR", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "AND", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "NAND", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "NOT", {9,0,0,0}, sf::IntRect(0, 112, 16, 16) }; category.items.push_back(item);
+	item = { "OR", {10,0,0,0}, sf::IntRect(0, 128, 16, 16) }; category.items.push_back(item);
+	item = { "NOR", {11,0,0,0}, sf::IntRect(0, 144, 16, 16) }; category.items.push_back(item);
+	item = { "XOR", {12,0,0,0}, sf::IntRect(0, 160, 16, 16) }; category.items.push_back(item);
+	item = { "XNOR", {13,0,0,0}, sf::IntRect(0, 176, 16, 16) }; category.items.push_back(item);
+	item = { "AND", {14,0,0,0}, sf::IntRect(0, 192, 16, 16) }; category.items.push_back(item);
+	item = { "NAND", {15,0,0,0}, sf::IntRect(0, 208, 16, 16) }; category.items.push_back(item);
 	m_inventory.push_back(category);
 
 	category.name = "Special";
 	category.items.clear();
-	item = { "Button", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Switch", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Clock", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Debug", {2,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Button", {7,0,0,0}, sf::IntRect(0, 224, 16, 16) }; category.items.push_back(item);
+	item = { "Switch", {8,0,0,0}, sf::IntRect(0, 240, 16, 16) }; category.items.push_back(item);
+	item = { "Clock", {16,0,0,0}, sf::IntRect(16, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Debug", {17,0,0,0}, sf::IntRect(16, 16, 16, 16) }; category.items.push_back(item);
 	m_inventory.push_back(category);
 
-	for (InventoryCategory& category : m_inventory) {
-		std::cout << category.name << "\n";
-		for (InventoryItem& item : category.items) {
-			std::cout << item.name << ", " << item.data.toUInt32() << ", " << item.rect.left << "/" << item.rect.top << "/" << item.rect.width << "/" << item.rect.height << "\n";
-		}
-		std::cout << "\n";
-	}
+	//DEBUG
+	//for (InventoryCategory& category : m_inventory) {
+	//	std::cout << category.name << "\n";
+	//	for (InventoryItem& item : category.items) {
+	//		std::cout << item.name << ", " << item.data.toUInt32() << ", " << item.rect.left << "/" << item.rect.top << "/" << item.rect.width << "/" << item.rect.height << "\n";
+	//	}
+	//	std::cout << "\n";
+	//}
 }
 
 void CircuitGridRuleset::updateAllPixels(World* world) {

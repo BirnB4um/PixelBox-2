@@ -11,7 +11,7 @@ class Ruleset
 public:
 
 	struct InventoryItem {
-		std::string name;
+		std::string name = "";
 		PixelData data;
 		sf::IntRect rect;
 	};
@@ -46,6 +46,8 @@ public:
 	inline const std::vector<InventoryCategory>& getInventory() const {
 		return m_inventory;
 	}
+
+	InventoryItem getItemFromID(uint8_t id);
 
 
 protected:

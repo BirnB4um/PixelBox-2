@@ -68,6 +68,8 @@ public:
 
 	void updateAllPixels();
 
+	uint32_t getPixel(size_t x, size_t y);
+
 private:
 
 	WorldMetaData m_metaData;

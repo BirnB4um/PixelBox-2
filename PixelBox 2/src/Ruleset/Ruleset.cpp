@@ -101,3 +101,15 @@ void Ruleset::addSurrondingPixels(size_t& index) const {
 void Ruleset::createInventory() {
 
 }
+
+Ruleset::InventoryItem Ruleset::getItemFromID(uint8_t id) {
+	for (InventoryCategory& category : m_inventory) {
+		for (InventoryItem& item : category.items) {
+			if (item.data.id == id) {
+				return item;
+			}
+		}
+	}
+
+	return InventoryItem();
+}

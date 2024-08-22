@@ -43,6 +43,8 @@ public:
 private:
 	SimulationScreen* m_simulation;
 
+	std::vector<GuiElement*> m_guiElements;
+
 	bool m_isDrawing;
 	sf::Vector2f m_startDrawingPosition;
 

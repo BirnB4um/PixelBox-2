@@ -26,27 +26,29 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_pauseSwitch.setFunction([this]() {
 		m_simulation->m_isSimulationPaused = m_pauseSwitch.getCurrentState().id == 1 ? true : false;
 		});
-	m_simulation->addGuiElement(&m_pauseSwitch);
+	m_guiElements.push_back(&m_pauseSwitch);
 
 	m_interactionSwitch.addState({ 1, {65, 1, 11, 11} });//drawing
 	m_interactionSwitch.addState({ 2, {77, 1, 12, 14} });//interacting
 	m_interactionSwitch.setSpritePadding(5.0f);
 	m_interactionSwitch.setFunction([this]() {
 		});
-	m_simulation->addGuiElement(&m_interactionSwitch);
+	m_guiElements.push_back(&m_interactionSwitch);
 
 	//Sliders
 	m_tpsSlider.setRange(1, 1000);
 	m_tpsSlider.setValue(10);
 	m_tpsSlider.setFunction([this]() {
 		});
-	m_simulation->addGuiElement(&m_tpsSlider);
+	m_guiElements.push_back(&m_tpsSlider);
+
 
 	m_brushSizeSlider.setRange(1, 100);
 	m_brushSizeSlider.setValue(1);
 	m_brushSizeSlider.setFunction([this]() {
+		ResourceManager::getPixelShader()->setUniform("brushSize", m_brushSizeSlider.getValue());
 		});
-	m_simulation->addGuiElement(&m_brushSizeSlider);
+	m_guiElements.push_back(&m_brushSizeSlider);
 
 	//Drawtype Buttons
 	m_brushSwitch.setActivated(true);
@@ -57,7 +59,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		deactivateAllSwitches();
 		m_brushSwitch.setActivated(true);
 		});
-	m_simulation->addGuiElement(&m_brushSwitch);
+	m_guiElements.push_back(&m_brushSwitch);
 
 	m_lineSwitch.setBorderWidth(2.0f);
 	m_lineSwitch.setSpritePadding(2.0f);
@@ -66,7 +68,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		deactivateAllSwitches();
 		m_lineSwitch.setActivated(true);
 		});
-	m_simulation->addGuiElement(&m_lineSwitch);
+	m_guiElements.push_back(&m_lineSwitch);
 
 	m_rectangleSwitch.setBorderWidth(2.0f);
 	m_rectangleSwitch.setSpritePadding(2.0f);
@@ -75,7 +77,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		deactivateAllSwitches();
 		m_rectangleSwitch.setActivated(true);
 		});
-	m_simulation->addGuiElement(&m_rectangleSwitch);
+	m_guiElements.push_back(&m_rectangleSwitch);
 
 	m_circleSwitch.setBorderWidth(2.0f);
 	m_circleSwitch.setSpritePadding(2.0f);
@@ -84,7 +86,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		deactivateAllSwitches();
 		m_circleSwitch.setActivated(true);
 		});
-	m_simulation->addGuiElement(&m_circleSwitch);
+	m_guiElements.push_back(&m_circleSwitch);
 
 	m_fillSwitch.setBorderWidth(2.0f);
 	m_fillSwitch.setSpritePadding(2.0f);
@@ -93,7 +95,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		deactivateAllSwitches();
 		m_fillSwitch.setActivated(true);
 		});
-	m_simulation->addGuiElement(&m_fillSwitch);
+	m_guiElements.push_back(&m_fillSwitch);
 
 	m_selectionSwitch.setBorderWidth(2.0f);
 	m_selectionSwitch.setSpritePadding(4.0f);
@@ -102,7 +104,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		deactivateAllSwitches();
 		m_selectionSwitch.setActivated(true);
 		});
-	m_simulation->addGuiElement(&m_selectionSwitch);
+	m_guiElements.push_back(&m_selectionSwitch);
 
 	//Toggle switches
 
@@ -112,7 +114,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_gridSwitch.setFunction([this]() {
 		ResourceManager::getPixelShader()->setUniform("drawGrid", m_gridSwitch.isActivated());
 		});
-	m_simulation->addGuiElement(&m_gridSwitch);
+	m_guiElements.push_back(&m_gridSwitch);
 
 
 	m_detailSwitch.setBorderWidth(2.0f);
@@ -121,7 +123,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_detailSwitch.setFunction([this]() {
 		ResourceManager::getPixelShader()->setUniform("detailMode", m_detailSwitch.isActivated());
 		});
-	m_simulation->addGuiElement(&m_detailSwitch);
+	m_guiElements.push_back(&m_detailSwitch);
 
 	m_resetButton.setBorderWidth(2.0f);
 	m_resetButton.setSpritePadding(4.0f);
@@ -129,7 +131,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_resetButton.setFunction([this]() {
 		std::cout << "reset" << std::endl;
 		});
-	m_simulation->addGuiElement(&m_resetButton);
+	m_guiElements.push_back(&m_resetButton);
 
 	m_undoButton.setBorderWidth(2.0f);
 	m_undoButton.setSpritePadding(4.0f);
@@ -137,10 +139,26 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_undoButton.setFunction([this]() {
 		std::cout << "undo" << std::endl;
 		});
-	m_simulation->addGuiElement(&m_undoButton);
+	m_guiElements.push_back(&m_undoButton);
+
+
+	//reload resources
+	for (GuiElement* element : m_guiElements) {
+		element->reloadResources();
+	}
+
+	onResize();
+
 }
 
 bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
+
+	for (GuiElement* element : m_guiElements) {
+		if(element->handleEvent(sfEvent))
+			return true;
+	}
+
+
 	switch (sfEvent.type)
 	{
 	case sf::Event::KeyReleased:
@@ -233,9 +251,26 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 				instruction.startPos = instruction.endPos;
 			}
 
+			//FIXME: if selection tool is activated -> draws line
+
 			std::lock_guard<std::mutex> lock(m_simulation->m_drawingMutex);
 			m_simulation->m_collectedDrawInstructions.push_back(instruction);
 
+			return true;
+		}
+	}
+	break;
+
+	case sf::Event::MouseWheelScrolled:
+	{
+		float delta = sfEvent.mouseWheelScroll.delta; // up = 1 ; down = -1
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+			//change brush size
+
+			delta *= std::max(1.0f, ceil( sin(m_brushSizeSlider.getValue() * abs(delta) * 0.0069f) * 30 ));
+
+			m_brushSizeSlider.setValue(m_brushSizeSlider.getValue() + delta);
 			return true;
 		}
 	}
@@ -249,6 +284,11 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 }
 
 void WorldInteractionManager::update(float dt) {
+
+	for (GuiElement* element : m_guiElements) {
+		element->update(dt);
+	}
+
 	//if drawing with brush
 	if (m_brushSwitch.isActivated() && m_isDrawing) {
 		//if mouse moved relative to board
@@ -312,6 +352,12 @@ void WorldInteractionManager::render(sf::RenderTarget& window) {
 	}
 
 	window.setView(Application::normalView);
+
+	//draw gui
+	for (GuiElement* element : m_guiElements) {
+		element->render(window);
+	}
+
 }
 
 void WorldInteractionManager::onResize() {
@@ -350,6 +396,12 @@ void WorldInteractionManager::onResize() {
 void WorldInteractionManager::resetAll() {
 	m_isDrawing = false;
 
+	for (GuiElement* guiElement : m_guiElements) {
+		InteractableGui* interactable = dynamic_cast<InteractableGui*>(guiElement);
+		if (interactable != nullptr)
+			interactable->resetInteractionState();
+	}
+
 	m_pauseSwitch.setState(1);
 	m_interactionSwitch.setState(1);
 
@@ -358,6 +410,7 @@ void WorldInteractionManager::resetAll() {
 
 	m_gridSwitch.setActivated(false);
 	m_detailSwitch.setActivated(false);
+
 }
 
 void WorldInteractionManager::deactivateAllSwitches() {

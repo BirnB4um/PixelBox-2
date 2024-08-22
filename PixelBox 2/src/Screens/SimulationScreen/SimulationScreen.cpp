@@ -46,7 +46,6 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 	if (m_worldInteractionManager.handleEvent(sfEvent))
 		return true;
 
-
 	switch (sfEvent.type)
 	{
 	case sf::Event::KeyPressed:
@@ -71,24 +70,27 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 		break;
 
 	case sf::Event::MouseWheelScrolled:
-		{
-			float delta = sfEvent.mouseWheelScroll.delta; // up = 1 ; down = -1
-			float zoomAmount = delta > 0 ? 1.0f/0.8f : delta < 0 ? 0.8f : 0.0f;
+	{
+		float delta = sfEvent.mouseWheelScroll.delta; // up = 1 ; down = -1
+
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+			//zoom in/out
+			float zoomAmount = delta > 0 ? 1.0f / 0.8f : delta < 0 ? 0.8f : 0.0f;
 			m_targetZoomLevel = std::max(0.1f, std::min(2000.0f, m_targetZoomLevel * zoomAmount));
-
 			
-			//FIXME: zooming in on mouse works, but the animation is not direct because zoomLevel and center approximate
-			// their respective target independently
-			
-			//sf::Vector2f originalMousePos = getMouseWorldPos();
-			//sf::Vector2f diff = originalMousePos - m_targetViewCenter;
-			//m_targetViewCenter = originalMousePos - diff / zoomAmount;
-
 			return true;
 		}
 
-		break;
+		//FIXME: zooming in on mouse works, but the animation is not direct because zoomLevel and center approximate
+		// their respective target independently
 
+		//sf::Vector2f originalMousePos = getMouseWorldPos();
+		//sf::Vector2f diff = originalMousePos - m_targetViewCenter;
+		//m_targetViewCenter = originalMousePos - diff / zoomAmount;
+
+	}
+
+	break;
 
 	case sf::Event::MouseButtonPressed:
 		if (sfEvent.mouseButton.button == sf::Mouse::Middle) {
@@ -103,6 +105,7 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 			m_boardGrabbed = true;
 			return true;
 		}
+		
 		break;
 
 	case sf::Event::MouseButtonReleased:
@@ -116,6 +119,9 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 		}
 		break;
 
+	case sf::Event::MouseMoved:
+		break;
+
 	default:
 		break;
 	}
@@ -124,13 +130,19 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 }
 
 void SimulationScreen::update(float dt) {
-
 	updateGui(dt);
 
 	updateView(dt);
 
 	m_worldInteractionManager.update(dt);
 	m_inventory.update(dt);
+
+	if (m_worldInteractionManager.m_brushSizeSlider.isInteracted()) {
+		ResourceManager::getPixelShader()->setUniform("mousePos", toWorldPos(static_cast<sf::Vector2f>(Application::instance().getWindowSize()) / 2.0f));
+	}
+	else {
+		ResourceManager::getPixelShader()->setUniform("mousePos", getMouseWorldPos());
+	}
 }
 
 void SimulationScreen::render(sf::RenderTarget& window) {
@@ -182,7 +194,6 @@ void SimulationScreen::resetView() {
 }
 
 void SimulationScreen::updateView(float dt) {
-
 	//move view with keys
 	float moveSpeed = dt * (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ? 3000.0f : 800.0f) / m_zoomLevel;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
@@ -202,7 +213,6 @@ void SimulationScreen::updateView(float dt) {
 	if (m_boardGrabbed) {
 		m_targetViewCenter = m_startGrabbedViewCenter + static_cast<sf::Vector2f>(m_startGrabbedMousePos - Application::mousePos) / m_zoomLevel;
 	}
-
 
 	//update view center
 	sf::Vector2f dCenter = m_targetViewCenter - m_pixelView.getCenter();
@@ -239,7 +249,6 @@ void SimulationScreen::th_simulationLoop() {
 	int waitTime;
 
 	while (!m_stopSimulationThread) {
-
 		//FIXME: update multiple ticks per loop
 
 		{
@@ -266,7 +275,6 @@ void SimulationScreen::th_renderingLoop() {
 	bool updateTexture;
 
 	while (!m_stopRenderingThread) {
-
 		timer.start();
 
 		//process updates
@@ -285,7 +293,6 @@ void SimulationScreen::th_renderingLoop() {
 			if (updateTexture) {
 				m_world->updateRenderBuffer();
 			}
-
 		}
 
 		//upload to GPU
@@ -327,6 +334,10 @@ void SimulationScreen::stopRenderingThread() {
 
 sf::Vector2f SimulationScreen::getMouseWorldPos() {
 	return m_pixelView.getCenter() + static_cast<sf::Vector2f>(Application::mousePos - Application::instance().getWindowSize() / 2) / m_zoomLevel;
+}
+
+sf::Vector2f SimulationScreen::toWorldPos(sf::Vector2f screenPos) {
+	return m_pixelView.getCenter() + (screenPos - static_cast<sf::Vector2f>(Application::instance().getWindowSize()) / 2.0f) / m_zoomLevel;
 }
 
 void SimulationScreen::deleteWorld() {

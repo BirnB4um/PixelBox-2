@@ -28,6 +28,9 @@ public:
 	void setValue(float value);
 	void setRange(float min, float max);
 
+	//returns true if the slider is currently being interacted with
+	inline bool isInteracted() { return m_pressed; }
+
 protected:
 	NinePatch m_ninePatch;
 	sf::RectangleShape m_nob;

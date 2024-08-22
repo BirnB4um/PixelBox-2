@@ -89,6 +89,7 @@ private:
 	void stopRenderingThread();
 
 	sf::Vector2f getMouseWorldPos();
+	sf::Vector2f toWorldPos(sf::Vector2f screenPos);
 
 	void deleteWorld();
 

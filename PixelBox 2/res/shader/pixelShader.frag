@@ -7,8 +7,12 @@ uniform sampler2D pixelDetailTexture;
 uniform vec2 worldSize;
 uniform float zoomLevel;
 uniform bool detailMode;
+
 uniform bool drawGrid;
 float gridWidth = 2.0;
+
+uniform vec2 mousePos;
+uniform float brushSize;
 
 void main(){
 
@@ -19,17 +23,13 @@ void main(){
     // Anti-aliasing
     vec4 sum = vec4(0.0);
     float totalWeight = 0.0;
-
     //FIXME: using 0.5 works but has some artifacts when zoomed out. 1.0 is better but increases gpu usage. using 1.0 and cap at 5 works good
     int numSamples = int(min(5.0, max(0.0, floor(1.0 / zoomLevel))));
-
     vec2 sampleOffset = pixelSize * 0.5 / (zoomLevel * float(numSamples));
-
     //this fixes aritfacts from sampling neighbor pixels + drawing grid
     if(numSamples == 0){
         sampleOffset = vec2(0.0);
     }
-
     for(int x = -numSamples; x <= numSamples; ++x){
         for(int y = -numSamples; y <= numSamples; ++y){
             vec2 offset = vec2(x, y) * sampleOffset;
@@ -67,7 +67,13 @@ void main(){
             pixelUV.y <= gridWidth / zoomLevel ){
             color = mix(color, vec4(0.1, 0.1, 0.1, 1.0), factor);
         }
+    }
 
+    //Brush
+    if(brushSize > 1.0){
+        if(length(uv*worldSize - mousePos) <= brushSize){
+            color += 0.1;
+        }
     }
 
     gl_FragColor = color;

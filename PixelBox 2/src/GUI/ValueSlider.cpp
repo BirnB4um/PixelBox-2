@@ -26,6 +26,9 @@ ValueSlider::~ValueSlider() {
 }
 
 bool ValueSlider::handleEvent(sf::Event& sfEvent) {
+	if (!m_isInteractable)
+		return false;
+
 	switch (sfEvent.type)
 	{
 	case sf::Event::MouseMoved:
@@ -37,17 +40,28 @@ bool ValueSlider::handleEvent(sf::Event& sfEvent) {
 		break;
 
 	case sf::Event::MouseButtonPressed:
-		if (m_hovered) {
-			m_pressed = true;
-			updateValue();
-			return true;
+		if (sfEvent.mouseButton.button == sf::Mouse::Left) {
+			if (m_hovered) {
+				m_pressed = true;
+				updateValue();
+				return true;
+			}
 		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
-		m_pressed = false;
-		updateInteraction();
-		return false;
+		if (sfEvent.mouseButton.button == sf::Mouse::Left) {
+			m_pressed = false;
+			updateInteraction();
+		}
+		break;
+
+	case sf::Event::MouseWheelScrolled:
+		if (isMouseOver()) {
+			float delta = -sfEvent.mouseWheelScroll.delta;
+			setValue(getValue() + delta);
+			return true;
+		}
 		break;
 
 	default:
@@ -74,6 +88,8 @@ void ValueSlider::updateInteraction() {
 }
 
 void ValueSlider::update(float dt) {
+	if (!m_isInteractable)
+		return;
 
 }
 

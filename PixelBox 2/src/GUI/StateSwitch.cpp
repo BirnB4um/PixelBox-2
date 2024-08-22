@@ -19,6 +19,9 @@ StateSwitch::~StateSwitch() {
 
 
 bool StateSwitch::handleEvent(sf::Event& sfEvent) {
+	if (!m_isInteractable)
+		return false;
+
 	switch (sfEvent.type)
 	{
 	case sf::Event::MouseMoved:
@@ -28,21 +31,25 @@ bool StateSwitch::handleEvent(sf::Event& sfEvent) {
 		break;
 
 	case sf::Event::MouseButtonPressed:
-		if (m_hovered) {
-			m_ninePatch.setPatches(PatchAtlas::roundedPressed);
-			m_pressed = true;
-			return true;
+		if (sfEvent.mouseButton.button == sf::Mouse::Left) {
+			if (m_hovered) {
+				m_ninePatch.setPatches(PatchAtlas::roundedPressed);
+				m_pressed = true;
+				return true;
+			}
 		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
-		if (m_hovered && m_pressed) {
-			m_ninePatch.setPatches(PatchAtlas::roundedHover);
-			callFunction();
+		if (sfEvent.mouseButton.button == sf::Mouse::Left) {
+			if (m_hovered && m_pressed) {
+				m_ninePatch.setPatches(PatchAtlas::roundedHover);
+				callFunction();
+				m_pressed = false;
+				return true;
+			}
 			m_pressed = false;
-			return true;
 		}
-		m_pressed = false;
 		break;
 
 	default:
@@ -71,6 +78,9 @@ void StateSwitch::updateInteraction() {
 }
 
 void StateSwitch::update(float dt) {
+	if (!m_isInteractable)
+		return;
+
 }
 
 void StateSwitch::render(sf::RenderTarget& window) {

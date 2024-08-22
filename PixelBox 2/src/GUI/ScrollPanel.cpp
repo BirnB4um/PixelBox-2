@@ -33,13 +33,16 @@ ScrollPanel::~ScrollPanel() {
 }
 
 bool ScrollPanel::handleEvent(sf::Event& sfEvent) {
+	if (!m_isInteractable)
+		return false;
+
 	if (Panel::handleEvent(sfEvent))
 		return true;
 
-	if (m_horizontalSlider.handleEvent(sfEvent))
+	if (m_horizontalScrollable && m_horizontalSlider.handleEvent(sfEvent))
 		return true;
 
-	if (m_verticalSlider.handleEvent(sfEvent))
+	if (m_verticalScrollable && m_verticalSlider.handleEvent(sfEvent))
 		return true;
 
 	switch (sfEvent.type)
@@ -69,8 +72,15 @@ bool ScrollPanel::handleEvent(sf::Event& sfEvent) {
 }
 
 void ScrollPanel::update(float dt) {
-	m_horizontalSlider.update(dt);
-	m_verticalSlider.update(dt);
+	if (!m_isInteractable)
+		return;
+
+	if(m_horizontalScrollable)
+		m_horizontalSlider.update(dt);
+
+	if(m_verticalScrollable)
+		m_verticalSlider.update(dt);
+
 	Panel::update(dt);
 }
 

@@ -15,6 +15,8 @@ Panel::~Panel() {
 }
 
 bool Panel::handleEvent(sf::Event& sfEvent) {
+	if (!m_isInteractable)
+		return false;
 
 	//switch (sfEvent.type)
 	//{
@@ -32,6 +34,9 @@ bool Panel::handleEvent(sf::Event& sfEvent) {
 }
 
 void Panel::update(float dt) {
+	if (!m_isInteractable)
+		return;
+
 	m_ninePatch.update(dt);
 	GuiContainer::update(dt);
 }

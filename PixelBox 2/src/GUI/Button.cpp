@@ -15,6 +15,9 @@ Button::~Button() {
 }
 
 bool Button::handleEvent(sf::Event& sfEvent) {
+	if (!m_isInteractable)
+		return false;
+
 	switch (sfEvent.type)
 	{
 	case sf::Event::MouseMoved:
@@ -24,19 +27,23 @@ bool Button::handleEvent(sf::Event& sfEvent) {
 		break;
 
 	case sf::Event::MouseButtonPressed:
-		if (m_hovered) {
-			m_ninePatch.setPatches(PatchAtlas::roundedPressed);
-			m_pressed = true;
-			return true;
+		if (sfEvent.mouseButton.button == sf::Mouse::Left) {
+			if (m_hovered) {
+				m_ninePatch.setPatches(PatchAtlas::roundedPressed);
+				m_pressed = true;
+				return true;
+			}
 		}
 		break;
 
 	case sf::Event::MouseButtonReleased:
-		if (m_hovered && m_pressed) {
-			m_ninePatch.setPatches(PatchAtlas::roundedHover);
-			m_function();
-			m_pressed = false;
-			return true;
+		if (sfEvent.mouseButton.button == sf::Mouse::Left) {
+			if (m_hovered && m_pressed) {
+				m_ninePatch.setPatches(PatchAtlas::roundedHover);
+				m_function();
+				m_pressed = false;
+				return true;
+			}
 		}
 		m_pressed = false;
 		break;
@@ -67,6 +74,9 @@ void Button::updateInteraction() {
 }
 
 void Button::update(float dt) {
+	if (!m_isInteractable)
+		return;
+
 }
 
 void Button::render(sf::RenderTarget& window) {

@@ -81,6 +81,9 @@ void TextInput::setInputFlags(bool numbers, bool alphabet, bool special) {
 }
 
 bool TextInput::handleEvent(sf::Event& sfEvent) {
+	if (!m_isInteractable)
+		return false;
+
 	switch (sfEvent.type)
 	{
 	case sf::Event::KeyPressed:
@@ -134,7 +137,7 @@ bool TextInput::handleEvent(sf::Event& sfEvent) {
 		break;
 
 	case sf::Event::MouseButtonPressed:
-		{
+		if (sfEvent.mouseButton.button == sf::Mouse::Left) {
 			m_isFocused = isMouseOver();
 
 			if (m_isFocused)
@@ -150,6 +153,9 @@ bool TextInput::handleEvent(sf::Event& sfEvent) {
 }
 
 void TextInput::update(float dt) {
+	if (!m_isInteractable)
+		return;
+
 	if (m_isFocused) {
 		m_cursorBlinkTime += dt;
 		if (m_cursorBlinkTime > 0.5f) {

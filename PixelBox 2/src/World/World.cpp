@@ -318,3 +318,10 @@ void World::redrawWorld() {
 	}
 	m_renderUpdates.add(0);
 }
+
+uint32_t World::getPixel(size_t x, size_t y) {
+	if (!isCreated() || x >= m_metaData.width || y >= m_metaData.height)
+		return 0;
+
+	return reinterpret_cast<uint32_t*>(m_worldDataFront)[x + y * m_metaData.width];
+}

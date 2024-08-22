@@ -6,6 +6,7 @@
 
 Inventory::Inventory() {
 	m_simulation = nullptr;
+	m_showInventory = true;
 
 }
 
@@ -18,39 +19,140 @@ void Inventory::init(SimulationScreen* simulation) {
 
 	m_inventoryPanel.setSliderWidth(20.0f);
 	m_inventoryPanel.setScrollable(true, false);
-	m_simulation->addGuiElement(&m_inventoryPanel);
+	m_guiElement.push_back(&m_inventoryPanel);
+
+	m_selectedPixelButton.setBorderWidth(4.0f);
+	m_selectedPixelButton.setSpritePadding(1.0f);
+	m_selectedPixelButton.setFunction(
+		[this]() {
+			setInventoryVisible(!isInventoryVisible());
+		}
+	);
+	m_guiElement.push_back(&m_selectedPixelButton);
+
+	for (GuiElement* element : m_guiElement) {
+		element->reloadResources();
+	}
+	onResize();
 }
 
 bool Inventory::handleEvent(sf::Event& sfEvent) {
+
+	if (m_selectedPixelButton.handleEvent(sfEvent))
+		return true;
+
+	if (m_inventoryPanel.handleEvent(sfEvent) && m_showInventory)
+		return true;
+
+	switch (sfEvent.type)
+	{
+
+	case sf::Event::KeyReleased:
+		if (sfEvent.key.code == sf::Keyboard::E) {
+			m_selectedPixelButton.callFunction();
+			return true;
+		}
+		break;
+
+	case sf::Event::MouseButtonPressed:
+		if (sfEvent.mouseButton.button == sf::Mouse::Right) {
+
+			//select pixel
+			if (m_showInventory) {
+				sf::FloatRect worldRect = sf::FloatRect(0.0f, 0.0f, m_simulation->m_world->getMetaData().width, m_simulation->m_world->getMetaData().height);
+				sf::Vector2i mouse = static_cast<sf::Vector2i>(m_simulation->getMouseWorldPos());
+				if (worldRect.contains(m_simulation->getMouseWorldPos())) {
+					setSelectedPixel(m_simulation->m_world->getPixel(mouse.x, mouse.y));
+					return true;
+				}
+			}
+
+		}
+		break;
+	default:
+		break;
+	}
 	return false;
 }
 
 void Inventory::update(float dt) {
+	if(m_showInventory)
+		m_inventoryPanel.update(dt);
 
+	m_selectedPixelButton.update(dt);
 }
 
 void Inventory::render(sf::RenderTarget& window) {
+	if(m_showInventory)
+		m_inventoryPanel.render(window);
 
+	m_selectedPixelButton.render(window);
 }
 
 void Inventory::onResize() {
 	sf::Vector2f windowSize = static_cast<sf::Vector2f>(Application::instance().getWindowSize());
-	float width = 300.0f;
-	m_inventoryPanel.setBounds(windowSize.x - width, 0.0f, width, windowSize.y);
+	float panelWidth = 300.0f;
+	m_inventoryPanel.setBounds(windowSize.x - panelWidth, 0.0f, panelWidth, windowSize.y);
+
+	float width = 60.0f;
+	float padding = 5.0f;
+	m_selectedPixelButton.setBounds(windowSize.x - (m_showInventory ? panelWidth : 0.0f) - width - padding, padding, width, width);
+
+
+	//resize inventory
+	panelWidth -= m_inventoryPanel.getSliderWidth() - m_inventoryPanel.getBorderWidth() * 2.0f;
+
+	m_inventoryTitle.setBounds(0.0f, 0.0f, panelWidth, 50.0f);
+
+	float y = 60.0f;
+	float x = 5.0f;
+	width = 50.0f;
+	padding = 12.0f;
+	int buttonsPerRow = floor((panelWidth - x) / (width + padding));
+
+	for (InventoryCategory& category : m_inventoryCategories) {
+
+		category.name.setBounds(x, y, panelWidth - x, 30);
+
+		y += 35.0f;
+
+		int colCount = 0;
+		float buttonX = x;
+
+		for (InventoryItem& item : category.items) {
+			item.button.setBounds(buttonX, y, width, width);
+			item.name.setBounds(buttonX - padding / 2.0f, y + width, width + padding, 20);
+
+			colCount++;
+			buttonX += width + padding;
+			if (colCount >= buttonsPerRow) {
+				y += width + 25.0f;
+				buttonX = x;
+				colCount = 0;
+			}
+		}
+
+		y += width + 50.0f;
+	}
+
 }
 
 void Inventory::resetAll() {
 	m_inventoryPanel.resetInteractionState();
 
+	m_inventoryPanel.resetInteractionState();
+
 }
 
 void Inventory::createFromRuleset(Ruleset* ruleset) {
+
+
+	m_selectedPixelButton.setTexture(ruleset->getInventoryTexture());
+
 	m_inventoryPanel.clearElements();
-	float panelWidth = m_inventoryPanel.getSize().x - m_inventoryPanel.getSliderWidth() - m_inventoryPanel.getBorderWidth() * 2.0f;
 
 	//Title
 	m_inventoryTitle.reloadResources();
-	m_inventoryTitle.setBounds(0.0f, 0.0f, panelWidth, 50.0f);
 	m_inventoryTitle.setText("Inventory");
 	m_inventoryTitle.setAlignment(TextRect::Alignment::CenterLeft);
 	m_inventoryTitle.setFontSize(30);
@@ -59,81 +161,86 @@ void Inventory::createFromRuleset(Ruleset* ruleset) {
 
 	//Categories
 	m_inventoryCategories.clear();
-	m_inventoryButtons.clear();
-	m_inventoryButtonNames.clear();
 
-	float y = 50.0f;
-	float x = 5.0f;
-	float width = 50.0f;
-	float padding = 12.0f;
-	int buttonsPerRow = floor((panelWidth - x) / (width + padding));
 
 	for (const Ruleset::InventoryCategory& category : ruleset->getInventory()) {
 
-		//Category name
-		TextRect categoryName;
-		categoryName.reloadResources();
-		categoryName.setText(category.name);
-		categoryName.setFontSize(20);
-		categoryName.setAlignment(TextRect::Alignment::CenterLeft);
-		categoryName.setBounds(x, y, panelWidth - x, 30);
-		m_inventoryCategories.push_back(categoryName);
+		InventoryCategory invCategory;
 
-		y += 35.0f;
+		//Category name
+		invCategory.name.reloadResources();
+		invCategory.name.setText(category.name);
+		invCategory.name.setFontSize(20);
+		invCategory.name.setAlignment(TextRect::Alignment::CenterLeft);
 
 		//Category items
-		int colCount = 0;
-		float buttonX = x;
 		for (const Ruleset::InventoryItem& item : category.items) {
+
+			InventoryItem invItem;
 			
 			//Button
-			SpriteButton button;
-			button.reloadResources();
-			button.setBounds(buttonX, y, width, width);
-			button.setTexturePatch(item.rect);
-			button.setFunction([this, item]() {
-				m_selectedPixel = item.data;
+			invItem.button.reloadResources();
+			invItem.button.setTexturePatch(item.rect);
+			invItem.button.setFunction([this, item]() {
+				setSelectedPixel(item.data);
 				});
-			button.setSpritePadding(1.0f);
-			button.setTexture(ruleset->getInventoryTexture());
-			m_inventoryButtons.push_back(button);
+			invItem.button.setSpritePadding(1.0f);
+			invItem.button.setTexture(ruleset->getInventoryTexture());
 
 
 			//Name
-			TextRect itemName;
-			itemName.reloadResources();
-			itemName.setText(item.name);
-			itemName.setFontSize(9);
-			itemName.setAlignment(TextRect::Alignment::Center);
-			itemName.setBounds(buttonX - padding/2.0f, y + width, width+padding, 20);
-			m_inventoryButtonNames.push_back(itemName);
+			invItem.name.reloadResources();
+			invItem.name.setText(item.name);
+			invItem.name.setFontSize(9);
+			invItem.name.setAlignment(TextRect::Alignment::Center);
 
-			
-			colCount++;
-			buttonX += width + padding;
-			if (colCount >= buttonsPerRow) {
-				y += width + 25.0f;
-				buttonX = x;
-				colCount = 0;
-			}
+
+			invCategory.items.push_back(invItem);
 
 		}
 
-		y += width + 50.0f;
-
+		m_inventoryCategories.push_back(invCategory);
 	}
 
 	//add to panel
-	for (SpriteButton& button : m_inventoryButtons) {
-		m_inventoryPanel.addElement(&button);
-	}
-	for (TextRect& name : m_inventoryButtonNames) {
-		m_inventoryPanel.addElement(&name);
-	}
-	for (TextRect& category : m_inventoryCategories) {
-		m_inventoryPanel.addElement(&category);
+	for (InventoryCategory& category : m_inventoryCategories) {
+		m_inventoryPanel.addElement(&category.name);
+		for (InventoryItem& item : category.items) {
+			m_inventoryPanel.addElement(&item.button);
+			m_inventoryPanel.addElement(&item.name);
+		}
 	}
 
+	//set initial item
+	bool foundItem = false;
+	for (InventoryCategory& category : m_inventoryCategories) {
+		for (InventoryItem& item : category.items) {
+			item.button.callFunction();
+			foundItem = true;
+			break;
+		}
+		if (foundItem)
+			break;
+	}
 
 	m_inventoryPanel.resetSliders();
+
+	onResize();
+}
+
+void Inventory::setInventoryVisible(bool visible) {
+	m_showInventory = visible;
+	onResize();
+}
+
+void Inventory::setSelectedPixel(PixelData pixel) {
+	setSelectedPixel(pixel.toUInt32());
+}
+
+void Inventory::setSelectedPixel(uint32_t pixel) {
+	m_selectedPixel.fromUInt32(pixel);
+
+	//get texture rect from id
+	sf::IntRect area = m_simulation->m_world->getMetaData().ruleset->getItemFromID(m_selectedPixel.id).rect;
+	m_selectedPixelButton.setTexturePatch(area);
 }

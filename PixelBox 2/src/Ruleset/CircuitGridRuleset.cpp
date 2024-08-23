@@ -37,32 +37,32 @@ void CircuitGridRuleset::createInventory() {
 
 	category.name = "Stuff";
 	category.items.clear();
-	item = { "Air", {0,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Wire", {1,0,0,0}, sf::IntRect(0, 16, 16, 16) }; category.items.push_back(item);
-	item = { "Output", {2,0,0,0}, sf::IntRect(0, 32, 16, 16) }; category.items.push_back(item);
-	item = { "Battery", {3,0,0,0}, sf::IntRect(0, 48, 16, 16) }; category.items.push_back(item);
-	item = { "Delay", {4,0,0,0}, sf::IntRect(0, 64, 16, 16) }; category.items.push_back(item);
-	item = { "Bridge", {5,0,0,0}, sf::IntRect(0, 80, 16, 16) }; category.items.push_back(item);
-	item = { "Lamp", {6,0,0,0}, sf::IntRect(0, 96, 16, 16) }; category.items.push_back(item);
+	item = { "Air", {AIR,0,0,0}, sf::IntRect(0, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Wire", {WIRE,1,0,0}, sf::IntRect(0, 16, 16, 16) }; category.items.push_back(item);
+	item = { "Output", {OUTPUT,1,0,0}, sf::IntRect(0, 32, 16, 16) }; category.items.push_back(item);
+	item = { "Battery", {BATTERY,2,0,0}, sf::IntRect(0, 48, 16, 16) }; category.items.push_back(item);
+	item = { "Delay", {DELAY,1,3,0}, sf::IntRect(0, 64, 16, 16) }; category.items.push_back(item);
+	item = { "Bridge", {BRIDGE,1,1,0}, sf::IntRect(0, 80, 16, 16) }; category.items.push_back(item);
+	item = { "Lamp", {LAMP,1,0,0}, sf::IntRect(0, 96, 16, 16) }; category.items.push_back(item);
 	m_inventory.push_back(category);
 
 	category.name = "Logic gates";
 	category.items.clear();
-	item = { "NOT", {9,0,0,0}, sf::IntRect(0, 112, 16, 16) }; category.items.push_back(item);
-	item = { "OR", {10,0,0,0}, sf::IntRect(0, 128, 16, 16) }; category.items.push_back(item);
-	item = { "NOR", {11,0,0,0}, sf::IntRect(0, 144, 16, 16) }; category.items.push_back(item);
-	item = { "XOR", {12,0,0,0}, sf::IntRect(0, 160, 16, 16) }; category.items.push_back(item);
-	item = { "XNOR", {13,0,0,0}, sf::IntRect(0, 176, 16, 16) }; category.items.push_back(item);
-	item = { "AND", {14,0,0,0}, sf::IntRect(0, 192, 16, 16) }; category.items.push_back(item);
-	item = { "NAND", {15,0,0,0}, sf::IntRect(0, 208, 16, 16) }; category.items.push_back(item);
+	item = { "NOT", {NOT,0,0,0}, sf::IntRect(0, 112, 16, 16) }; category.items.push_back(item);
+	item = { "OR", {OR,0,0,0}, sf::IntRect(0, 128, 16, 16) }; category.items.push_back(item);
+	item = { "NOR", {NOR,0,0,0}, sf::IntRect(0, 144, 16, 16) }; category.items.push_back(item);
+	item = { "XOR", {XOR,0,0,0}, sf::IntRect(0, 160, 16, 16) }; category.items.push_back(item);
+	item = { "XNOR", {XNOR,0,0,0}, sf::IntRect(0, 176, 16, 16) }; category.items.push_back(item);
+	item = { "AND", {AND,0,0,0}, sf::IntRect(0, 192, 16, 16) }; category.items.push_back(item);
+	item = { "NAND", {NAND,0,0,0}, sf::IntRect(0, 208, 16, 16) }; category.items.push_back(item);
 	m_inventory.push_back(category);
 
 	category.name = "Special";
 	category.items.clear();
-	item = { "Button", {7,0,0,0}, sf::IntRect(0, 224, 16, 16) }; category.items.push_back(item);
-	item = { "Switch", {8,0,0,0}, sf::IntRect(0, 240, 16, 16) }; category.items.push_back(item);
-	item = { "Clock", {16,0,0,0}, sf::IntRect(16, 0, 16, 16) }; category.items.push_back(item);
-	item = { "Debug", {17,0,0,0}, sf::IntRect(16, 16, 16, 16) }; category.items.push_back(item);
+	item = { "Button", {BUTTON,1,0,0}, sf::IntRect(0, 224, 16, 16) }; category.items.push_back(item);
+	item = { "Switch", {SWITCH,1,0,0}, sf::IntRect(0, 240, 16, 16) }; category.items.push_back(item);
+	item = { "Clock", {CLOCK,0,0,0}, sf::IntRect(16, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Debug", {DEBUG,0,0,0}, sf::IntRect(16, 16, 16, 16) }; category.items.push_back(item);
 	m_inventory.push_back(category);
 
 	//DEBUG
@@ -79,11 +79,10 @@ void CircuitGridRuleset::updateAllPixels(World* world) {
 	this->world = world;
 	width = world->m_metaData.width;
 	height = world->m_metaData.height;
-
 	frontBuffer = world->m_worldDataFront;
 	backBuffer = world->m_worldDataBack;
 
-	for (size_t index : world->m_updateList.getItems()) {
+	for (size_t index : world->m_updateList) {
 		if (updatePixel(index)) {
 			addSurrondingPixels(index);
 		}
@@ -95,17 +94,133 @@ const bool CircuitGridRuleset::updatePixel(size_t& index) const {
 
 	//FIXME: optimize by using bitshift, calculating indecies on the fly (as rvalues)
 
-	uint8_t* valueIndex = &world->m_worldDataFront[index * 4];
+	uint8_t* valuePtr = &frontBuffer[index * 4];
+	uint8_t* nextValuePtr = &backBuffer[index * 4];
 
 	//direct neighbours
-	uint8_t* topIndex = valueIndex - width * 4;
-	uint8_t* bottomIndex = valueIndex + width * 4;
-	uint8_t* leftIndex = valueIndex - 4;
-	uint8_t* rightIndex = valueIndex + 4;
-
-
+	uint8_t* topIndex = valuePtr - width * 4;
+	uint8_t* bottomIndex = valuePtr + width * 4;
+	uint8_t* leftIndex = valuePtr - 4;
+	uint8_t* rightIndex = valuePtr + 4;
 
 	//read from frontBuffer, write to backBuffer
+
+	switch (*valuePtr)
+	{
+	case AIR:
+		return false;
+
+	case WIRE:
+
+	{
+		uint8_t surrounding_data = 0;//0b1:nachbar ist 0; 0x10:nachbar ist 2
+
+		//up
+		if (*topIndex > AIR && *topIndex <= BRIDGE) {
+			if ( topIndex[*topIndex == BRIDGE ? 2 : 1] == 0) {
+				surrounding_data = surrounding_data | 0b1;
+			}
+			else if ( topIndex[*topIndex == BRIDGE ? 2 : 1] == 2) {
+				surrounding_data = surrounding_data | 0b10;
+			}
+		}
+
+		//down
+		if (*bottomIndex > AIR && *bottomIndex <= BRIDGE) {
+			if ( bottomIndex[*bottomIndex == BRIDGE ? 2 : 1] == 0) {
+				surrounding_data = surrounding_data | 0b1;
+			}
+			else if (bottomIndex[*bottomIndex == BRIDGE ? 2 : 1] == 2) {
+				surrounding_data = surrounding_data | 0b10;
+			}
+		}
+
+		//left
+		if ( *leftIndex > AIR && *leftIndex <= BRIDGE) {
+			if (leftIndex[1] == 0) {
+				surrounding_data = surrounding_data | 0b1;
+			}
+			else if (leftIndex[1] == 2) {
+				surrounding_data = surrounding_data | 0b10;
+			}
+		}
+
+		//right
+		if (*rightIndex > AIR && *rightIndex <= BRIDGE) {
+			if (rightIndex[1] == 0) {
+				surrounding_data = surrounding_data | 0b1;
+			}
+			else if (rightIndex[1] == 2) {
+				surrounding_data = surrounding_data | 0b10;
+			}
+		}
+
+
+		if ( *(valuePtr + 1) == 0) {//if off -> normal
+			nextValuePtr[1] = 1;
+		}
+		else if (*(valuePtr + 1) == 2 && surrounding_data & 0b1) {//if on && surrounding off -> off
+			nextValuePtr[1] = 0;
+		}
+		else if (*(valuePtr + 1) == 1 && surrounding_data & 0b10) {//if normal && surrounding on -> on
+			nextValuePtr[1] = 2;
+		}
+
+
+		return *reinterpret_cast<uint32_t*>(valuePtr) != *reinterpret_cast<uint32_t*>(nextValuePtr);
+	}
+
+	case OUTPUT:
+		break;
+
+	case BATTERY:
+		break;
+
+	case DELAY:
+		break;
+
+	case BRIDGE:
+		break;
+
+	case LAMP:
+		break;
+
+	case BUTTON:
+		break;
+
+	case SWITCH:
+		break;
+
+	case NOT:
+		break;
+
+	case OR:
+		break;
+
+	case NOR:
+		break;
+
+	case XOR:
+		break;
+
+	case XNOR:
+		break;
+
+	case AND:
+		break;
+
+	case NAND:
+		break;
+
+	case CLOCK:
+		break;
+
+	case DEBUG:
+		break;
+
+	default:
+		break;
+	}
 
 
 	return false;
@@ -116,7 +231,9 @@ void CircuitGridRuleset::addSurrondingPixels(size_t& index) const {
 	//update pixels from updateList, save next updates to updateListNext + renderUpdates
 
 	world->m_updateListNext.add(index);
+
 	world->m_renderUpdates.add(index);
+	//reinterpret_cast<uint32_t*>(world->m_worldRenderBuffer)[index] = reinterpret_cast<uint32_t*>(world->m_worldDataBack)[index];
 
 	bool notTop = index >= width * 2;
 	bool notBottom = index < width * height - width * 2;

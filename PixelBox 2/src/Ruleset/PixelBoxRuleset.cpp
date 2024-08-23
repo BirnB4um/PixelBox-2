@@ -25,7 +25,7 @@ void PixelBoxRuleset::updateAllPixels(World* world) {
 
 	//TODO: update from bottom to top
 
-	for (size_t index : world->m_updateList.getItems()) {
+	for (size_t index : world->m_updateList) {
 		if (updatePixel(index)) {
 			addSurrondingPixels(index);
 		}

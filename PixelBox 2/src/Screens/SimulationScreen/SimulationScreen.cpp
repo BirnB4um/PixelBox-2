@@ -146,7 +146,7 @@ void SimulationScreen::update(float dt) {
 }
 
 void SimulationScreen::render(sf::RenderTarget& window) {
-	window.clear();
+	window.clear(sf::Color(10, 10, 10));
 
 	window.setView(m_pixelView);
 	window.draw(m_pixelSprite, ResourceManager::getPixelShader());

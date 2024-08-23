@@ -39,6 +39,12 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_tpsSlider.setRange(1, 1000);
 	m_tpsSlider.setValue(10);
 	m_tpsSlider.setFunction([this]() {
+		if (m_tpsSlider.getValue() == 1000) {
+			m_simulation->setMSPerTick(0.0);
+		}
+		else {
+			m_simulation->setMSPerTick(1000.0 / m_tpsSlider.getValue());
+		}
 		});
 	m_guiElements.push_back(&m_tpsSlider);
 

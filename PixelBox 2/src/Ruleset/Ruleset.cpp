@@ -25,7 +25,7 @@ void Ruleset::updateAllPixels(World* world) {
 	frontBuffer = world->m_worldDataFront;
 	backBuffer = world->m_worldDataBack;
 
-	for (size_t index : world->m_updateList.getItems()) {
+	for (size_t index : world->m_updateList) {
 		if (updatePixel(index)) {
 			addSurrondingPixels(index);
 		}

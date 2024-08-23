@@ -37,7 +37,7 @@ void main(){
             vec4 pixelData = texture2D(pixelTexture, uv + offset);
 
             //TODO: add support for ruleset to determine if row should be switched
-            bool switchRow = false;
+            bool switchRow = pixelData.g > 1.0/255.0;
             
             vec2 pixelUV = vec2(pixelData.r * 255.0/256.0, 0.0);
             if(switchRow){

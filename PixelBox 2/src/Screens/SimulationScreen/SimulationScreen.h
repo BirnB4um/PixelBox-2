@@ -42,6 +42,10 @@ public:
 	//ownership gets transferred
 	void setWorld(World* world);
 
+	inline void setMSPerTick(double msPerTick) { m_msPerTick = msPerTick; }
+	inline double getMSPerTick() { return m_msPerTick; }
+
+
 
 private:
 

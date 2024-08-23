@@ -69,14 +69,6 @@ void World::createWorld() {
 	m_updateListNext.setMaxSize(m_metaData.width * m_metaData.height);
 	m_renderUpdates.setMaxSize(m_metaData.width * m_metaData.height);
 	clearWorld();
-
-	//DEBUG
-	for (size_t i = 0; i < m_metaData.width * m_metaData.height * 4; i += 4) {
-		m_worldDataFront[i] = rand() % 255;
-		m_worldDataFront[i + 1] = rand() % 255;
-		m_worldDataFront[i + 2] = rand() % 255;
-		m_worldDataFront[i + 3] = 255;
-	}
 }
 
 void World::tick() {
@@ -84,12 +76,12 @@ void World::tick() {
 		return;
 
 	//return if no pixels need to be updated
-	int numPixelsToUpdate = m_updateList.size();
+	int numPixelsToUpdate = m_updateList.getSize();
 	if (numPixelsToUpdate == 0)
 		return;
 
 	//copy changed pixels
-	for (size_t i : m_updateList.getItems()) {
+	for (size_t i : m_updateList) {
 		reinterpret_cast<uint32_t*>(m_worldDataBack)[i] = reinterpret_cast<uint32_t*>(m_worldDataFront)[i];
 	}
 	m_updateListNext.clear();
@@ -289,14 +281,14 @@ void World::addDrawInstruction(std::vector<DrawInstruction>& drawInstructionList
 }
 
 void World::updateRenderBuffer() {
-	for (size_t item : m_renderUpdates.getItems()) {
+	for (size_t item : m_renderUpdates) {
 		reinterpret_cast<uint32_t*>(m_worldRenderBuffer)[item] = reinterpret_cast<uint32_t*>(m_worldDataFront)[item];
 	}
 	m_renderUpdates.clear();
 }
 
 bool World::renderBufferHasChanges() {
-	return m_renderUpdates.size() > 0;
+	return m_renderUpdates.getSize() > 0;
 }
 
 uint8_t* World::getRenderBuffer() {

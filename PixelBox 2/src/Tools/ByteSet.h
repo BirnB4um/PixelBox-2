@@ -5,43 +5,99 @@
 class ByteSet
 {
 public:
-
-	ByteSet() {
+	ByteSet() : maxSize(1024), size(0), map(nullptr), items(nullptr) {
 		setMaxSize(1024);
 	}
 
-	ByteSet(size_t maxSize) {
+	ByteSet(size_t maxSize) : maxSize(maxSize), size(0), map(nullptr), items(nullptr) {
 		setMaxSize(maxSize);
 	}
 
-
 	~ByteSet() {
 		delete[] map;
+		delete[] items;
 	}
 
-	inline void setMaxSize(size_t maxSize) {
-		this->maxSize = maxSize;
-		delete[] map;
+	// Copy Constructor
+	ByteSet(const ByteSet& other) : maxSize(other.maxSize), size(other.size) {
 		map = new bool[maxSize];
-		memset(map, 0, maxSize);
-		clear();
-		items.reserve(maxSize);
+		items = new size_t[maxSize];
+		std::copy(other.map, other.map + maxSize, map);
+		std::copy(other.items, other.items + size, items);
 	}
 
-	inline size_t getMaxSize() const { 
+	// Copy Assignment Operator
+	ByteSet& operator=(const ByteSet& other) {
+		if (this != &other) {
+			ByteSet temp(other);
+			swap(temp);
+		}
+		return *this;
+	}
+
+	// Move Constructor
+	ByteSet(ByteSet&& other) noexcept
+		: maxSize(other.maxSize), size(other.size), map(other.map), items(other.items) {
+		other.maxSize = 0;
+		other.size = 0;
+		other.map = nullptr;
+		other.items = nullptr;
+	}
+
+	// Move Assignment Operator
+	ByteSet& operator=(ByteSet&& other) noexcept {
+		if (this != &other) {
+			delete[] map;
+			delete[] items;
+
+			maxSize = other.maxSize;
+			size = other.size;
+			map = other.map;
+			items = other.items;
+
+			other.maxSize = 0;
+			other.size = 0;
+			other.map = nullptr;
+			other.items = nullptr;
+		}
+		return *this;
+	}
+
+	// Set maximum size of ByteSet
+	inline void setMaxSize(size_t maxSize) {
+		if (this->maxSize != maxSize) {
+			bool* newMap = new bool[maxSize](); // Allocate and zero initialize
+			size_t* newItems = new size_t[maxSize];
+
+			delete[] map;
+			delete[] items;
+
+			map = newMap;
+			items = newItems;
+			this->maxSize = maxSize;
+			size = 0;
+		}
+	}
+
+	inline size_t getMaxSize() const {
 		return maxSize;
 	}
 
-	//add item to set
-	//returns true if item was added, false if it was already in the set
+	// Add item to set
+	// Returns true if item was added, false if it was already in the set
 	inline bool add(size_t item) {
 		assert(item < maxSize);
 
+		// If already set
 		if (map[item])
 			return false;
 
+		// Set flag
 		map[item] = true;
-		items.push_back(item);
+
+		// Push back item
+		items[size++] = item;
+
 		return true;
 	}
 
@@ -50,18 +106,19 @@ public:
 		return map[item];
 	}
 
+	// Clear the ByteSet
 	inline void clear() {
-		for (size_t item : items) {
-			map[item] = false;
+		for (size_t i = 0; i < size; ++i) {
+			map[items[i]] = false;
 		}
-		items.clear();
+		size = 0;
 	}
 
-	inline size_t size() const { 
-		return items.size();
+	inline size_t getSize() const {
+		return size;
 	}
 
-	std::vector<size_t>& getItems() {
+	size_t* getItems() {
 		return items;
 	}
 
@@ -73,13 +130,43 @@ public:
 		std::swap(maxSize, other.maxSize);
 		std::swap(map, other.map);
 		std::swap(items, other.items);
+		std::swap(size, other.size);
 	}
 
+
+	class iterator {
+	public:
+		iterator(size_t* ptr) : m_ptr(ptr) {}
+
+		size_t& operator*() const { return *m_ptr; }
+		size_t* operator->() { return m_ptr; }
+
+		// Prefix increment
+		iterator& operator++() {
+			m_ptr++;
+			return *this;
+		}
+
+		// Postfix increment
+		iterator operator++(int) {
+			iterator tmp = *this;
+			++(*this);
+			return tmp;
+		}
+
+		friend bool operator==(const iterator& a, const iterator& b) { return a.m_ptr == b.m_ptr; }
+		friend bool operator!=(const iterator& a, const iterator& b) { return a.m_ptr != b.m_ptr; }
+
+	private:
+		size_t* m_ptr;
+	};
+
+	iterator begin() { return iterator(items); }
+	iterator end() { return iterator(items + size); }
 
 private:
 	size_t maxSize;
 	bool* map;
-	std::vector<size_t> items;
-
+	size_t* items;
+	size_t size;
 };
-

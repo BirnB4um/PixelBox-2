@@ -6,6 +6,7 @@ class CircuitGridRuleset : public Ruleset
 {
 
 public:
+
 	CircuitGridRuleset();
 	~CircuitGridRuleset() override;
 
@@ -14,6 +15,31 @@ public:
 	void addSurrondingPixels(size_t& index) const override;
 
 private:
+
+	enum Item : uint8_t {
+		AIR,
+		WIRE,
+		OUTPUT,
+		BATTERY,
+		DELAY,
+		BRIDGE,
+
+		LAMP,
+		BUTTON,
+		SWITCH,
+
+		NOT,
+		OR,
+		NOR,
+		XOR,
+		XNOR,
+		AND,
+		NAND,
+
+		CLOCK,
+		DEBUG
+
+	};
 
 	void createInventory() override;
 

@@ -10,6 +10,7 @@ SimulationScreen::SimulationScreen() {
 	m_stopRenderingThread = false;
 	m_stopRenderingThread = false;
 	m_boardGrabbed = false;
+	m_hideGui = false;
 }
 
 SimulationScreen::~SimulationScreen() {
@@ -52,11 +53,7 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 		break;
 
 	case sf::Event::KeyReleased:
-		if (sfEvent.key.code == sf::Keyboard::Space) { // (un-)pause simulation
-			m_worldInteractionManager.m_pauseSwitch.callFunction();
-			return true;
-		}
-		else if (sfEvent.key.code == sf::Keyboard::Escape) {
+		if (sfEvent.key.code == sf::Keyboard::Escape) {
 			stopRenderingThread();
 			stopSimulationThread();
 			deleteWorld();
@@ -65,6 +62,12 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 		}
 		else if (sfEvent.key.code == sf::Keyboard::Num0) {
 			resetView();
+			return true;
+		}
+		else if (sfEvent.key.code == sf::Keyboard::F1) { //toggle gui visibility
+			m_hideGui = !m_hideGui;
+			m_worldInteractionManager.setHideGui(m_hideGui);
+			m_inventory.setHideGui(m_hideGui);
 			return true;
 		}
 		break;
@@ -77,7 +80,7 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 			//zoom in/out
 			float zoomAmount = delta > 0 ? 1.0f / 0.8f : delta < 0 ? 0.8f : 0.0f;
 			m_targetZoomLevel = std::max(0.1f, std::min(2000.0f, m_targetZoomLevel * zoomAmount));
-			
+
 			return true;
 		}
 
@@ -87,7 +90,6 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 		//sf::Vector2f originalMousePos = getMouseWorldPos();
 		//sf::Vector2f diff = originalMousePos - m_targetViewCenter;
 		//m_targetViewCenter = originalMousePos - diff / zoomAmount;
-
 	}
 
 	break;
@@ -105,7 +107,7 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 			m_boardGrabbed = true;
 			return true;
 		}
-		
+
 		break;
 
 	case sf::Event::MouseButtonReleased:
@@ -173,6 +175,7 @@ void SimulationScreen::setWorld(World* world) {
 	m_isSimulationPaused = false;
 	m_msPerTick = 100.0;
 	m_msPerFrame = 25.0;
+	m_updateOneTick = false;
 	m_boardGrabbed = false;
 	m_world->redrawWorld();
 	m_inventory.createFromRuleset(m_world->getMetaData().ruleset);
@@ -246,26 +249,45 @@ void SimulationScreen::updateView(float dt) {
 
 void SimulationScreen::th_simulationLoop() {
 	Timer timer;
-	int waitTime;
+	double waitTime;
+
+	double msPerTick = 0.0;
+	double windowSize = 20.0;
+	size_t numTicks = 1;
+	int tickIndex = 0;
 
 	while (!m_stopSimulationThread) {
-		//FIXME: update multiple ticks per loop
-
 		{
-			timer.start();
+			DoubleMutexGuard guard(m_bufferMutex);
 
-			std::lock_guard<std::mutex> lock(m_bufferMutex);
-
-			if (!m_isSimulationPaused) {
-				m_world->tick();
+			msPerTick = m_msPerTick;
+			if (msPerTick > 0.0) {
+				numTicks = static_cast<int>(ceil(windowSize / msPerTick));
+			}
+			else {
+				numTicks = -1;//set to max size
 			}
 
+			timer.start();
+			if (m_isSimulationPaused) {
+				waitTime = 100.0; //10 fps
+				if (m_updateOneTick) {
+					m_updateOneTick = false;
+					m_world->tick();
+				}
+			}
+			else {
+				for (tickIndex = 0; tickIndex < numTicks && timer.getCurrentDuration() < windowSize; ++tickIndex) {
+					m_world->tick();
+				}
+				waitTime = tickIndex * msPerTick;
+			}
 			timer.stop();
 		}
 
-		//wait for next tick
-		waitTime = static_cast<int>(std::max(0.0, m_msPerTick - timer.getDuration()));
-		std::this_thread::sleep_for(std::chrono::milliseconds(waitTime));
+		//wait for next tickcycle
+		waitTime = Utils::constrain(waitTime - timer.getDuration(), 0.0, 1000.0);
+		std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(waitTime)));
 	}
 }
 
@@ -285,7 +307,7 @@ void SimulationScreen::th_renderingLoop() {
 				m_collectedDrawInstructions.clear();
 			}
 
-			std::lock_guard<std::mutex> lock(m_bufferMutex);
+			DoubleMutexGuard guard(m_bufferMutex);
 
 			m_world->drawToWorld();
 

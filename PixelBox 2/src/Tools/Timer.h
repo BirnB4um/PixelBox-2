@@ -23,7 +23,13 @@ public:
 		return m_duration.count();
 	}
 
+	//returns duration of timer in milliseconds since start() was called
+	inline double getCurrentDuration() {
+		return std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - m_t).count();
+	}
+
 	//get duration of timer in milliseconds
+	//call stop() before this
 	inline double getDuration() {
 		return m_duration.count();
 	}

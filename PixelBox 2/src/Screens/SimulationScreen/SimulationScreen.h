@@ -9,6 +9,7 @@
 #include "../../World/PixelData.h"
 #include "WorldInteractionManager.h"
 #include "Inventory.h"
+#include "../../Tools/DoubleMutex.h"
 
 class SimulationScreen : public Screen
 {
@@ -66,13 +67,15 @@ private:
 	bool m_isSimulationPaused;
 	double m_msPerTick;
 	double m_msPerFrame;
+	bool m_updateOneTick;
 
 	std::thread m_simulationThread;
 	std::thread m_renderingThread;
 	bool m_stopSimulationThread;
 	bool m_stopRenderingThread;
-	std::mutex m_bufferMutex; //mutex for all buffers in World
+	DoubleMutex m_bufferMutex; //mutex for all buffers in World
 
+	bool m_hideGui;
 	WorldInteractionManager m_worldInteractionManager;
 	Inventory m_inventory;
 

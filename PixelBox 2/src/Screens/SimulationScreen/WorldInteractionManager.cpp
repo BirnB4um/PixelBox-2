@@ -6,6 +6,7 @@
 WorldInteractionManager::WorldInteractionManager() {
 	m_simulation = nullptr;
 	m_isDrawing = false;
+	m_hideGui = false;
 
 	m_linePreview.setFillColor(sf::Color(255, 0, 0));
 	m_rectPreview.setFillColor(sf::Color::Transparent);
@@ -36,18 +37,24 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_guiElements.push_back(&m_interactionSwitch);
 
 	//Sliders
-	m_tpsSlider.setRange(1, 1000);
-	m_tpsSlider.setValue(10);
+	m_tpsSlider.setRange(0.0f, 1.0f);
+	m_tpsSlider.setValue(0.0f);
 	m_tpsSlider.setFunction([this]() {
-		if (m_tpsSlider.getValue() == 1000) {
+		if (m_tpsSlider.getValue() == 1.0f) {
 			m_simulation->setMSPerTick(0.0);
+			m_tpsText.setText("TPS: MAX");
 		}
 		else {
-			m_simulation->setMSPerTick(1000.0 / m_tpsSlider.getValue());
+			m_simulation->setMSPerTick(1000.0 * std::pow(0.000004, m_tpsSlider.getValue()));
+			m_tpsText.setText("TPS: " + std::to_string((int)(1000.0f / m_simulation->getMSPerTick())));
 		}
 		});
 	m_guiElements.push_back(&m_tpsSlider);
 
+	m_tpsText.setFontSize(15);
+	m_tpsText.setText("TPS: 1");
+	m_tpsText.setAlignment(TextRect::Alignment::CenterLeft);
+	m_guiElements.push_back(&m_tpsText);
 
 	m_brushSizeSlider.setRange(1, 100);
 	m_brushSizeSlider.setValue(1);
@@ -122,7 +129,6 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		});
 	m_guiElements.push_back(&m_gridSwitch);
 
-
 	m_detailSwitch.setBorderWidth(2.0f);
 	m_detailSwitch.setSpritePadding(4.0f);
 	m_detailSwitch.setTexturePatch({ 61, 20, 4, 6 });
@@ -135,7 +141,8 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_resetButton.setSpritePadding(4.0f);
 	m_resetButton.setTexturePatch({ 76, 16, 8, 11 });
 	m_resetButton.setFunction([this]() {
-		std::cout << "reset" << std::endl;
+		DoubleMutexGuard lock(m_simulation->m_bufferMutex);
+		m_simulation->m_world->resetWorld();
 		});
 	m_guiElements.push_back(&m_resetButton);
 
@@ -147,71 +154,63 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		});
 	m_guiElements.push_back(&m_undoButton);
 
-
 	//reload resources
 	for (GuiElement* element : m_guiElements) {
 		element->reloadResources();
 	}
 
 	onResize();
-
 }
 
 bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
-
-	for (GuiElement* element : m_guiElements) {
-		if(element->handleEvent(sfEvent))
-			return true;
+	if (!m_hideGui) {
+		for (GuiElement* element : m_guiElements) {
+			if (element->handleEvent(sfEvent))
+				return true;
+		}
 	}
-
 
 	switch (sfEvent.type)
 	{
 	case sf::Event::KeyReleased:
-		if (sfEvent.key.code == sf::Keyboard::R) {
-			uint32_t data = 0xff0000ff;
-			reinterpret_cast<uint8_t*>(&data)[0] = rand() % 255;
-			reinterpret_cast<uint8_t*>(&data)[1] = rand() % 255;
-			reinterpret_cast<uint8_t*>(&data)[2] = rand() % 255;
-			reinterpret_cast<uint8_t*>(&data)[3] = 255;
-
-			DrawInstruction instruction(
-				data,
-				{ 0,0 },
-				{ static_cast<int>(m_simulation->m_world->getMetaData().width),static_cast<int>(m_simulation->m_world->getMetaData().height) },
-				DrawInstruction::Type::RECTANGLE,
-				1.0f,
-				nullptr);
-
-			std::lock_guard<std::mutex> lock(m_simulation->m_drawingMutex);
-			m_simulation->m_collectedDrawInstructions.push_back(instruction);
-
-			return true;
+		if (sfEvent.key.code == sf::Keyboard::Space) { // (un-)pause simulation
+			m_pauseSwitch.callFunction();
 		}
-		else if (sfEvent.key.code == sf::Keyboard::Num1) {
+		else if (sfEvent.key.code == sf::Keyboard::Right) { //step one tick
+			m_simulation->m_updateOneTick = true;
+		}
+		else if (sfEvent.key.code == sf::Keyboard::R) { //reset pixels to default
+			m_resetButton.callFunction();
+		}
+		else if (sfEvent.key.code == sf::Keyboard::Num1) { //select brush
 			m_brushSwitch.callFunction();
 		}
-		else if (sfEvent.key.code == sf::Keyboard::Num2) {
+		else if (sfEvent.key.code == sf::Keyboard::Num2) { // select line
 			m_lineSwitch.callFunction();
 		}
-		else if (sfEvent.key.code == sf::Keyboard::Num3) {
+		else if (sfEvent.key.code == sf::Keyboard::Num3) { // select rectangle
 			m_rectangleSwitch.callFunction();
 		}
-		else if (sfEvent.key.code == sf::Keyboard::Num4) {
+		else if (sfEvent.key.code == sf::Keyboard::Num4) { // select circle
 			m_circleSwitch.callFunction();
 		}
-		else if (sfEvent.key.code == sf::Keyboard::Num5) {
+		else if (sfEvent.key.code == sf::Keyboard::Num5) { // select fill
 			m_fillSwitch.callFunction();
 		}
-		else if (sfEvent.key.code == sf::Keyboard::Num6) {
+		else if (sfEvent.key.code == sf::Keyboard::Num6) { // select selection
 			m_selectionSwitch.callFunction();
 		}
-		else if (sfEvent.key.code == sf::Keyboard::G) {
+		else if (sfEvent.key.code == sf::Keyboard::G) { // toggle grid
 			m_gridSwitch.callFunction();
 		}
-		else if (sfEvent.key.code == sf::Keyboard::Y) {
+		else if (sfEvent.key.code == sf::Keyboard::Y) { // toggle detail
 			m_detailSwitch.callFunction();
 		}
+		else {
+			return false;
+		}
+		return true;
+
 		break;
 
 	case sf::Event::MouseButtonPressed:
@@ -274,7 +273,7 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
 			//change brush size
 
-			delta *= std::max(1.0f, ceil( sin(m_brushSizeSlider.getValue() * abs(delta) * 0.0069f) * 30 ));
+			delta *= std::max(1.0f, ceil(sin(m_brushSizeSlider.getValue() * abs(delta) * 0.0069f) * 30));
 
 			m_brushSizeSlider.setValue(m_brushSizeSlider.getValue() + delta);
 			return true;
@@ -290,9 +289,10 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 }
 
 void WorldInteractionManager::update(float dt) {
-
-	for (GuiElement* element : m_guiElements) {
-		element->update(dt);
+	if (!m_hideGui) {
+		for (GuiElement* element : m_guiElements) {
+			element->update(dt);
+		}
 	}
 
 	//if drawing with brush
@@ -360,10 +360,11 @@ void WorldInteractionManager::render(sf::RenderTarget& window) {
 	window.setView(Application::normalView);
 
 	//draw gui
-	for (GuiElement* element : m_guiElements) {
-		element->render(window);
+	if (!m_hideGui) {
+		for (GuiElement* element : m_guiElements) {
+			element->render(window);
+		}
 	}
-
 }
 
 void WorldInteractionManager::onResize() {
@@ -373,6 +374,7 @@ void WorldInteractionManager::onResize() {
 	m_interactionSwitch.setBounds(10, 70, 50, 50);
 
 	m_tpsSlider.setBounds(80, 10, 160, 25);
+	m_tpsText.setBounds(250, 10, 200, 25);
 	m_brushSizeSlider.setBounds(80, 70, 160, 25);
 
 	float x = 10.0f;
@@ -416,7 +418,6 @@ void WorldInteractionManager::resetAll() {
 
 	m_gridSwitch.setActivated(false);
 	m_detailSwitch.setActivated(false);
-
 }
 
 void WorldInteractionManager::deactivateAllSwitches() {

@@ -31,6 +31,11 @@ public:
 	void setSelectedPixel(uint32_t pixel);
 	inline PixelData getSelectedPixel() const { return m_selectedPixel; }
 
+	void setHideGui(bool hideGui) {
+		m_hideGui = hideGui;
+	}
+	bool isGuiHidden() const { return m_hideGui; }
+
 private:
 
 	struct InventoryItem {
@@ -45,6 +50,7 @@ private:
 
 	bool m_showInventory;
 
+	bool m_hideGui;
 	SimulationScreen* m_simulation;
 	std::vector<GuiElement*> m_guiElement;
 

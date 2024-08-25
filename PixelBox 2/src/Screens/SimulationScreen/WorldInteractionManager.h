@@ -22,10 +22,16 @@ public:
 
 	void resetAll();
 
+	void setHideGui(bool hideGui) {
+		m_hideGui = hideGui;
+	}
+	bool isGuiHidden() const { return m_hideGui; }
+
 	SpriteStateSwitch m_pauseSwitch;
 	SpriteStateSwitch m_interactionSwitch;
 
 	HorizontalValueSlider m_tpsSlider;
+	TextRect m_tpsText;
 	HorizontalValueSlider m_brushSizeSlider;
 
 	SpriteSwitch m_brushSwitch;
@@ -43,6 +49,7 @@ public:
 private:
 	SimulationScreen* m_simulation;
 
+	bool m_hideGui;
 	std::vector<GuiElement*> m_guiElements;
 
 	bool m_isDrawing;

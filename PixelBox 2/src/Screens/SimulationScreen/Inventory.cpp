@@ -7,6 +7,7 @@
 Inventory::Inventory() {
 	m_simulation = nullptr;
 	m_showInventory = true;
+	m_hideGui = false;
 
 }
 
@@ -38,11 +39,13 @@ void Inventory::init(SimulationScreen* simulation) {
 
 bool Inventory::handleEvent(sf::Event& sfEvent) {
 
-	if (m_selectedPixelButton.handleEvent(sfEvent))
-		return true;
+	if (!m_hideGui) {
+		if (m_selectedPixelButton.handleEvent(sfEvent))
+			return true;
 
-	if (m_inventoryPanel.handleEvent(sfEvent) && m_showInventory)
-		return true;
+		if (m_inventoryPanel.handleEvent(sfEvent) && m_showInventory)
+			return true;
+	}
 
 	switch (sfEvent.type)
 	{
@@ -58,14 +61,13 @@ bool Inventory::handleEvent(sf::Event& sfEvent) {
 		if (sfEvent.mouseButton.button == sf::Mouse::Right) {
 
 			//select pixel
-			if (m_showInventory) {
-				sf::FloatRect worldRect = sf::FloatRect(0.0f, 0.0f, m_simulation->m_world->getMetaData().width, m_simulation->m_world->getMetaData().height);
-				sf::Vector2i mouse = static_cast<sf::Vector2i>(m_simulation->getMouseWorldPos());
-				if (worldRect.contains(m_simulation->getMouseWorldPos())) {
-					setSelectedPixel(m_simulation->m_world->getPixel(mouse.x, mouse.y));
-					return true;
-				}
+			sf::FloatRect worldRect = sf::FloatRect(0.0f, 0.0f, m_simulation->m_world->getMetaData().width, m_simulation->m_world->getMetaData().height);
+			sf::Vector2i mouse = static_cast<sf::Vector2i>(m_simulation->getMouseWorldPos());
+			if (worldRect.contains(m_simulation->getMouseWorldPos())) {
+				setSelectedPixel(m_simulation->m_world->getPixel(mouse.x, mouse.y));
+				return true;
 			}
+			
 
 		}
 		break;
@@ -76,17 +78,21 @@ bool Inventory::handleEvent(sf::Event& sfEvent) {
 }
 
 void Inventory::update(float dt) {
-	if(m_showInventory)
-		m_inventoryPanel.update(dt);
+	if (!m_hideGui) {
+		if (m_showInventory)
+			m_inventoryPanel.update(dt);
 
-	m_selectedPixelButton.update(dt);
+		m_selectedPixelButton.update(dt);
+	}
 }
 
 void Inventory::render(sf::RenderTarget& window) {
-	if(m_showInventory)
-		m_inventoryPanel.render(window);
+	if (!m_hideGui) {
+		if (m_showInventory)
+			m_inventoryPanel.render(window);
 
-	m_selectedPixelButton.render(window);
+		m_selectedPixelButton.render(window);
+	}
 }
 
 void Inventory::onResize() {

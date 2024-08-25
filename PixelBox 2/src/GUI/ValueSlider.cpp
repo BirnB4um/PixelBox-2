@@ -1,7 +1,6 @@
 #include "ValueSlider.h"
 #include "../Application.h"
 
-
 ValueSlider::ValueSlider() : InteractableGui() {
 	m_nob.setFillColor(sf::Color(60, 120, 200));
 	m_zeroLine.setFillColor(sf::Color(255, 255, 255, 255));
@@ -22,7 +21,6 @@ ValueSlider::ValueSlider() : InteractableGui() {
 }
 
 ValueSlider::~ValueSlider() {
-
 }
 
 bool ValueSlider::handleEvent(sf::Event& sfEvent) {
@@ -59,7 +57,7 @@ bool ValueSlider::handleEvent(sf::Event& sfEvent) {
 	case sf::Event::MouseWheelScrolled:
 		if (isMouseOver()) {
 			float delta = -sfEvent.mouseWheelScroll.delta;
-			setValue(getValue() + delta);
+			setValue(m_value + delta * (m_maxValue - m_minValue)/50.0f);
 			return true;
 		}
 		break;
@@ -90,7 +88,6 @@ void ValueSlider::updateInteraction() {
 void ValueSlider::update(float dt) {
 	if (!m_isInteractable)
 		return;
-
 }
 
 void ValueSlider::render(sf::RenderTarget& window) {
@@ -129,17 +126,19 @@ float ValueSlider::getValue() {
 }
 
 void ValueSlider::setValue(float value) {
-	m_value = value;
-	m_value = std::max(m_value, m_minValue);
-	m_value = std::min(m_value, m_maxValue);
+	m_value = Utils::constrain(value, m_minValue, m_maxValue);
 
 	updateNobPosition();
 	m_function();
 }
 
 void ValueSlider::setRange(float min, float max) {
-	if (min == max)
-		max += 0.0001f;
+	if (min == max) {
+		max += 0.000001f;
+	}
+	else if (min > max) {
+		std::swap(min, max);
+	}
 
 	m_minValue = min;
 	m_maxValue = max;
@@ -149,11 +148,9 @@ void ValueSlider::setRange(float min, float max) {
 }
 
 void ValueSlider::updateNobPosition() {
-
 }
 
 void ValueSlider::updateValue() {
-
 }
 
 void ValueSlider::updateZeroLine() {
@@ -166,4 +163,3 @@ void ValueSlider::resetInteractionState() {
 	m_ninePatch.setPatches(PatchAtlas::angularIdle);
 	updateInteraction();
 }
-

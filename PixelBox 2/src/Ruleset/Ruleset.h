@@ -23,6 +23,7 @@ public:
 	Ruleset();
 	virtual ~Ruleset();
 
+
 	inline uint64_t getID() {
 		return m_id;
 	}
@@ -48,6 +49,7 @@ public:
 	}
 
 	InventoryItem getItemFromID(uint8_t id);
+	uint32_t getItemDataFromID(uint8_t id);
 
 
 protected:
@@ -58,6 +60,7 @@ protected:
 
 
 	std::vector<InventoryCategory> m_inventory;
+	uint32_t* m_defaultPixelData;
 
 	//temp values for updating pixels
 	World* world;

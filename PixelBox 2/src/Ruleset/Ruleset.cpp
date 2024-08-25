@@ -9,12 +9,14 @@ Ruleset::Ruleset() {
 	backBuffer = nullptr;
 	width = 0;
 	height = 0;
+
+	m_defaultPixelData = new uint32_t[256];
+	memset(m_defaultPixelData, 0, 256 * sizeof(uint32_t));
 }
 
 Ruleset::~Ruleset() {
-
+	delete[] m_defaultPixelData;
 }
-
 
 
 void Ruleset::updateAllPixels(World* world) {
@@ -112,4 +114,9 @@ Ruleset::InventoryItem Ruleset::getItemFromID(uint8_t id) {
 	}
 
 	return InventoryItem();
+}
+
+
+uint32_t Ruleset::getItemDataFromID(uint8_t id) {
+	return m_defaultPixelData[id];
 }

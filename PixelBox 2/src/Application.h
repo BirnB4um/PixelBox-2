@@ -2,8 +2,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <imgui.h>
-#include <imgui-SFML.h>
 
 #include "Screens/Screen.h"
 #include "Screens/HomeScreen/HomeScreen.h"

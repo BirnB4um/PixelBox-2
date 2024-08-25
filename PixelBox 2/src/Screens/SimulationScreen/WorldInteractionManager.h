@@ -33,6 +33,7 @@ public:
 	HorizontalValueSlider m_tpsSlider;
 	TextRect m_tpsText;
 	HorizontalValueSlider m_brushSizeSlider;
+	TextRect m_brushSizeText;
 
 	SpriteSwitch m_brushSwitch;
 	SpriteSwitch m_lineSwitch;

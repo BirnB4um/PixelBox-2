@@ -11,6 +11,7 @@ SimulationScreen::SimulationScreen() {
 	m_stopRenderingThread = false;
 	m_boardGrabbed = false;
 	m_hideGui = false;
+	m_directRendering = false;
 }
 
 SimulationScreen::~SimulationScreen() {
@@ -173,7 +174,7 @@ void SimulationScreen::setWorld(World* world) {
 	m_pixelView.setCenter(m_targetViewCenter);
 	updateView(0.0f);
 	m_isSimulationPaused = false;
-	m_msPerTick = 100.0;
+	m_msPerTick = 1000.0;
 	m_msPerFrame = 25.0;
 	m_updateOneTick = false;
 	m_boardGrabbed = false;
@@ -277,7 +278,7 @@ void SimulationScreen::th_simulationLoop() {
 				}
 			}
 			else {
-				for (tickIndex = 0; tickIndex < numTicks && timer.getCurrentDuration() < windowSize; ++tickIndex) {
+				for (tickIndex = 0; tickIndex < numTicks && timer.getCurrentDuration() < windowSize && !m_isSimulationPaused; ++tickIndex) {
 					m_world->tick();
 				}
 				waitTime = tickIndex * msPerTick;
@@ -365,4 +366,8 @@ sf::Vector2f SimulationScreen::toWorldPos(sf::Vector2f screenPos) {
 void SimulationScreen::deleteWorld() {
 	delete m_world;
 	m_world = nullptr;
+}
+
+void SimulationScreen::setSimulationPaused(bool paused) {
+	m_worldInteractionManager.m_pauseSwitch.setState(paused ? 1 : 2);
 }

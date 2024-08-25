@@ -35,14 +35,11 @@ void Application::init() {
 		screen->onResize();
 	}
 	openScreen(ScreenID::HOME);
-
-
-	ImGui::SFML::Init(m_window);
 }
 
 
 Application::~Application() {
-	ImGui::SFML::Shutdown();
+
 }
 
 void Application::createWindow(unsigned int width, unsigned int height, bool fullscreen, int fps, std::string title, bool vsync)
@@ -121,7 +118,6 @@ void Application::close() {
 
 void Application::handleEvents() {
 	while (m_window.pollEvent(m_sfEvent)) {
-		ImGui::SFML::ProcessEvent(m_window, m_sfEvent);
 
 		switch (m_sfEvent.type)
 		{
@@ -159,25 +155,11 @@ void Application::handleEvents() {
 			break;
 		}
 
-		//if mouse is captured by imgui, don't handle events
-		if (ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard)
-			continue;
-
 		currentScreen->handleEvent(m_sfEvent);
 	}
 }
 
 void Application::update() {
-	ImGui::SFML::Update(m_window, m_deltaTime);
-
-	//ImGui::Begin("gui");
-	//float scale = GuiElement::getGuiScale();
-	//if (ImGui::SliderFloat("gui scale", &scale, 0.1f, 2.0f)) {
-	//	GuiElement::setGuiScale(scale);
-	//	onResize();
-	//}
-	//ImGui::End();
-
 	currentScreen->update(m_deltaTime.asSeconds());
 }
 
@@ -186,8 +168,6 @@ void Application::draw() {
 	m_window.setView(normalView);
 
 	currentScreen->render(m_window);
-
-	ImGui::SFML::Render(m_window);
 
 	m_window.display();
 }

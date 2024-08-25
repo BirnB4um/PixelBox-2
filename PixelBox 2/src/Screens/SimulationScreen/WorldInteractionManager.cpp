@@ -46,7 +46,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 		}
 		else {
 			m_simulation->setMSPerTick(1000.0 * std::pow(0.000004, m_tpsSlider.getValue()));
-			m_tpsText.setText("TPS: " + std::to_string((int)(1000.0f / m_simulation->getMSPerTick())));
+			m_tpsText.setText("TPS: " + std::to_string(static_cast<int>(1000.0f / m_simulation->getMSPerTick())));
 		}
 		});
 	m_guiElements.push_back(&m_tpsSlider);
@@ -60,8 +60,14 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_brushSizeSlider.setValue(1);
 	m_brushSizeSlider.setFunction([this]() {
 		ResourceManager::getPixelShader()->setUniform("brushSize", m_brushSizeSlider.getValue());
+		m_brushSizeText.setText("Brushsize: " + std::to_string(static_cast<int>(m_brushSizeSlider.getValue())));
 		});
 	m_guiElements.push_back(&m_brushSizeSlider);
+
+	m_brushSizeText.setFontSize(15);
+	m_brushSizeText.setText("Brushsize: 1");
+	m_brushSizeText.setAlignment(TextRect::Alignment::CenterLeft);
+	m_guiElements.push_back(&m_brushSizeText);
 
 	//Drawtype Buttons
 	m_brushSwitch.setActivated(true);
@@ -217,7 +223,12 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 		if (sfEvent.mouseButton.button == sf::Mouse::Left && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
 			if (m_interactionSwitch.getCurrentState().id == 1) { //drawing
 				m_startDrawingPosition = m_simulation->getMouseWorldPos();
-				m_isDrawing = true;
+				if (m_selectionSwitch.isActivated()) {
+					//TODO: start selection
+				}
+				else {
+					m_isDrawing = true;
+				}
 
 				return true;
 			}
@@ -255,8 +266,6 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 				instruction.type = DrawInstruction::Type::FILL;
 				instruction.startPos = instruction.endPos;
 			}
-
-			//FIXME: if selection tool is activated -> draws line
 
 			std::lock_guard<std::mutex> lock(m_simulation->m_drawingMutex);
 			m_simulation->m_collectedDrawInstructions.push_back(instruction);
@@ -375,7 +384,8 @@ void WorldInteractionManager::onResize() {
 
 	m_tpsSlider.setBounds(80, 10, 160, 25);
 	m_tpsText.setBounds(250, 10, 200, 25);
-	m_brushSizeSlider.setBounds(80, 70, 160, 25);
+	m_brushSizeSlider.setBounds(80, 45, 160, 25);
+	m_brushSizeText.setBounds(250, 45, 200, 25);
 
 	float x = 10.0f;
 	float y = 130.0f;

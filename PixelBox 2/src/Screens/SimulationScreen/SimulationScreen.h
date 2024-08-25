@@ -46,6 +46,7 @@ public:
 	inline void setMSPerTick(double msPerTick) { m_msPerTick = msPerTick; }
 	inline double getMSPerTick() { return m_msPerTick; }
 
+	void setSimulationPaused(bool paused);
 
 
 private:
@@ -69,6 +70,7 @@ private:
 	double m_msPerFrame;
 	bool m_updateOneTick;
 
+	bool m_directRendering; //TODO: implement this by updating the texture directly with frontbuffer
 	std::thread m_simulationThread;
 	std::thread m_renderingThread;
 	bool m_stopSimulationThread;

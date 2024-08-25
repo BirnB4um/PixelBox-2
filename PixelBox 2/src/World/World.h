@@ -11,6 +11,7 @@
 #include "DrawInstruction.h"
 #include "../Tools/ByteSet.h"
 #include "../Tools/Utils.h"
+#include "../Tools/Timer.h"
 
 
 class World
@@ -74,6 +75,10 @@ public:
 
 	uint32_t getPixel(size_t x, size_t y);
 
+	int getTimeSinceLastTick() {
+		return m_timeSinceLastTick;
+	}
+
 private:
 
 	WorldMetaData m_metaData;
@@ -87,6 +92,8 @@ private:
 
 	std::vector<DrawInstruction> m_drawInstructionList;
 
+	long long m_timeLastTick;
+	int m_timeSinceLastTick;
 
 };
 

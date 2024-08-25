@@ -75,6 +75,11 @@ void World::tick() {
 	if (!isCreated())
 		return;
 
+	//update time
+	long long currentTime = Timer::getTime();
+	m_timeSinceLastTick = currentTime - m_timeLastTick;
+	m_timeLastTick = currentTime;
+
 	//return if no pixels need to be updated
 	int numPixelsToUpdate = m_updateList.getSize();
 	if (numPixelsToUpdate == 0)
@@ -148,6 +153,7 @@ void World::drawToWorld() {
 										if (sqrt((_x - x) * (_x - x) + (_y - y) * (_y - y)) <= instruction.width - 1) {
 
 											reinterpret_cast<uint32_t*>(m_worldDataFront)[_x + _y * m_metaData.width] = instruction.pixelData;
+											reinterpret_cast<uint32_t*>(m_worldDataBack)[_x + _y * m_metaData.width] = instruction.pixelData;
 											m_renderUpdates.add(_x + _y * m_metaData.width);
 
 											for (int uy = Utils::constrain(_y - 1, 1, static_cast<int>(m_metaData.height) - 2); uy <= Utils::constrain(_y + 1, 1, static_cast<int>(m_metaData.height) - 2); ++uy) {
@@ -189,6 +195,7 @@ void World::drawToWorld() {
 				for (size_t y = instruction.startPos.y; y <= instruction.endPos.y; ++y) {
 					for (size_t x = instruction.startPos.x; x <= instruction.endPos.x; ++x) {
 						reinterpret_cast<uint32_t*>(m_worldDataFront)[x + y * m_metaData.width] = instruction.pixelData;
+						reinterpret_cast<uint32_t*>(m_worldDataBack)[x + y * m_metaData.width] = instruction.pixelData;
 						m_renderUpdates.add(x + y * m_metaData.width);
 					}
 				}
@@ -218,7 +225,7 @@ void World::drawToWorld() {
 					continue;
 
 				std::vector<size_t> test_list;
-				test_list.reserve(4 * 1000);
+				test_list.reserve(100000);
 				test_list.push_back(instruction.startPos.y * m_metaData.width + instruction.startPos.x);
 
 				size_t next_i;
@@ -229,6 +236,7 @@ void World::drawToWorld() {
 					uint8_t id = m_worldDataFront[next_i * 4];
 					if (id == itemIDtoOverride) {
 						reinterpret_cast<uint32_t*>(m_worldDataFront)[next_i] = instruction.pixelData;
+						reinterpret_cast<uint32_t*>(m_worldDataBack)[next_i] = instruction.pixelData;
 						m_renderUpdates.add(next_i);
 
 
@@ -312,8 +320,8 @@ void World::updateAllPixels() {
 }
 
 void World::redrawWorld() {
-	for (size_t i = 0; i < m_metaData.width * m_metaData.height * 4; ++i) {
-		m_worldRenderBuffer[i] = m_worldDataFront[i];
+	for (size_t i = 0; i < m_metaData.width * m_metaData.height; ++i) {
+		reinterpret_cast<uint32_t*>(m_worldRenderBuffer)[i] = reinterpret_cast<uint32_t*>(m_worldDataFront)[i];
 	}
 	m_renderUpdates.add(0);
 }

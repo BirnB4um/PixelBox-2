@@ -230,26 +230,33 @@ void World::drawToWorld() {
 					if (id == itemIDtoOverride) {
 						reinterpret_cast<uint32_t*>(m_worldDataFront)[next_i] = instruction.pixelData;
 						m_renderUpdates.add(next_i);
-						m_updateList.add(next_i);
+
+
+						//add to update list
+						int posX = next_i % m_metaData.width;
+						int posY = floor(next_i / m_metaData.width);
+						int startPosX = Utils::constrain(posX - 1, 1, static_cast<int>(m_metaData.width) - 2);
+						int startPosY = Utils::constrain(posY - 1, 1, static_cast<int>(m_metaData.height) - 2);
+						int endPosX = Utils::constrain(posX + 1, 1, static_cast<int>(m_metaData.width) - 2);
+						int endPosY = Utils::constrain(posY + 1, 1, static_cast<int>(m_metaData.height) - 2);
+						for (int y = startPosY; y <= endPosY; ++y) {
+							for (int x = startPosX; x <= endPosX; ++x) {
+								m_updateList.add(x + y * m_metaData.width);
+							}
+						}
+
 
 						if (next_i % m_metaData.width > 0) {
 							test_list.push_back(next_i - 1);
-
 						}
-
 						if (next_i % m_metaData.width < m_metaData.width - 1) {
 							test_list.push_back(next_i + 1);
-
 						}
-
 						if (next_i <= m_metaData.width * (m_metaData.height - 1)) {
 							test_list.push_back(next_i + m_metaData.width);
-
 						}
-
 						if (next_i >= m_metaData.width) {
 							test_list.push_back(next_i - m_metaData.width);
-
 						}
 					}
 				}
@@ -316,4 +323,18 @@ uint32_t World::getPixel(size_t x, size_t y) {
 		return 0;
 
 	return reinterpret_cast<uint32_t*>(m_worldDataFront)[x + y * m_metaData.width];
+}
+
+void World::resetWorld() {
+
+	for (size_t y = 0; y < m_metaData.height; ++y) {
+		for (size_t x = 0; x < m_metaData.width; ++x) {
+			size_t i = y * m_metaData.width + x;
+			reinterpret_cast<uint32_t*>(m_worldDataFront)[i] = m_metaData.ruleset->getItemDataFromID(m_worldDataFront[i * 4]);
+			reinterpret_cast<uint32_t*>(m_worldDataBack)[i] = reinterpret_cast<uint32_t*>(m_worldDataFront)[i];
+		}
+	}
+
+	redrawWorld();
+	updateAllPixels();
 }

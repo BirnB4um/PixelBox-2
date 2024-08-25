@@ -34,6 +34,9 @@ public:
 	//deletes all pixels
 	void clearWorld();
 
+	//reset pixels to default value
+	void resetWorld();
+
 	//save the world to file
 	//worldName determines the filename 
 	bool save();
@@ -66,6 +69,7 @@ public:
 
 	uint8_t* getRenderBuffer();
 
+	//add all pixels to update queue
 	void updateAllPixels();
 
 	uint32_t getPixel(size_t x, size_t y);

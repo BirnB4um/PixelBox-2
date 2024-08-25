@@ -1,5 +1,6 @@
 #include "CircuitGridRuleset.h"
 #include "../World/World.h"
+#include "../Application.h"
 
 CircuitGridRuleset::CircuitGridRuleset() {
 	m_id = 1;
@@ -57,7 +58,7 @@ void CircuitGridRuleset::createInventory() {
 	category.items.clear();
 	item = { "Button", {BUTTON,1,0,0}, sf::IntRect(0, 224, 16, 16) }; category.items.push_back(item);
 	item = { "Switch", {SWITCH,1,0,0}, sf::IntRect(0, 240, 16, 16) }; category.items.push_back(item);
-	item = { "Clock", {CLOCK,0,0,0}, sf::IntRect(16, 0, 16, 16) }; category.items.push_back(item);
+	item = { "Clock", {CLOCK,0,100,0}, sf::IntRect(16, 0, 16, 16) }; category.items.push_back(item);
 	item = { "Debug", {DEBUG,0,0,0}, sf::IntRect(16, 16, 16, 16) }; category.items.push_back(item);
 	m_inventory.push_back(category);
 
@@ -856,10 +857,9 @@ const bool CircuitGridRuleset::updatePixel(size_t& index) const {
 
 	case CLOCK:
 	{
-		//TODO:
 		int next_value = valuePtr[3];
-		next_value -= 100;
-		next_value = next_value < 0 ? 0 : next_value > 255 ? 255 : next_value;
+		next_value -= world->getTimeSinceLastTick() / 10;
+		next_value = Utils::constrain(next_value, 0, 255);
 		if (next_value == 0) {
 			nextValuePtr[1] = 2;
 			next_value = valuePtr[2];
@@ -906,10 +906,7 @@ const bool CircuitGridRuleset::updatePixel(size_t& index) const {
 		}
 
 		if (surrounding_electricity_count > 0) {
-			//TODO: pause simulation
-			
-			//if (!simulation_paused)
-			//	gui.pause_button.func();
+			Application::instance().simulationScreen.setSimulationPaused(true);
 			return true;
 		}
 
@@ -918,8 +915,7 @@ const bool CircuitGridRuleset::updatePixel(size_t& index) const {
 	break;
 
 	default:
-		break;
+		return false;
 	}
 
-	return false;
 }

@@ -11,7 +11,7 @@ class Ruleset
 public:
 
 	struct InventoryItem {
-		std::string name = "";
+		std::string name = "Unknown";
 		PixelData data;
 		sf::IntRect rect;
 	};
@@ -32,21 +32,13 @@ public:
 	virtual const bool updatePixel (size_t&index) const;
 	virtual void addSurrondingPixels(size_t& index) const;
 
-	inline sf::Texture* getPixelTexture() {
-		return &m_pixels;
-	}
+	inline sf::Texture* getPixelTexture() { return &m_pixels; }
 
-	inline sf::Texture* getDetailedPixelTexture() {
-		return &m_detailedPixels;
-	}
+	inline sf::Texture* getDetailedPixelTexture() { return &m_detailedPixels; }
 
-	inline sf::Texture* getInventoryTexture() {
-		return &m_inventoryTexture;
-	}
+	inline sf::Texture* getInventoryTexture() { return &m_inventoryTexture; }
 
-	inline const std::vector<InventoryCategory>& getInventory() const {
-		return m_inventory;
-	}
+	inline const std::vector<InventoryCategory>& getInventory() const { return m_inventory; }
 
 	InventoryItem getItemFromID(uint8_t id);
 	uint32_t getItemDataFromID(uint8_t id);

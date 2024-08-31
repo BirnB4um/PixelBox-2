@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GuiRect.h"
+
 #include "SpriteRect.h"
 
 #include "Button.h"

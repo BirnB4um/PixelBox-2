@@ -11,6 +11,9 @@ class WorldInteractionManager
 {
 
 public:
+	
+	friend class SimulationScreen;
+
 	WorldInteractionManager();
 	~WorldInteractionManager();
 
@@ -27,6 +30,8 @@ public:
 	}
 	bool isGuiHidden() const { return m_hideGui; }
 
+
+private:
 	SpriteStateSwitch m_pauseSwitch;
 	SpriteStateSwitch m_interactionSwitch;
 
@@ -47,7 +52,6 @@ public:
 	SpriteButton m_resetButton;
 	SpriteButton m_undoButton;
 
-private:
 	SimulationScreen* m_simulation;
 
 	bool m_hideGui;

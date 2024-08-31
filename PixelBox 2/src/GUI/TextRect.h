@@ -39,6 +39,13 @@ public:
 
 	void setBorderWidth(float width) { };
 
+	inline void setLineSpacing(float spacing) { m_text.setLineSpacing(spacing); }
+	inline float getLineSpacing() const { return m_text.getLineSpacing(); }
+
+	inline void setLetterSpacing(float spacing) { m_text.setLetterSpacing(spacing); }
+	inline float getLetterSpacing() const { return m_text.getLetterSpacing(); }
+
+
 	//TODO:
 	//void scaleFontSizeToFit();
 

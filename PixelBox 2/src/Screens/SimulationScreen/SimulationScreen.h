@@ -9,6 +9,7 @@
 #include "../../World/PixelData.h"
 #include "WorldInteractionManager.h"
 #include "Inventory.h"
+#include "InfoBox.h"
 #include "../../Tools/DoubleMutex.h"
 
 class SimulationScreen : public Screen
@@ -17,6 +18,7 @@ public:
 
 	friend class WorldInteractionManager;
 	friend class Inventory;
+	friend class InfoBox;
 
 	SimulationScreen();
 	~SimulationScreen();
@@ -80,6 +82,7 @@ private:
 	bool m_hideGui;
 	WorldInteractionManager m_worldInteractionManager;
 	Inventory m_inventory;
+	InfoBox m_infoBox;
 
 
 	//for collecting instructions before copying to worlds instruction buffer

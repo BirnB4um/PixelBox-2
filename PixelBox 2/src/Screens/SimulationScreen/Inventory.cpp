@@ -141,6 +141,8 @@ void Inventory::onResize() {
 		y += width + 50.0f;
 	}
 
+	m_inventoryPanel.updateTotalRenderSize();
+
 }
 
 void Inventory::resetAll() {

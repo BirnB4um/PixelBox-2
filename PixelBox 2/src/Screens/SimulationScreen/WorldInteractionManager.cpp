@@ -182,7 +182,7 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 		if (sfEvent.key.code == sf::Keyboard::Space) { // (un-)pause simulation
 			m_pauseSwitch.callFunction();
 		}
-		else if (sfEvent.key.code == sf::Keyboard::Right) { //step one tick
+		else if (sfEvent.key.code == sf::Keyboard::Enter) { //step one tick
 			m_simulation->m_updateOneTick = true;
 		}
 		else if (sfEvent.key.code == sf::Keyboard::R) { //reset pixels to default
@@ -428,6 +428,9 @@ void WorldInteractionManager::resetAll() {
 
 	m_gridSwitch.setActivated(false);
 	m_detailSwitch.setActivated(false);
+
+	m_tpsSlider.setValue(0.0f);
+	m_brushSizeSlider.setValue(1.0f);
 }
 
 void WorldInteractionManager::deactivateAllSwitches() {

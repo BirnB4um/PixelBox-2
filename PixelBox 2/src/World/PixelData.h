@@ -6,6 +6,9 @@ class PixelData {
 public:
 	PixelData() : id(0), data1(0), data2(0), data3(0) {}
 	PixelData(uint8_t id, uint8_t data1, uint8_t data2, uint8_t data3) : id(id), data1(data1), data2(data2), data3(data3) {}
+	PixelData(uint32_t data) {
+		fromUInt32(data);
+	}
 
 	uint8_t id;
 	uint8_t data1;

@@ -20,11 +20,13 @@ SimulationScreen::~SimulationScreen() {
 void SimulationScreen::init() {
 	m_worldInteractionManager.init(this);
 	m_inventory.init(this);
+	m_infoBox.init(this);
 }
 
 void SimulationScreen::onResize() {
 	m_worldInteractionManager.onResize();
 	m_inventory.onResize();
+	m_infoBox.onResize();
 }
 
 void SimulationScreen::onClosing() {
@@ -36,6 +38,7 @@ void SimulationScreen::onSwitch() {
 	Screen::onSwitch();
 	m_worldInteractionManager.resetAll();
 	m_inventory.resetAll();
+	m_infoBox.resetAll();
 }
 
 bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
@@ -43,6 +46,9 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 		return true;
 
 	if (m_inventory.handleEvent(sfEvent))
+		return true;
+
+	if (m_infoBox.handleEvent(sfEvent))
 		return true;
 
 	if (m_worldInteractionManager.handleEvent(sfEvent))
@@ -69,6 +75,7 @@ bool SimulationScreen::handleEvent(sf::Event& sfEvent) {
 			m_hideGui = !m_hideGui;
 			m_worldInteractionManager.setHideGui(m_hideGui);
 			m_inventory.setHideGui(m_hideGui);
+			m_infoBox.setHideGui(m_hideGui);
 			return true;
 		}
 		break;
@@ -139,6 +146,7 @@ void SimulationScreen::update(float dt) {
 
 	m_worldInteractionManager.update(dt);
 	m_inventory.update(dt);
+	m_infoBox.update(dt);
 
 	if (m_worldInteractionManager.m_brushSizeSlider.isInteracted()) {
 		ResourceManager::getPixelShader()->setUniform("mousePos", toWorldPos(static_cast<sf::Vector2f>(Application::instance().getWindowSize()) / 2.0f));
@@ -151,12 +159,22 @@ void SimulationScreen::update(float dt) {
 void SimulationScreen::render(sf::RenderTarget& window) {
 	window.clear(sf::Color(10, 10, 10));
 
+	sf::RectangleShape r;
+	r.setPosition(0, 0);
+	r.setSize(sf::Vector2f(100, 200));
+	r.setFillColor(sf::Color::Transparent);
+	r.setOutlineColor(sf::Color::White);
+	r.setOutlineThickness(5);
+	window.draw(r);
+
+
 	window.setView(m_pixelView);
 	window.draw(m_pixelSprite, ResourceManager::getPixelShader());
 	window.setView(Application::normalView);
 
 	m_worldInteractionManager.render(window);
 	m_inventory.render(window);
+	m_infoBox.render(window);
 
 	renderGui(window);
 }

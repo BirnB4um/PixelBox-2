@@ -42,6 +42,8 @@ public:
 	void resetSliders();
 
 
+	void updateTotalRenderSize();
+
 private:
 	HorizontalSlider m_horizontalSlider;
 	VerticalSlider m_verticalSlider;
@@ -52,7 +54,6 @@ private:
 	sf::FloatRect m_totalRenderSize;
 
 	void updateBounds() override;
-	void updateTotalRenderSize();
 	void updateSliders();
 
 

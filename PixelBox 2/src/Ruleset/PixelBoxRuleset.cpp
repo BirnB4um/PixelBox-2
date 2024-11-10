@@ -27,7 +27,7 @@ void PixelBoxRuleset::updateAllPixels(World* world) {
 
 	for (size_t index : world->m_updateList) {
 		if (updatePixel(index)) {
-			addSurrondingPixels(index);
+			addSurroundingPixels(index);
 		}
 	}
 
@@ -58,7 +58,7 @@ const bool PixelBoxRuleset::updatePixel(size_t& index) const {
 	return false;
 }
 
-void PixelBoxRuleset::addSurrondingPixels(size_t& index) const {
+void PixelBoxRuleset::addSurroundingPixels(size_t& index) const {
 
 	//update pixels from updateList, save next updates to updateListNext + renderUpdates
 
@@ -96,4 +96,8 @@ void PixelBoxRuleset::addSurrondingPixels(size_t& index) const {
 		world->m_updateListNext.add(index + height);//bottom
 	}
 
+}
+
+PixelData PixelBoxRuleset::getPixelInteractionResult(PixelData pixel) {
+	return pixel;
 }

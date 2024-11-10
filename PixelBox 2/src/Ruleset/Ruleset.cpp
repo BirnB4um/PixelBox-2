@@ -29,7 +29,7 @@ void Ruleset::updateAllPixels(World* world) {
 
 	for (size_t index : world->m_updateList) {
 		if (updatePixel(index)) {
-			addSurrondingPixels(index);
+			addSurroundingPixels(index);
 		}
 	}
 
@@ -60,7 +60,7 @@ const bool Ruleset::updatePixel(size_t& index) const {
 	return false;
 }
 
-void Ruleset::addSurrondingPixels(size_t& index) const {
+void Ruleset::addSurroundingPixels(size_t& index) const {
 
 	//update pixels from updateList, save next updates to updateListNext + renderUpdates
 
@@ -119,4 +119,8 @@ Ruleset::InventoryItem Ruleset::getItemFromID(uint8_t id) {
 
 uint32_t Ruleset::getItemDataFromID(uint8_t id) {
 	return m_defaultPixelData[id];
+}
+
+PixelData Ruleset::getPixelInteractionResult(PixelData pixel) {
+	return pixel;
 }

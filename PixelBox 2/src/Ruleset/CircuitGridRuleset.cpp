@@ -70,6 +70,20 @@ void CircuitGridRuleset::createInventory() {
 	}
 }
 
+PixelData CircuitGridRuleset::getPixelInteractionResult(PixelData pixel) {
+
+	if (pixel.id == SWITCH or pixel.id == BUTTON) {
+		if (pixel.data1 == 1) {
+			pixel.data1 = 2;
+		}
+		else if (pixel.data1 == 2) {
+			pixel.data1 = 0;
+		}
+	}
+
+	return pixel;
+}
+
 void CircuitGridRuleset::updateAllPixels(World* world) {
 	this->world = world;
 	width = world->m_metaData.width;
@@ -79,12 +93,12 @@ void CircuitGridRuleset::updateAllPixels(World* world) {
 
 	for (size_t index : world->m_updateList) {
 		if (updatePixel(index)) {
-			addSurrondingPixels(index);
+			addSurroundingPixels(index);
 		}
 	}
 }
 
-void CircuitGridRuleset::addSurrondingPixels(size_t& index) const {
+void CircuitGridRuleset::addSurroundingPixels(size_t& index) const {
 	//update pixels from updateList, save next updates to updateListNext + renderUpdates
 
 	world->m_updateListNext.add(index);

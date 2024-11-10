@@ -40,5 +40,13 @@ public:
 		data3 = xPtr[3];
 	}
 
+	inline bool operator==(const PixelData& other) const {
+		return id == other.id && data1 == other.data1 && data2 == other.data2 && data3 == other.data3;
+	}
+
+	inline bool operator!=(const PixelData& other) const {
+		return id != other.id || data1 != other.data1 || data2 != other.data2 || data3 != other.data3;
+	}
+
 
 };

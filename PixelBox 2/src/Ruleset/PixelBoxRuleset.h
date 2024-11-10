@@ -10,6 +10,7 @@ public:
 
 	void updateAllPixels(World* world) override;
 	const bool updatePixel(size_t& index) const override;
-	void addSurrondingPixels(size_t& index) const override;
+	void addSurroundingPixels(size_t& index) const override;
+	PixelData getPixelInteractionResult(PixelData pixel) override;
 };
 

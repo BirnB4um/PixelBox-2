@@ -6,6 +6,7 @@
 WorldInteractionManager::WorldInteractionManager() {
 	m_simulation = nullptr;
 	m_isDrawing = false;
+	m_isInteracting = false;
 	m_hideGui = false;
 
 	m_linePreview.setFillColor(sf::Color(255, 0, 0));
@@ -25,7 +26,7 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_pauseSwitch.addState({ 2, {61, 1, 3, 5} }); //unpaused
 	m_pauseSwitch.setSpritePadding(5.0f);
 	m_pauseSwitch.setFunction([this]() {
-		m_simulation->m_isSimulationPaused = m_pauseSwitch.getCurrentState().id == 1 ? true : false;
+		m_simulation->m_isSimulationPaused = m_pauseSwitch.getCurrentState().id == 1;
 		});
 	m_guiElements.push_back(&m_pauseSwitch);
 
@@ -33,6 +34,10 @@ void WorldInteractionManager::init(SimulationScreen* simulation) {
 	m_interactionSwitch.addState({ 2, {77, 1, 12, 14} });//interacting
 	m_interactionSwitch.setSpritePadding(5.0f);
 	m_interactionSwitch.setFunction([this]() {
+		m_isInteracting = m_interactionSwitch.getCurrentState().id == 2;
+		if (m_isInteracting) {
+			m_isDrawing = false;
+		}
 		});
 	m_guiElements.push_back(&m_interactionSwitch);
 
@@ -221,7 +226,30 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 
 	case sf::Event::MouseButtonPressed:
 		if (sfEvent.mouseButton.button == sf::Mouse::Left && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-			if (m_interactionSwitch.getCurrentState().id == 1) { //drawing
+			if (m_isInteracting) { //interacting
+				sf::FloatRect worldRect = sf::FloatRect(0.0f, 0.0f, m_simulation->m_world->getMetaData().width, m_simulation->m_world->getMetaData().height);
+				sf::Vector2i mouse = static_cast<sf::Vector2i>(m_simulation->getMouseWorldPos());
+				if (!worldRect.contains(m_simulation->getMouseWorldPos())) {
+					return false;
+				}
+				PixelData hoveredPixel(m_simulation->m_world->getPixel(mouse.x, mouse.y));
+				PixelData resultingPixel = m_simulation->m_world->getMetaData().ruleset->getPixelInteractionResult(hoveredPixel);
+				if (hoveredPixel != resultingPixel) {
+					DrawInstruction instruction(
+						resultingPixel.toUInt32(),
+						static_cast<sf::Vector2i>(m_simulation->getMouseWorldPos()),
+						static_cast<sf::Vector2i>(m_simulation->getMouseWorldPos()),
+						DrawInstruction::Type::LINE,
+						1,
+						nullptr
+					);
+
+					std::lock_guard<std::mutex> lock(m_simulation->m_drawingMutex);
+					m_simulation->m_collectedDrawInstructions.push_back(instruction);
+				}
+				return true;
+			}
+			else { //drawing
 				m_startDrawingPosition = m_simulation->getMouseWorldPos();
 				if (m_selectionSwitch.isActivated()) {
 					//TODO: start selection
@@ -231,8 +259,6 @@ bool WorldInteractionManager::handleEvent(sf::Event& sfEvent) {
 				}
 
 				return true;
-			}
-			else { //interacting
 			}
 		}
 		break;
@@ -305,7 +331,7 @@ void WorldInteractionManager::update(float dt) {
 	}
 
 	//if drawing with brush
-	if (m_brushSwitch.isActivated() && m_isDrawing) {
+	if (m_brushSwitch.isActivated() && m_isDrawing && !m_isInteracting) {
 		//if mouse moved relative to board
 		if (m_startDrawingPosition != m_simulation->getMouseWorldPos()) {
 			//create drawing instruction for brush

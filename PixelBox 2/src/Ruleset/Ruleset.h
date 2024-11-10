@@ -30,7 +30,7 @@ public:
 
 	virtual void updateAllPixels(World* world);
 	virtual const bool updatePixel (size_t&index) const;
-	virtual void addSurrondingPixels(size_t& index) const;
+	virtual void addSurroundingPixels(size_t& index) const;
 
 	inline sf::Texture* getPixelTexture() { return &m_pixels; }
 
@@ -42,6 +42,8 @@ public:
 
 	InventoryItem getItemFromID(uint8_t id);
 	uint32_t getItemDataFromID(uint8_t id);
+
+	virtual PixelData getPixelInteractionResult(PixelData pixel);
 
 
 protected:

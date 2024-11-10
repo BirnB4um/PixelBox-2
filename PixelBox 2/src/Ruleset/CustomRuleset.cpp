@@ -25,7 +25,7 @@ void CustomRuleset::updateAllPixels(World* world) {
 
 	for (size_t index : world->m_updateList) {
 		if (updatePixel(index)) {
-			addSurrondingPixels(index);
+			addSurroundingPixels(index);
 		}
 	}
 
@@ -56,7 +56,7 @@ const bool CustomRuleset::updatePixel(size_t& index) const {
 	return false;
 }
 
-void CustomRuleset::addSurrondingPixels(size_t& index) const {
+void CustomRuleset::addSurroundingPixels(size_t& index) const {
 
 	//update pixels from updateList, save next updates to updateListNext + renderUpdates
 
